@@ -57,7 +57,7 @@ class DonationService {
   /// 返回 [DonationResult] 包含数据和数据源信息
   static Future<DonationResult> getTopDonors() async {
     try {
-      const url =
+      final url =
           '${AppConstants.apiBaseUrl}${AppConstants.donationApiEndpoint}';
 
       AppLogger.info('正在请求捐赠数据: $url');
@@ -86,7 +86,7 @@ class DonationService {
 
         // 检查是否有 donors 字段
         if (!data.containsKey('donors')) {
-          throw const FormatException('响应数据缺少 donors 字段');
+          throw FormatException('响应数据缺少 donors 字段');
         }
 
         final donorsList = data['donors'];

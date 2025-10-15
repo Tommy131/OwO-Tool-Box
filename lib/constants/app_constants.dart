@@ -19,7 +19,7 @@ class AppConstants {
   static const String instagramName = 'jay.jay2045';
 
   // ========== 外部链接 ==========
-  static const String instagramUrl = 'https://instagram.com/$instagramName';
+  static const String instagramUrl = 'https://instagram.com/${instagramName}';
   static const String owoServiceUrl = 'https://owoblog.com/service';
   static const String githubUrl = 'https://github.com/Tommy131';
   static const String githubRepoUrl =

@@ -180,7 +180,7 @@ class _TestMatrixScreenState extends State<TestMatrixScreen> {
         ),
       ),
       value: value,
-      activeThumbColor: const Color(0xFF00F0FF),
+      activeColor: const Color(0xFF00F0FF),
       onChanged: onChanged,
     );
   }

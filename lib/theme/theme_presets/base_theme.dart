@@ -113,14 +113,16 @@ abstract class BaseTheme {
         secondary: colors.secondary,
         tertiary: colors.tertiary,
         surface: colors.surface ?? defaultSurface,
+        background: colors.background ?? defaultBackground,
         error: isDark ? Colors.redAccent : Colors.red,
         onPrimary:
-            colors.onPrimary ?? _getContrastingColor(colors.primary), // ✅ 智能对比色
+            colors.onPrimary ?? _getContrastingColor(colors.primary), // 智能对比色
         onSecondary:
             colors.onSecondary ?? _getContrastingColor(colors.secondary),
         onSurface: isDark ? Colors.white : Colors.black87,
+        onBackground: isDark ? Colors.white : Colors.black87,
         onError: Colors.white,
-        surfaceContainerHighest: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100,
+        surfaceVariant: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100,
         outline: colors.primary.withOpacity(isDark ? 0.4 : 0.3),
       ),
 
@@ -135,7 +137,7 @@ abstract class BaseTheme {
       floatingActionButtonTheme: _buildFABTheme(colors, styles),
       elevatedButtonTheme: _buildElevatedButtonTheme(colors, styles),
 
-      // ✅ 新增按钮主题
+      // 按钮主题
       outlinedButtonTheme: _buildOutlinedButtonTheme(colors, styles, isDark),
       textButtonTheme: _buildTextButtonTheme(colors, isDark),
 
@@ -149,7 +151,7 @@ abstract class BaseTheme {
     );
   }
 
-  /// ✅ 新增：智能计算对比色的辅助方法
+  /// 智能计算对比色的辅助方法
   Color _getContrastingColor(Color color) {
     // 计算亮度，根据 WCAG 标准
     final luminance = color.computeLuminance();
@@ -224,7 +226,7 @@ abstract class BaseTheme {
             ? [Shadow(color: colors.primary.withOpacity(0.8), blurRadius: 12)]
             : null,
       ),
-      // ✅ 修复：提高未选中图标的可见度
+      // 提高未选中图标的可见度
       unselectedIconTheme: IconThemeData(
         color: isDark
             ? Colors.grey.shade400
@@ -239,7 +241,7 @@ abstract class BaseTheme {
             ? [Shadow(color: colors.primary.withOpacity(0.5), blurRadius: 8)]
             : null,
       ),
-      // ✅ 修复：提高未选中文字的可见度
+      // 提高未选中文字的可见度
       unselectedLabelTextStyle: TextStyle(
         color: isDark
             ? Colors.grey.shade400
@@ -293,7 +295,7 @@ abstract class BaseTheme {
         foregroundColor: colors.onPrimary ??
             (colors.primary.computeLuminance() > 0.5
                 ? Colors.black
-                : Colors.white), // ✅ 自动计算前景色
+                : Colors.white), // 自动计算前景色
         elevation: styles.cardElevation,
         padding: styles.buttonPadding,
         shape: RoundedRectangleBorder(
@@ -305,7 +307,7 @@ abstract class BaseTheme {
     );
   }
 
-  /// ✅ 新增：OutlinedButton 主题（用于次要按钮）
+  /// OutlinedButton 主题（用于次要按钮）
   OutlinedButtonThemeData _buildOutlinedButtonTheme(
     ThemeColors colors,
     ThemeStyles styles,
@@ -323,7 +325,7 @@ abstract class BaseTheme {
     );
   }
 
-  /// ✅ 新增：TextButton 主题
+  /// TextButton 主题
   TextButtonThemeData _buildTextButtonTheme(
     ThemeColors colors,
     bool isDark,

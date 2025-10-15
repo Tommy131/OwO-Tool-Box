@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart' hide Localizations;
 
 import '../utils/i18n/app_localization.dart';
+import '../utils/i18n/localization_keys.dart';
 import 'about_screen.dart';
 import 'test_screens/components_demo_screen.dart';
 import 'home_screen.dart';
@@ -34,19 +35,19 @@ class ScreenNavigationHelper {
           NavigationItem(
             icon: Icons.home_outlined,
             selectedIcon: Icons.home,
-            labelKey: 'home',
+            labelKey: L18nKeys.home,
             page: const HomeScreen(),
           ),
           NavigationItem(
             icon: Icons.settings_outlined,
             selectedIcon: Icons.settings,
-            labelKey: 'settings',
+            labelKey: L18nKeys.settings,
             page: const SettingsScreen(),
           ),
           NavigationItem(
             icon: Icons.info_outlined,
             selectedIcon: Icons.info,
-            labelKey: 'about',
+            labelKey: L18nKeys.about,
             page: const AboutScreen(),
           ),
           NavigationItem(

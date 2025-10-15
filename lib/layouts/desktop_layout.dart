@@ -36,7 +36,8 @@ class DesktopLayout extends StatelessWidget {
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
                       minHeight: MediaQuery.of(context).size.height -
-                          kToolbarHeight, // 减去标题栏高度
+                          kToolbarHeight + // 减去标题栏高度
+                          15, // 加上减去之后的空白占位 = 15 pixels
                     ),
                     child: IntrinsicHeight(
                       child: NavigationRail(
