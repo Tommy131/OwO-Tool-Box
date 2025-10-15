@@ -113,16 +113,14 @@ abstract class BaseTheme {
         secondary: colors.secondary,
         tertiary: colors.tertiary,
         surface: colors.surface ?? defaultSurface,
-        background: colors.background ?? defaultBackground,
         error: isDark ? Colors.redAccent : Colors.red,
         onPrimary:
             colors.onPrimary ?? _getContrastingColor(colors.primary), // 智能对比色
         onSecondary:
             colors.onSecondary ?? _getContrastingColor(colors.secondary),
         onSurface: isDark ? Colors.white : Colors.black87,
-        onBackground: isDark ? Colors.white : Colors.black87,
         onError: Colors.white,
-        surfaceVariant: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100,
+        surfaceContainerHighest: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100,
         outline: colors.primary.withOpacity(isDark ? 0.4 : 0.3),
       ),
 

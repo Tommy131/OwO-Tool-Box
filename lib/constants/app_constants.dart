@@ -7,9 +7,9 @@ class AppConstants {
   AppConstants._();
 
   // ========== 应用信息 ==========
-  static const String appName = 'Flutter App Framework';
-  static const String appVersion = '2.4.0';
-  static const String appDescription = '一个功能完整的 Flutter 应用框架';
+  static const String appName = 'OwO! System Tools';
+  static const String appVersion = '1.0.0';
+  static const String appDescription = 'A multifunctional System Tools';
 
   // ========== 开发者信息 ==========
   static const String developerName = 'HanskiJay';
@@ -19,7 +19,7 @@ class AppConstants {
   static const String instagramName = 'jay.jay2045';
 
   // ========== 外部链接 ==========
-  static const String instagramUrl = 'https://instagram.com/${instagramName}';
+  static const String instagramUrl = 'https://instagram.com/$instagramName';
   static const String owoServiceUrl = 'https://owoblog.com/service';
   static const String githubUrl = 'https://github.com/Tommy131';
   static const String githubRepoUrl =

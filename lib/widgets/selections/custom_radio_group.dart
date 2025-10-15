@@ -44,7 +44,7 @@ class CustomRadioGroup<T> extends StatelessWidget {
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 8),
           );
-        }).toList(),
+        }),
       ],
     );
   }

@@ -44,13 +44,13 @@ class HomeScreen extends StatelessWidget {
             )
           : null,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(isDesktop
-                ? 48
-                : isTablet
-                    ? 32
-                    : 16),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(isDesktop
+              ? 48
+              : isTablet
+                  ? 32
+                  : 16),
+          child: Center(
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: isDesktop

@@ -227,7 +227,7 @@ class CyberpunkMatrixPainter extends CustomPainter {
     if (size.width == 0 || size.height == 0) return;
 
     final colWidth = size.width / drops.length;
-    final charHeight = 22.0;
+    const charHeight = 22.0;
 
     for (var drop in drops) {
       final baseX = drop.x * colWidth + colWidth / 2;

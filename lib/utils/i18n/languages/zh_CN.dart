@@ -7,7 +7,7 @@ import '../localization_keys.dart';
 class ZhCN {
   static const Map<String, String> translations = {
     // ========== 通用 ==========
-    L18nKeys.appTitle: 'Flutter 应用框架',
+    L18nKeys.appTitle: 'OwO! System Tools',
     L18nKeys.ok: '确定',
     L18nKeys.cancel: '取消',
 
@@ -19,7 +19,7 @@ class ZhCN {
 
     // ========== 欢迎页 ==========
     L18nKeys.welcome: '欢迎使用',
-    L18nKeys.welcomeMessage: '这是一个功能完整的Flutter应用框架',
+    L18nKeys.welcomeMessage: '由HanskiJay开发的多功能系统助手',
     L18nKeys.welcomeDescription: '支持多平台自适应布局,完美适配手机、平板和桌面设备',
     L18nKeys.exploreFeatures: '探索功能',
 
@@ -95,5 +95,60 @@ class ZhCN {
     L18nKeys.maximize: '最大化',
     L18nKeys.restore: '还原',
     L18nKeys.close: '关闭',
+
+    // ========== 设置页（SettingsScreen）==========
+    // 设置分类
+    L18nKeys.commonSettings: '通用设置',
+    L18nKeys.hostMonitoringSettings: '主机监控设置',
+
+    // 分组标题
+    L18nKeys.refreshSettings: '刷新设置',
+    L18nKeys.hostCheckSettings: '主机检测设置',
+    L18nKeys.alertSettings: '告警设置',
+    L18nKeys.alertThresholds: '告警阈值',
+    L18nKeys.notificationSettings: '通知设置',
+
+    // 刷新设置
+    L18nKeys.pollingInterval: '主机轮询间隔',
+    L18nKeys.secondsSuffix: '秒',
+    L18nKeys.refreshIntervalHint: '输入刷新间隔（秒）',
+    L18nKeys.refreshIntervalTip: '建议设置为1-10秒之间，过短可能影响性能',
+
+    // 主机检测设置
+    L18nKeys.checkTimeout: '检测超时时间',
+    L18nKeys.timeoutHint: '输入超时时间（秒）',
+    L18nKeys.hostTimeoutTip: '检测主机在线状态的超时时间，建议3-10秒',
+    L18nKeys.backgroundCheckInterval: '后台检测间隔',
+    L18nKeys.minutesSuffix: '分钟',
+    L18nKeys.checkIntervalHint: '输入检测间隔（分钟）',
+    L18nKeys.backgroundCheckTip: '后台静默检测主机列表状态的间隔时间，建议5-30分钟',
+
+    // 告警设置（总开关）
+    L18nKeys.enableAlerts: '启用告警',
+    L18nKeys.enableAlertsSubtitle: '开启后将在资源使用超过阈值时发送通知',
+
+    // 告警阈值（滑块标签）
+    L18nKeys.cpuUsage: 'CPU 使用率',
+    L18nKeys.memoryUsage: '内存使用率',
+    L18nKeys.diskUsage: '磁盘使用率',
+    L18nKeys.uploadRate: '上传速率',
+    L18nKeys.downloadRate: '下载速率',
+    L18nKeys.kbPerSecond: ' KB/s',
+
+    // 通知设置
+    L18nKeys.notifyOnDisconnect: '断开连接通知',
+    L18nKeys.soundEnabled: '声音提示',
+    L18nKeys.vibrationEnabled: '震动提示',
+    L18nKeys.vibrationNote: '仅在移动设备上生效',
+
+    // 交互：保存与校验提示、确认弹窗、结果提示
+    L18nKeys.saveSettings: '保存设置',
+    L18nKeys.invalidRefreshInterval: '请输入有效的刷新间隔（至少1秒）',
+    L18nKeys.invalidHostCheckTimeout: '请输入有效的检测超时时间（1-60秒）',
+    L18nKeys.invalidHostCheckInterval: '请输入有效的检测间隔（1-1440分钟）',
+    L18nKeys.longRefreshTitle: '刷新间隔较长',
+    // 占位变量：{seconds} 用来替换 intervalSeconds
+    L18nKeys.longRefreshContent: '您设置的刷新间隔为{seconds}秒，这可能导致数据更新不及时。确定继续？',
+    L18nKeys.settingsSaved: '设置已保存',
   };
 }

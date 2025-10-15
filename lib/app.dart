@@ -16,6 +16,7 @@ import 'layouts/tablet_layout.dart';
 import 'providers/locale_provider.dart';
 import 'providers/matrix_rain_provider.dart';
 import 'providers/navigation_provider.dart';
+import 'providers/system_provider.dart';
 import 'screens/screen_navigation_helper.dart';
 import 'providers/theme_provider.dart';
 import 'utils/i18n/app_localization.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => MatrixRainProvider()),
+        ChangeNotifierProvider(create: (_) => SystemProvider()),
       ],
       child: Consumer2<ThemeProvider, LocaleProvider>(
         builder: (context, themeProvider, localeProvider, child) {
@@ -77,8 +79,22 @@ class MyApp extends StatelessWidget {
 // 自适应脚手架 - 根据屏幕尺寸自动切换布局
 // ============================================================================
 
-class AdaptiveScaffold extends StatelessWidget {
+class AdaptiveScaffold extends StatefulWidget {
   const AdaptiveScaffold({super.key});
+
+  @override
+  State<AdaptiveScaffold> createState() => _AdaptiveScaffoldState();
+}
+
+class _AdaptiveScaffoldState extends State<AdaptiveScaffold>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SystemProvider>().initialize();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

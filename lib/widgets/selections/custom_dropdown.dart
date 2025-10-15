@@ -81,7 +81,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
           const SizedBox(height: 8),
         ],
         DropdownButtonFormField<T>(
-          value: widget.value,
+          initialValue: widget.value,
           items: widget.items,
           onChanged: widget.enabled ? widget.onChanged : null,
           validator: widget.validator,

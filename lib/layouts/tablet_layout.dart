@@ -44,7 +44,7 @@ class TabletLayout extends StatelessWidget {
                 SingleChildScrollView(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      minHeight: availableHeight,
+                      minHeight: availableHeight + 15,
                     ),
                     child: IntrinsicHeight(
                       child: NavigationRail(
