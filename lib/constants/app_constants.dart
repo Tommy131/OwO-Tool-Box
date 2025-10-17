@@ -7,9 +7,9 @@ class AppConstants {
   AppConstants._();
 
   // ========== 应用信息 ==========
-  static const String appName = 'OwO! System Tools';
-  static const String appVersion = '1.0.0';
-  static const String appDescription = 'A multifunctional System Tools';
+  static const String appName = 'Flutter App Framework';
+  static const String appVersion = '2.4.0';
+  static const String appDescription = '一个功能完整的 Flutter 应用框架';
 
   // ========== 开发者信息 ==========
   static const String developerName = 'HanskiJay';

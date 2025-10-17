@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../utils/i18n/language_config.dart';
+import '../i18n/language_config.dart';
 import '../utils/logger.dart';
 
 class LocaleProvider with ChangeNotifier {

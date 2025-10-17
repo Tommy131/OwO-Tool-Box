@@ -13,17 +13,12 @@ class L18nKeys {
   static const String home = 'home';
   static const String settings = 'settings';
   static const String about = 'about';
-  static const String monitor = 'monitor';
 
   // ========== 欢迎页 ==========
   static const String welcome = 'welcome';
   static const String welcomeMessage = 'welcome_message';
   static const String welcomeDescription = 'welcome_description';
   static const String exploreFeatures = 'explore_features';
-
-  // ========== 监控页 ==========
-  static const String systemMonitorPage = 'system_monitor_page';
-  static const String systemMonitoring = 'system_monitoring';
 
   // ========== 语言设置 ==========
   static const String languageSettings = 'language_settings';
@@ -98,58 +93,4 @@ class L18nKeys {
   static const String maximize = 'maximize';
   static const String restore = 'restore';
   static const String close = 'close';
-
-  // ========== 设置页（SettingsScreen）==========
-  // 设置分类
-  static const String commonSettings = 'common_settings';
-  static const String hostMonitoringSettings = 'host_monitoring_settings';
-
-  // 列表分组标题
-  static const String refreshSettings = 'refresh_settings';
-  static const String hostCheckSettings = 'host_check_settings';
-  static const String alertSettings = 'alert_settings';
-  static const String alertThresholds = 'alert_thresholds';
-  static const String notificationSettings = 'notification_settings';
-
-  // 刷新设置
-  static const String pollingInterval = 'polling_interval';
-  static const String secondsSuffix = 'seconds_suffix';
-  static const String refreshIntervalHint = 'refresh_interval_hint';
-  static const String refreshIntervalTip = 'refresh_interval_tip';
-
-  // 主机检测设置
-  static const String checkTimeout = 'check_timeout';
-  static const String timeoutHint = 'timeout_hint';
-  static const String hostTimeoutTip = 'host_timeout_tip';
-  static const String backgroundCheckInterval = 'background_check_interval';
-  static const String minutesSuffix = 'minutes_suffix';
-  static const String checkIntervalHint = 'check_interval_hint';
-  static const String backgroundCheckTip = 'background_check_tip';
-
-  // 告警设置（开关与说明）
-  static const String enableAlerts = 'enable_alerts';
-  static const String enableAlertsSubtitle = 'enable_alerts_subtitle';
-
-  // 告警阈值（滑块标签）
-  static const String cpuUsage = 'cpu_usage';
-  static const String memoryUsage = 'memory_usage';
-  static const String diskUsage = 'disk_usage';
-  static const String uploadRate = 'upload_rate';
-  static const String downloadRate = 'download_rate';
-  static const String kbPerSecond = 'kb_per_second';
-
-  // 通知设置（开关与说明）
-  static const String notifyOnDisconnect = 'notify_on_disconnect';
-  static const String soundEnabled = 'sound_enabled';
-  static const String vibrationEnabled = 'vibration_enabled';
-  static const String vibrationNote = 'vibration_note';
-
-  // 交互：保存与校验提示、确认弹窗、结果提示
-  static const String saveSettings = 'save_settings';
-  static const String invalidRefreshInterval = 'invalid_refresh_interval';
-  static const String invalidHostCheckTimeout = 'invalid_host_check_timeout';
-  static const String invalidHostCheckInterval = 'invalid_host_check_interval';
-  static const String longRefreshTitle = 'long_refresh_title';
-  static const String longRefreshContent = 'long_refresh_content';
-  static const String settingsSaved = 'settings_saved';
 }

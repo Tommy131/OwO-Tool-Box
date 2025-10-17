@@ -9,8 +9,8 @@ import '../layouts/responsive_break_points.dart';
 import '../providers/navigation_provider.dart';
 import '../providers/theme_provider.dart';
 import '../theme/theme_config.dart';
-import '../utils/i18n/app_localization.dart';
-import '../utils/i18n/localization_keys.dart';
+import '../i18n/app_localization.dart';
+import '../i18n/localization_keys.dart';
 import '../widgets/cards/feature_card.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -44,13 +44,13 @@ class HomeScreen extends StatelessWidget {
             )
           : null,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(isDesktop
-              ? 48
-              : isTablet
-                  ? 32
-                  : 16),
-          child: Center(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(isDesktop
+                ? 48
+                : isTablet
+                    ? 32
+                    : 16),
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: isDesktop

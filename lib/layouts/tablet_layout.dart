@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/navigation_provider.dart';
-import '../utils/i18n/app_localization.dart';
-import '../utils/i18n/localization_keys.dart';
+import '../i18n/app_localization.dart';
+import '../i18n/localization_keys.dart';
 import '../widgets/bars/custom_title_bar.dart';
 
 class TabletLayout extends StatelessWidget {

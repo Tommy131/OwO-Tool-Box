@@ -5,29 +5,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../layouts/responsive_break_points.dart';
-import '../../models/app_settings.dart';
-import '../../models/system_monitor_settings.dart';
-import '../../providers/locale_provider.dart';
-import '../../providers/matrix_rain_provider.dart';
-import '../../providers/system_provider.dart';
-import '../../providers/theme_provider.dart';
-import '../../theme/theme_config.dart';
-import '../../utils/i18n/app_localization.dart';
-import '../../utils/i18n/language_config.dart';
-import '../../utils/i18n/localization_keys.dart';
-import 'system_monitor_settings_section.dart';
+import '../layouts/responsive_break_points.dart';
+import '../providers/locale_provider.dart';
+import '../providers/matrix_rain_provider.dart';
+import '../providers/theme_provider.dart';
+import '../theme/theme_config.dart';
+import '../i18n/app_localization.dart';
+import '../i18n/language_config.dart';
+import '../i18n/localization_keys.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
-
-  @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  SystemMonitorSettings? _pendingMonitorSettings;
-  bool _hasChanges = false;
 
   @override
   Widget build(BuildContext context) {
@@ -43,13 +31,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             )
           : null,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(isDesktop
-              ? 48
-              : isTablet
-                  ? 32
-                  : 16),
-          child: Center(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(isDesktop
+                ? 48
+                : isTablet
+                    ? 32
+                    : 16),
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: isDesktop
@@ -68,33 +56,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     const SizedBox(height: 24),
                   ],
-                  Text(
-                    localizations.translate(L18nKeys.commonSettings),
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
                   _buildThemeModeSection(context),
                   const SizedBox(height: 16),
                   _buildThemeColorSection(context),
                   const SizedBox(height: 16),
-                  _buildEffectsSection(context),
+                  _buildEffectsSection(context), // ✅ 新增特效设置
                   const SizedBox(height: 16),
                   _buildLanguageSection(context),
-                  const SizedBox(height: 30),
-                  Text(
-                    localizations.translate(L18nKeys.hostMonitoringSettings),
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildSystemMonitorSection(context),
-                  const SizedBox(height: 16),
-                  if (_hasChanges) _buildSaveButton(context),
                 ],
               ),
             ),
@@ -104,173 +72,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildSystemMonitorSection(BuildContext context) {
-    final systemProvider = Provider.of<SystemProvider>(context, listen: false);
-    final settings = systemProvider.settings;
-    final alertConfig = systemProvider.alertManager.config;
-
-    final initialSettings = SystemMonitorSettings(
-      refreshInterval: settings.refreshInterval,
-      hostCheckTimeout: settings.hostCheckTimeout,
-      hostCheckInterval: settings.hostCheckInterval,
-      alertConfig: alertConfig,
-    );
-
-    return SystemMonitorSettingsSection(
-      initialSettings: initialSettings,
-      onSettingsChanged: (newSettings) {
-        setState(() {
-          _pendingMonitorSettings = newSettings;
-          _hasChanges = true;
-        });
-      },
-    );
-  }
-
-  Widget _buildSaveButton(BuildContext context) {
-    final localizations = AppLocalization.of(context);
-    final theme = Theme.of(context);
-
-    return SizedBox(
-      width: double.infinity,
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: _hasChanges
-              ? LinearGradient(
-                  colors: [
-                    theme.colorScheme.primary,
-                    theme.colorScheme.secondary,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )
-              : LinearGradient(
-                  colors: [Colors.grey.shade700, Colors.grey.shade700],
-                ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: ElevatedButton(
-          onPressed: _hasChanges ? _saveSettings : null,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          child: Text(
-            localizations.translate(L18nKeys.saveSettings),
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _saveSettings() async {
-    if (_pendingMonitorSettings == null) return;
-
-    final localizations = AppLocalization.of(context);
-    final theme = Theme.of(context);
-    final settings = _pendingMonitorSettings!;
-
-    if (settings.refreshInterval < 1) {
-      _showSnackBar(
-        localizations.translate(L18nKeys.invalidRefreshInterval),
-        theme.colorScheme.error,
-      );
-      return;
-    }
-
-    if (settings.hostCheckTimeout < 1 || settings.hostCheckTimeout > 60) {
-      _showSnackBar(
-        localizations.translate(L18nKeys.invalidHostCheckTimeout),
-        theme.colorScheme.error,
-      );
-      return;
-    }
-
-    if (settings.hostCheckInterval < 1 || settings.hostCheckInterval > 1440) {
-      _showSnackBar(
-        localizations.translate(L18nKeys.invalidHostCheckInterval),
-        theme.colorScheme.error,
-      );
-      return;
-    }
-
-    if (settings.refreshInterval > 60) {
-      final confirmed = await _showConfirmDialog(
-        localizations.translate(L18nKeys.longRefreshTitle),
-        localizations
-            .translate(L18nKeys.longRefreshContent)
-            .replaceAll('{seconds}', settings.refreshInterval.toString()),
-      );
-      if (!confirmed) return;
-    }
-
-    final newAppSettings = AppSettings(
-      refreshInterval: settings.refreshInterval,
-      hostCheckTimeout: settings.hostCheckTimeout,
-      hostCheckInterval: settings.hostCheckInterval,
-    );
-
-    if (mounted) {
-      await context.read<SystemProvider>().updateSettings(newAppSettings);
-      await context
-          .read<SystemProvider>()
-          .alertManager
-          .updateConfig(settings.alertConfig);
-
-      setState(() {
-        _hasChanges = false;
-        _pendingMonitorSettings = null;
-      });
-
-      _showSnackBar(
-        localizations.translate(L18nKeys.settingsSaved),
-        Colors.green,
-      );
-    }
-  }
-
-  Future<bool> _showConfirmDialog(String title, String content) async {
-    final localizations = AppLocalization.of(context);
-
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        title: Text(title),
-        content: Text(content),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(localizations.translate(L18nKeys.cancel)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(localizations.translate(L18nKeys.ok)),
-          ),
-        ],
-      ),
-    );
-    return result ?? false;
-  }
-
-  void _showSnackBar(String message, Color backgroundColor) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: backgroundColor,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
+  /// 主题模式选择区域（浅色/深色/系统）
   Widget _buildThemeModeSection(BuildContext context) {
     final localizations = AppLocalization.of(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -344,6 +146,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  /// 主题配色选择区域（默认/科技/自然等）
   Widget _buildThemeColorSection(BuildContext context) {
     final localizations = AppLocalization.of(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -391,7 +194,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     IconData icon,
     ThemeProvider provider,
   ) {
-    final localizations = AppLocalization.of(context);
     final isSelected = provider.themeType == type;
 
     return ListTile(
@@ -407,7 +209,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-                '${localizations.translate(L18nKeys.themeColorSettings)}...'),
+                '${AppLocalization.of(context).translate(L18nKeys.themeColorSettings)}...'),
             duration: const Duration(milliseconds: 500),
           ),
         );
@@ -456,6 +258,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
             ),
             const SizedBox(height: 16),
+
+            // 主开关
             SwitchListTile(
               secondary: Icon(
                 Icons.water_drop_rounded,
@@ -474,6 +278,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 await matrixRainProvider.setMatrixRain(value);
               },
             ),
+
+            // 子选项（仅在启用时显示）
             if (matrixRainProvider.isEnabled) ...[
               const Divider(height: 24),
               Padding(
@@ -528,6 +334,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           matrixRainProvider.setScanning(value),
                       dense: true,
                     ),
+                    SwitchListTile(
+                      secondary: Icon(
+                        Icons.bubble_chart_rounded,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 20,
+                      ),
+                      title: Text(
+                        localizations.translate(L18nKeys.glitchEffect),
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      subtitle: Text(
+                        localizations
+                            .translate(L18nKeys.glitchEffectDescription),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isDark
+                              ? Colors.grey.shade500
+                              : Colors.grey.shade600,
+                        ),
+                      ),
+                      value: matrixRainProvider.enableGlitch,
+                      onChanged: (value) => matrixRainProvider.setGlitch(value),
+                      dense: true,
+                    ),
                   ],
                 ),
               ),
@@ -538,6 +368,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  /// 语言选择区域
   Widget _buildLanguageSection(BuildContext context) {
     final localizations = AppLocalization.of(context);
     final localeProvider = Provider.of<LocaleProvider>(context);
@@ -566,8 +397,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               return _buildLanguageOption(
                 context,
                 locale,
-                LanguageConfig.languageNames[locale.languageCode] ?? '',
-                LanguageConfig.languageFlags[locale.languageCode] ?? '🌐',
+                LanguageConfig.getLanguageName(locale.languageCode),
+                LanguageConfig.getLanguageFlag(locale.languageCode),
                 localeProvider,
               );
             }),
@@ -584,14 +415,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     String flag,
     LocaleProvider provider,
   ) {
-    final localizations = AppLocalization.of(context);
-    final isSelected = provider.locale?.languageCode == locale.languageCode;
+    final currentLanguageCode = provider.locale?.languageCode ??
+        Localizations.localeOf(context).languageCode;
+    final isSelected = currentLanguageCode == locale.languageCode;
 
     return ListTile(
-      leading: Text(
-        flag,
-        style: const TextStyle(fontSize: 24),
-      ),
+      leading: Text(flag, style: const TextStyle(fontSize: 24)),
       title: Text(title),
       trailing: isSelected
           ? Icon(
@@ -603,7 +432,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-                '${localizations.translate(L18nKeys.languageSettings)}...'),
+                '${AppLocalization.of(context).translate(L18nKeys.languageSettings)}...'),
             duration: const Duration(milliseconds: 500),
           ),
         );

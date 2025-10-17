@@ -29,7 +29,7 @@ void main() async {
         appWindow.minSize = minSize;
         appWindow.size = initialSize;
         appWindow.alignment = Alignment.center;
-        appWindow.title = 'OwO! System Tools';
+        appWindow.title = 'Flutter App Framework';
         appWindow.show();
 
         AppLogger.info('桌面窗口初始化完成 - 自定义窗口控制');

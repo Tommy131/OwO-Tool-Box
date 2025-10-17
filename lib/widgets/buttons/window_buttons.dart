@@ -7,7 +7,7 @@ import 'dart:io';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 
-import '../../utils/i18n/app_localization.dart';
+import '../../i18n/app_localization.dart';
 
 class WindowButtons extends StatefulWidget {
   const WindowButtons({super.key});

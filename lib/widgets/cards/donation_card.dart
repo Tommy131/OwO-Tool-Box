@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../constants/app_constants.dart';
 import '../../models/donation_model.dart';
 import '../../services/donation_service.dart';
-import '../../utils/i18n/app_localization.dart';
+import '../../i18n/app_localization.dart';
 
 class DonationCard extends StatefulWidget {
   const DonationCard({super.key});
