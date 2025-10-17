@@ -7,20 +7,21 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:owo_system_tools/host_monitor/my_providers/host_monitor_provider.dart';
 import 'package:provider/provider.dart';
 
-import 'layouts/desktop_layout.dart';
-import 'layouts/responsive_builder.dart';
-import 'layouts/mobile_layout.dart';
-import 'layouts/tablet_layout.dart';
-import 'providers/locale_provider.dart';
-import 'providers/matrix_rain_provider.dart';
-import 'providers/navigation_provider.dart';
+import 'core/layouts/desktop_layout.dart';
+import 'core/layouts/responsive_builder.dart';
+import 'core/layouts/mobile_layout.dart';
+import 'core/layouts/tablet_layout.dart';
+import 'core/providers/locale_provider.dart';
+import 'core/providers/matrix_rain_provider.dart';
+import 'core/providers/navigation_provider.dart';
 import 'screens/screen_navigation_helper.dart';
-import 'providers/theme_provider.dart';
-import 'i18n/app_localization.dart';
-import 'i18n/language_config.dart';
-import 'i18n/localization_delegate.dart';
+import 'core/providers/theme_provider.dart';
+import 'core/i18n/app_localization.dart';
+import 'core/i18n/language_config.dart';
+import 'core/i18n/localization_delegate.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -33,11 +34,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => MatrixRainProvider()),
+        ChangeNotifierProvider(create: (_) => HostMonitorProvider()),
       ],
       child: Consumer2<ThemeProvider, LocaleProvider>(
         builder: (context, themeProvider, localeProvider, child) {
           return MaterialApp(
-            title: 'Flutter App Framework',
+            title: 'OwO! System Tools',
             debugShowCheckedModeBanner: false,
             theme: themeProvider.lightTheme,
             darkTheme: themeProvider.darkTheme,
@@ -77,11 +79,16 @@ class MyApp extends StatelessWidget {
 // 自适应脚手架 - 根据屏幕尺寸自动切换布局
 // ============================================================================
 
-class AdaptiveScaffold extends StatelessWidget {
+class AdaptiveScaffold extends StatelessWidget with WidgetsBindingObserver {
   const AdaptiveScaffold({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // 初始化主机监测管理器
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HostMonitorProvider>().initialize();
+    });
+
     final localizations = AppLocalization.of(context);
     final navigationHelper =
         ScreenNavigationHelper(localizations: localizations);

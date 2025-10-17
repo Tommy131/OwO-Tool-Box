@@ -5,13 +5,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../layouts/responsive_break_points.dart';
-import '../providers/navigation_provider.dart';
-import '../providers/theme_provider.dart';
-import '../theme/theme_config.dart';
-import '../i18n/app_localization.dart';
-import '../i18n/localization_keys.dart';
-import '../widgets/cards/feature_card.dart';
+import '../core/layouts/responsive_break_points.dart';
+import '../core/providers/navigation_provider.dart';
+import '../core/providers/theme_provider.dart';
+import '../core/theme/theme_config.dart';
+import '../core/i18n/app_localization.dart';
+import '../core/i18n/localization_keys.dart';
+import '../core/widgets/cards/feature_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

@@ -7,7 +7,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 
 import 'app.dart';
-import 'utils/logger.dart';
+import 'core/utils/logger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +18,6 @@ void main() async {
 
   try {
     AppLogger.info('应用启动 - 版本 2.1.0 (多平台布局 + 窗口控制)');
-    runApp(const MyApp());
 
     // 初始化桌面窗口 (仅在桌面平台)
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
@@ -29,12 +28,15 @@ void main() async {
         appWindow.minSize = minSize;
         appWindow.size = initialSize;
         appWindow.alignment = Alignment.center;
-        appWindow.title = 'Flutter App Framework';
+        appWindow.title = 'OwO! System Tools';
         appWindow.show();
 
         AppLogger.info('桌面窗口初始化完成 - 自定义窗口控制');
       });
     }
+
+    // 启动应用程序实例
+    runApp(const MyApp());
   } catch (e, stackTrace) {
     AppLogger.error('应用启动失败', e, stackTrace);
   }

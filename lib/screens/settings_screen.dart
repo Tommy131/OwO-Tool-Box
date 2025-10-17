@@ -3,16 +3,17 @@
 // ============================================================================
 
 import 'package:flutter/material.dart';
+import 'package:owo_system_tools/host_monitor/settings_screen/host_monitor_settings_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../layouts/responsive_break_points.dart';
-import '../providers/locale_provider.dart';
-import '../providers/matrix_rain_provider.dart';
-import '../providers/theme_provider.dart';
-import '../theme/theme_config.dart';
-import '../i18n/app_localization.dart';
-import '../i18n/language_config.dart';
-import '../i18n/localization_keys.dart';
+import '../core/layouts/responsive_break_points.dart';
+import '../core/providers/locale_provider.dart';
+import '../core/providers/matrix_rain_provider.dart';
+import '../core/providers/theme_provider.dart';
+import '../core/theme/theme_config.dart';
+import '../core/i18n/app_localization.dart';
+import '../core/i18n/language_config.dart';
+import '../core/i18n/localization_keys.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -60,9 +61,11 @@ class SettingsScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   _buildThemeColorSection(context),
                   const SizedBox(height: 16),
-                  _buildEffectsSection(context), // ✅ 新增特效设置
+                  _buildEffectsSection(context),
                   const SizedBox(height: 16),
                   _buildLanguageSection(context),
+                  const SizedBox(height: 16),
+                  const HostMonitorSettingsScreen(),
                 ],
               ),
             ),
