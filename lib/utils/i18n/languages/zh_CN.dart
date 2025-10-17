@@ -11,17 +11,26 @@ class ZhCN {
     L18nKeys.ok: '确定',
     L18nKeys.cancel: '取消',
 
+    // ======== 测试页面 ========
+    'components_demo_page': '组件展示',
+    'test_matrix_page': '代码雨展示',
+
     // ========== 导航 ==========
     L18nKeys.menu: '菜单',
     L18nKeys.home: '首页',
     L18nKeys.settings: '设置',
     L18nKeys.about: '关于',
+    L18nKeys.monitor: '系统监控',
 
     // ========== 欢迎页 ==========
     L18nKeys.welcome: '欢迎使用',
     L18nKeys.welcomeMessage: '由HanskiJay开发的多功能系统助手',
     L18nKeys.welcomeDescription: '支持多平台自适应布局,完美适配手机、平板和桌面设备',
     L18nKeys.exploreFeatures: '探索功能',
+
+    // ========== 监控页 ==========
+    L18nKeys.systemMonitorPage: '系统监控中心',
+    L18nKeys.systemMonitoring: '监控中',
 
     // ========== 语言设置 ==========
     L18nKeys.languageSettings: '语言设置',

@@ -120,7 +120,8 @@ abstract class BaseTheme {
             colors.onSecondary ?? _getContrastingColor(colors.secondary),
         onSurface: isDark ? Colors.white : Colors.black87,
         onError: Colors.white,
-        surfaceContainerHighest: isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100,
+        surfaceContainerHighest:
+            isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100,
         outline: colors.primary.withOpacity(isDark ? 0.4 : 0.3),
       ),
 
@@ -164,9 +165,15 @@ abstract class BaseTheme {
     bool isDark,
     Color defaultCardBg,
   ) {
+    // 为浅色模式添加主题色调
+    final Color cardBg = colors.cardBackground ??
+        (isDark
+            ? defaultCardBg
+            : colors.primary.withOpacity(0.03)); // 浅色模式使用主题色的淡色背景
+
     return CardThemeData(
       elevation: styles.cardElevation,
-      color: colors.cardBackground ?? defaultCardBg,
+      color: cardBg,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(styles.cardBorderRadius),
         side: styles.showCardBorder
@@ -192,7 +199,8 @@ abstract class BaseTheme {
       elevation: 0,
       backgroundColor: isDark
           ? (colors.cardBackground ?? const Color(0xFF1E1E1E))
-          : (colors.surface ?? Colors.white),
+          : (colors.surface ??
+              colors.primary.withOpacity(0.05)), // 浅色模式使用主题色淡背景
       foregroundColor: isDark ? colors.primary : Colors.black87,
       iconTheme: IconThemeData(color: colors.primary),
       titleTextStyle: TextStyle(
@@ -215,7 +223,8 @@ abstract class BaseTheme {
     return NavigationRailThemeData(
       backgroundColor: isDark
           ? (colors.cardBackground ?? const Color(0xFF2C2C2C))
-          : (colors.background ?? Colors.grey.shade50),
+          : (colors.background ??
+              colors.primary.withOpacity(0.04)), // 浅色模式使用主题色淡背景
       indicatorColor: colors.primary.withOpacity(isDark ? 0.2 : 0.15),
       selectedIconTheme: IconThemeData(
         color: colors.primary,
@@ -228,7 +237,7 @@ abstract class BaseTheme {
       unselectedIconTheme: IconThemeData(
         color: isDark
             ? Colors.grey.shade400
-            : Colors.grey.shade600, // 从 700 改为 400
+            : Colors.grey.shade600, // 从 700 改为 600
         size: 24,
       ),
       selectedLabelTextStyle: TextStyle(
@@ -243,7 +252,7 @@ abstract class BaseTheme {
       unselectedLabelTextStyle: TextStyle(
         color: isDark
             ? Colors.grey.shade400
-            : Colors.grey.shade600, // 从 700 改为 400
+            : Colors.grey.shade600, // 从 700 改为 600
         fontSize: 12,
       ),
     );
@@ -258,7 +267,8 @@ abstract class BaseTheme {
     return BottomNavigationBarThemeData(
       backgroundColor: isDark
           ? (colors.cardBackground ?? defaultCardBg)
-          : (colors.surface ?? Colors.white),
+          : (colors.surface ??
+              colors.primary.withOpacity(0.03)), // 浅色模式使用主题色淡背景
       selectedItemColor: colors.primary,
       unselectedItemColor: isDark ? Colors.grey.shade700 : Colors.grey.shade600,
       selectedIconTheme: const IconThemeData(size: 28),

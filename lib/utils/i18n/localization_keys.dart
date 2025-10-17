@@ -13,12 +13,17 @@ class L18nKeys {
   static const String home = 'home';
   static const String settings = 'settings';
   static const String about = 'about';
+  static const String monitor = 'monitor';
 
   // ========== 欢迎页 ==========
   static const String welcome = 'welcome';
   static const String welcomeMessage = 'welcome_message';
   static const String welcomeDescription = 'welcome_description';
   static const String exploreFeatures = 'explore_features';
+
+  // ========== 监控页 ==========
+  static const String systemMonitorPage = 'system_monitor_page';
+  static const String systemMonitoring = 'system_monitoring';
 
   // ========== 语言设置 ==========
   static const String languageSettings = 'language_settings';

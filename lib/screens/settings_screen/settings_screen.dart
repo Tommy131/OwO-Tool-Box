@@ -110,7 +110,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final alertConfig = systemProvider.alertManager.config;
 
     final initialSettings = SystemMonitorSettings(
-      refreshInterval: settings.refreshInterval.inSeconds,
+      refreshInterval: settings.refreshInterval,
       hostCheckTimeout: settings.hostCheckTimeout,
       hostCheckInterval: settings.hostCheckInterval,
       alertConfig: alertConfig,
@@ -210,7 +210,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     final newAppSettings = AppSettings(
-      refreshInterval: Duration(seconds: settings.refreshInterval),
+      refreshInterval: settings.refreshInterval,
       hostCheckTimeout: settings.hostCheckTimeout,
       hostCheckInterval: settings.hostCheckInterval,
     );

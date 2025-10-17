@@ -132,6 +132,23 @@ class AlertRecord {
     this.acknowledged = false,
   });
 
+  String get typeString {
+    switch (type) {
+      case AlertType.cpuHigh:
+        return 'CPU使用率过高';
+      case AlertType.memoryHigh:
+        return '内存使用率过高';
+      case AlertType.diskHigh:
+        return '磁盘使用率过高';
+      case AlertType.networkUploadHigh:
+        return '上传速率异常';
+      case AlertType.networkDownloadHigh:
+        return '下载速率异常';
+      case AlertType.disconnected:
+        return '服务器连接断开';
+    }
+  }
+
   String get message {
     switch (type) {
       case AlertType.cpuHigh:

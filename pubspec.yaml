@@ -31,6 +31,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
@@ -43,3 +44,21 @@ flutter:
         - asset: assets/fonts/Microsoft-YaHei-Regular.ttf
         - asset: assets/fonts/Microsoft-YaHei-Bold.ttf
           weight: 700
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/app_icon.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/icons/app_icon.png"
+    background_color: "#eeeeee"
+    theme_color: "#fea31a"
+  windows:
+    generate: true
+    image_path: "assets/icons/app_icon.png"
+    icon_size: 64 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/icons/app_icon.png"

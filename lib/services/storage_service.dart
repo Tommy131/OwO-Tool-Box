@@ -17,6 +17,7 @@
  */
 // lib/services/storage_service.dart
 import 'dart:convert';
+import 'package:owo_system_tools/utils/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/host_config.dart';
@@ -47,7 +48,7 @@ class StorageService {
 
       // 确保是列表类型
       if (jsonData is! List) {
-        // print('警告: 存储的主机数据格式不正确，已清空');
+        AppLogger.debug('警告: 存储的主机数据格式不正确，已清空');
         await _prefs.remove(_hostsKey);
         return [];
       }
@@ -57,7 +58,7 @@ class StorageService {
             try {
               return HostConfig.fromJson(item as Map<String, dynamic>);
             } catch (e) {
-              // print('解析主机配置失败: $e');
+              AppLogger.debug('解析主机配置失败: $e');
               return null;
             }
           })
@@ -65,7 +66,7 @@ class StorageService {
           .cast<HostConfig>()
           .toList();
     } catch (e) {
-      // print('读取主机列表失败: $e');
+      AppLogger.debug('读取主机列表失败: $e');
       // 清除损坏的数据
       await _prefs.remove(_hostsKey);
       return [];
@@ -77,7 +78,7 @@ class StorageService {
       final jsonString = json.encode(hosts.map((h) => h.toJson()).toList());
       return await _prefs.setString(_hostsKey, jsonString);
     } catch (e) {
-      // print('保存主机列表失败: $e');
+      AppLogger.debug('保存主机列表失败: $e');
       return false;
     }
   }
@@ -96,7 +97,7 @@ class StorageService {
 
       return await saveHosts(hosts);
     } catch (e) {
-      // print('添加主机失败: $e');
+      AppLogger.debug('添加主机失败: $e');
       return false;
     }
   }
@@ -108,13 +109,14 @@ class StorageService {
 
       if (index != -1) {
         hosts[index] = host;
+        AppLogger.debug('更新主机成功: ${host.name}');
         return await saveHosts(hosts);
       }
 
-      // print('未找到要更新的主机: ${host.id}');
+      AppLogger.debug('未找到要更新的主机: ${host.id}');
       return false;
     } catch (e) {
-      // print('更新主机失败: $e');
+      AppLogger.debug('更新主机失败: $e');
       return false;
     }
   }
@@ -126,12 +128,13 @@ class StorageService {
       hosts.removeWhere((h) => h.id == id);
 
       if (hosts.length < initialLength) {
+        AppLogger.debug("已删除主机记录 $id");
         return await saveHosts(hosts);
       }
 
       return false;
     } catch (e) {
-      // print('删除主机失败: $e');
+      AppLogger.debug('删除主机失败: $e');
       return false;
     }
   }
@@ -141,7 +144,7 @@ class StorageService {
     try {
       return await _prefs.remove(_hostsKey);
     } catch (e) {
-      // print('清空主机列表失败: $e');
+      AppLogger.debug('清空主机列表失败: $e');
       return false;
     }
   }
@@ -157,7 +160,7 @@ class StorageService {
       final jsonData = json.decode(jsonString);
       return AppSettings.fromJson(jsonData as Map<String, dynamic>);
     } catch (e) {
-      // print('读取设置失败: $e');
+      AppLogger.debug('读取设置失败: $e');
       // 清除损坏的数据
       await _prefs.remove(_settingsKey);
       return const AppSettings();
@@ -169,7 +172,7 @@ class StorageService {
       final jsonString = json.encode(settings.toJson());
       return await _prefs.setString(_settingsKey, jsonString);
     } catch (e) {
-      // print('保存设置失败: $e');
+      AppLogger.debug('保存设置失败: $e');
       return false;
     }
   }
@@ -179,7 +182,7 @@ class StorageService {
     try {
       return await _prefs.remove(_settingsKey);
     } catch (e) {
-      // print('清空设置失败: $e');
+      AppLogger.debug('清空设置失败: $e');
       return false;
     }
   }
@@ -191,7 +194,7 @@ class StorageService {
       await clearAllSettings();
       return true;
     } catch (e) {
-      // print('清空所有数据失败: $e');
+      AppLogger.debug('清空所有数据失败: $e');
       return false;
     }
   }

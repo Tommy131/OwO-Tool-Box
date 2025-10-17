@@ -15,6 +15,11 @@ class SunsetTheme extends BaseTheme {
         primary: _sunsetOrange,
         secondary: _sunsetPink,
         tertiary: _sunsetPurple,
+        // background: Color(0xFFF5F5F5),
+        surface: Colors.white,
+        cardBackground: Colors.white,
+        onPrimary: Colors.black,
+        onSecondary: Colors.white,
       );
 
   @override

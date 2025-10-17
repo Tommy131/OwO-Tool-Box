@@ -23,7 +23,7 @@ import 'package:flutter/foundation.dart';
 
 import '../services/tcp_service.dart';
 import '../services/storage_service.dart';
-import '../services/alert_manager.dart';
+import '../services/managers/alert_manager.dart';
 import '../models/system_info.dart';
 import '../models/host_config.dart';
 import '../models/app_settings.dart';
@@ -39,28 +39,34 @@ class SystemProvider with ChangeNotifier {
   Timer? _autoRefreshTimer;
   Timer? _connectionCheckTimer;
   StreamSubscription? _responseSubscription;
-
-  StorageService? _storageService;
-  AppSettings _settings = const AppSettings();
-  HostConfig? _currentHost;
-
-  final MetricsHistory _metricsHistory = MetricsHistory();
-  final AlertManager _alertManager = AlertManager();
-
   bool _isCheckingConnection = false;
   DateTime? _lastDataReceived;
 
+  // models
+  AppSettings _settings = const AppSettings();
+  HostConfig? _currentHost;
+  final MetricsHistory _metricsHistory = MetricsHistory();
+
+  // services
+  late StorageService _storageService;
+  final AlertManager _alertManager = AlertManager();
+
+  // public getter
   SystemInfo? get systemInfo => _systemInfo;
   ConnectionState get connectionState => _connectionState;
   String? get errorMessage => _errorMessage;
+
+  // models getter
   AppSettings get settings => _settings;
   HostConfig? get currentHost => _currentHost;
   MetricsHistory get metricsHistory => _metricsHistory;
+
+  // services getter
   AlertManager get alertManager => _alertManager;
 
   Future<void> initialize() async {
     _storageService = await StorageService.create();
-    _settings = await _storageService!.getSettings();
+    _settings = await _storageService.getSettings();
     await _alertManager.initialize();
 
     _alertManager.addListener(() {
@@ -72,11 +78,11 @@ class SystemProvider with ChangeNotifier {
 
   Future<void> updateSettings(AppSettings settings) async {
     _settings = settings;
-    await _storageService?.saveSettings(settings);
+    await _storageService.saveSettings(settings);
 
     if (_connectionState == ConnectionState.connected) {
       stopAutoRefresh();
-      startAutoRefresh(interval: settings.refreshInterval);
+      startAutoRefresh(settings.refreshInterval);
     }
 
     notifyListeners();
@@ -133,11 +139,11 @@ class SystemProvider with ChangeNotifier {
               _currentHost = _currentHost!.copyWith(
                 lastConnected: DateTime.now(),
               );
-              _storageService?.updateHost(_currentHost!);
+              _storageService.updateHost(_currentHost!);
             }
 
             notifyListeners();
-            startAutoRefresh(interval: _settings.refreshInterval);
+            startAutoRefresh(_settings.refreshInterval);
             startConnectionMonitoring();
             return;
           }
@@ -271,7 +277,7 @@ class SystemProvider with ChangeNotifier {
     try {
       final timeSinceLastData = DateTime.now().difference(_lastDataReceived!);
 
-      if (timeSinceLastData.inSeconds > 20) {
+      if (timeSinceLastData.inSeconds > settings.hostCheckTimeout) {
         _handleHostDisconnected();
         return;
       }
@@ -317,10 +323,12 @@ class SystemProvider with ChangeNotifier {
     }
   }
 
-  void startAutoRefresh({Duration? interval}) {
+  void startAutoRefresh(int? interval) {
     _autoRefreshTimer?.cancel();
     _autoRefreshTimer = Timer.periodic(
-      interval ?? _settings.refreshInterval,
+      Duration(
+        seconds: interval ?? _settings.refreshInterval,
+      ),
       (_) => refreshSystemInfo(),
     );
   }
@@ -351,10 +359,7 @@ class SystemProvider with ChangeNotifier {
 
   /// 获取保存的主机列表
   Future<List<HostConfig>> getSavedHosts() async {
-    if (_storageService == null) {
-      await initialize();
-    }
-    return await _storageService!.getHosts();
+    return await _storageService.getHosts();
   }
 
   @override

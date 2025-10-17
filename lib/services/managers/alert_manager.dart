@@ -22,9 +22,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/alert_config.dart';
-import '../models/system_info.dart';
-import 'notification_service.dart';
+import '../../models/alert_config.dart';
+import '../../models/system_info.dart';
+import '../notification_service.dart';
 
 class AlertManager extends ChangeNotifier {
   // 继承 ChangeNotifier

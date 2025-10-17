@@ -17,13 +17,13 @@
  */
 // lib/models/app_settings.dart
 class AppSettings {
-  final Duration refreshInterval;
+  final int refreshInterval;
   final int chartDataPoints; // 图表数据点数量
   final int hostCheckTimeout;
   final int hostCheckInterval;
 
   const AppSettings({
-    this.refreshInterval = const Duration(seconds: 1),
+    this.refreshInterval = 1,
     this.chartDataPoints = 60, // 默认60个点
     this.hostCheckTimeout = 10,
     this.hostCheckInterval = 5,
@@ -31,7 +31,7 @@ class AppSettings {
 
   Map<String, dynamic> toJson() {
     return {
-      'refreshIntervalSeconds': refreshInterval.inSeconds,
+      'refreshIntervalSeconds': refreshInterval,
       'chartDataPoints': chartDataPoints,
       'hostCheckInterval': hostCheckInterval,
       'hostCheckTimeout': hostCheckTimeout,
@@ -40,9 +40,7 @@ class AppSettings {
 
   factory AppSettings.fromJson(Map<String, dynamic> json) {
     return AppSettings(
-      refreshInterval: Duration(
-        seconds: json['refreshIntervalSeconds'] as int? ?? 1,
-      ),
+      refreshInterval: json['refreshIntervalSeconds'] as int? ?? 1,
       chartDataPoints: json['chartDataPoints'] as int? ?? 60,
       hostCheckInterval: json['hostCheckInterval'] as int? ?? 5,
       hostCheckTimeout: json['hostCheckTimeout'] as int? ?? 10,
@@ -50,11 +48,11 @@ class AppSettings {
   }
 
   AppSettings copyWith({
-    Duration? refreshInterval,
+    refreshInterval,
     int? chartDataPoints,
   }) {
     return AppSettings(
-      refreshInterval: refreshInterval ?? this.refreshInterval,
+      refreshInterval: refreshInterval,
       chartDataPoints: chartDataPoints ?? this.chartDataPoints,
       hostCheckInterval: hostCheckInterval,
       hostCheckTimeout: hostCheckTimeout,

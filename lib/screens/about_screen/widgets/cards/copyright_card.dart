@@ -9,12 +9,12 @@ class CopyrightCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               '© 2023-${DateTime.now().year} OwOTeam-DGMT',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.7),
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -23,10 +23,10 @@ class CopyrightCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   'Made with',
                   style: TextStyle(
-                    color: Colors.white60,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 13,
                   ),
                 ),
@@ -44,10 +44,10 @@ class CopyrightCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 4),
-                const Text(
+                Text(
                   'by HanskiJay',
                   style: TextStyle(
-                    color: Colors.white60,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 13,
                   ),
                 ),

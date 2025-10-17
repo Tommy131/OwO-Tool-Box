@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../models/alert_config.dart';
-import '../services/windows_notification_service.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -22,14 +21,22 @@ class NotificationService {
 
     try {
       // 仅在支持的平台上初始化
-      if (Platform.isAndroid || Platform.isIOS) {
+      if (Platform.isAndroid || Platform.isIOS || Platform.isWindows) {
         const androidSettings =
             AndroidInitializationSettings('@mipmap/ic_launcher');
         const iosSettings = DarwinInitializationSettings();
 
+        const WindowsInitializationSettings windowsSettings =
+            WindowsInitializationSettings(
+          appName: 'OwO! System Tools',
+          appUserModelId: 'com.owoblog.owo_system_tool',
+          guid: 'a8c22b2c-94e3-4b5d-9a84-3b3e3e3e3e3e', // 必须是唯一的GUID
+        );
+
         const initSettings = InitializationSettings(
           android: androidSettings,
           iOS: iosSettings,
+          windows: windowsSettings,
         );
 
         final result = await _notifications.initialize(
@@ -39,7 +46,6 @@ class NotificationService {
 
         _initialized = result ?? false;
       } else {
-        // Windows 不使用 flutter_local_notifications
         _initialized = true;
       }
     } catch (e) {
@@ -152,24 +158,18 @@ class NotificationService {
     }
   }
 
-  void _showWindowsNotification(AlertRecord alert) {
-    // 控制台输出
-    // print('═══════════════════════════════════════');
-    // print('【Windows 系统通知】');
-    // print('主机: ${alert.hostName}');
-    // print('告警: ${alert.message}');
-    // print('时间: ${alert.timestamp}');
-    // print('═══════════════════════════════════════');
+  Future<void> _showWindowsNotification(AlertRecord alert) async {
+    const NotificationDetails notificationDetails = NotificationDetails(
+      windows: WindowsNotificationDetails(),
+    );
 
-    // Windows 原生通知（如果实现了）
-    try {
-      WindowsNotificationService.showNotification(
-        '${alert.hostName} - 系统告警',
-        alert.message,
-      );
-    } catch (e) {
-      // print('Windows 通知失败: $e');
-    }
+    await _notifications.show(
+      DateTime.now().millisecondsSinceEpoch ~/ 1000, // 通知ID
+      'OwO! 检测告警: ${alert.typeString}', // 这里是标题
+      alert.message, // 这里是内容
+      notificationDetails,
+      payload: alert.toString(),
+    );
   }
 
   int? _getAlertColor(AlertType type) {

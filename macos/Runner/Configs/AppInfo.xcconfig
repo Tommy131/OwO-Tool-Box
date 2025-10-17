@@ -11,4 +11,4 @@ PRODUCT_NAME = owo_system_tools
 PRODUCT_BUNDLE_IDENTIFIER = com.owoblog.flutterAppFramework
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2025 com.example. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2025 com.owoblog. All rights reserved.

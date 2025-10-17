@@ -11,6 +11,11 @@ class DefaultTheme extends BaseTheme {
         primary: Colors.blue,
         secondary: Colors.blueAccent,
         tertiary: Colors.lightBlue,
+        // background: Color(0xFFF5F5F5),
+        surface: Colors.white,
+        cardBackground: Colors.white,
+        onPrimary: Colors.black,
+        onSecondary: Colors.white,
       );
 
   @override

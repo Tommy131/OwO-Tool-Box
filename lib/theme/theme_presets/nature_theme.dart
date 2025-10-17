@@ -15,6 +15,11 @@ class NatureTheme extends BaseTheme {
         primary: _mossGreen,
         secondary: _earthBrown,
         tertiary: _forestGreen,
+        // background: Color(0xFFF5F5F5),
+        surface: Colors.white,
+        cardBackground: Colors.white,
+        onPrimary: Colors.black,
+        onSecondary: Colors.white,
       );
 
   @override

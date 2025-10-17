@@ -15,6 +15,11 @@ class OceanTheme extends BaseTheme {
         primary: _seaFoam,
         secondary: _oceanBlue,
         tertiary: _deepOcean,
+        // background: Color(0xFFF5F5F5),
+        surface: Colors.white,
+        cardBackground: Colors.white,
+        onPrimary: Colors.black,
+        onSecondary: Colors.white,
       );
 
   @override
@@ -22,7 +27,7 @@ class OceanTheme extends BaseTheme {
         primary: _seaFoam,
         secondary: _oceanBlue,
         tertiary: _deepOcean,
-        background: Color(0xFF001219),
+        background: Color(0xFF002533),
         cardBackground: Color(0xFF003D5B),
       );
 
