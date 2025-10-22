@@ -66,6 +66,54 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
     _geoIPService = GeoIPService();
     _loadHosts();
     _checkConnection();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = context.read<HostMonitorProvider>();
+      provider.addListener(_onProviderStateChanged);
+    });
+  }
+
+// Provider 状态变化回调
+  void _onProviderStateChanged() {
+    final provider = context.read<HostMonitorProvider>();
+
+    // 检测到断开连接
+    if (!provider.isConnected && !provider.isConnecting && _isConnected) {
+      AppLogger.debug('[HostMonitorScreen] 检测到连接断开,返回主机列表');
+
+      _updateState(() {
+        _isConnecting = false;
+        _isConnected = false;
+      });
+
+      // 显示断开提示
+      if (mounted && provider.errorMessage != null) {
+        CustomSnackBar(
+          context,
+          message: provider.errorMessage!,
+          backgroundColor: Colors.red.shade700,
+          icon: Icons.error_outline,
+          duration: const Duration(seconds: 3),
+        ).showModern();
+      }
+    }
+
+    // 同步连接状态
+    else if (provider.isConnected != _isConnected ||
+        provider.isConnecting != _isConnecting) {
+      _updateState(() {
+        _isConnecting = provider.isConnecting;
+        _isConnected = provider.isConnected;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    final provider = context.read<HostMonitorProvider>();
+    provider.removeListener(_onProviderStateChanged);
+
+    super.dispose();
   }
 
   /// 加载主机列表
@@ -215,6 +263,9 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
 
   AppBar _buildAppBar() {
     final provider = context.read<HostMonitorProvider>();
+    final hostName = provider.currentHost != null
+        ? provider.currentHost!.name
+        : _tr('host_monitor');
 
     return AppBar(
       elevation: 0,
@@ -226,11 +277,11 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
             child: const Icon(Icons.dns, size: 20),
           ),
           const SizedBox(width: 12),
-          Text(
-            provider.currentHost != null
-                ? provider.currentHost!.name
-                : _tr('host_monitor'),
-            style: const TextStyle(fontWeight: FontWeight.w600),
+          Flexible(
+            child: Text(
+              hostName,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),
@@ -317,37 +368,6 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
         tooltip: _tr('disconnect'),
       ),
     );
-  }
-
-  void _onDisconnect() {
-    final provider = context.read<HostMonitorProvider>();
-    if (provider.isConnected) {
-      setState(() {
-        // 确保这两个值始终为 false, 防止出现异常
-        _isConnecting = false;
-        _isConnected = false;
-      });
-
-      if (DateTime.now()
-              .difference(provider.currentHost!.lastConnected!)
-              .inSeconds <=
-          5) {
-        CustomSnackBar(
-          context,
-          message: _tr('force_disconnect_message'),
-          backgroundColor: Colors.deepOrangeAccent,
-          icon: Icons.warning_amber_outlined,
-        ).showModern();
-      } else {
-        CustomSnackBar(
-          context,
-          message: _tr('safe_disconnect_message'),
-          backgroundColor: Colors.green,
-          icon: Icons.exit_to_app_outlined,
-        ).showModern();
-      }
-      provider.disconnect();
-    }
   }
 
   Widget _buildBadge(int count) {
@@ -752,11 +772,13 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
           backgroundColor: Colors.green,
         ).showModern();
       } else {
-        CustomSnackBar(
-          context,
-          message: provider.errorMessage ?? _tr('connection_failed'),
-          backgroundColor: ScreenTheme.accentColor,
-        ).showModern();
+        CustomDialogs.showResultDialog(
+          context: context,
+          title: 'Error',
+          icon: Icons.error_outline,
+          iconColor: Colors.redAccent,
+          content: provider.errorMessage ?? _tr('connection_failed'),
+        );
       }
     }
 
@@ -765,5 +787,38 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
       provider.disconnect();
     }
     return result;
+  }
+
+  void _onDisconnect() {
+    final provider = context.read<HostMonitorProvider>();
+    if (provider.isConnected || provider.isConnecting) {
+      _updateState(() {
+        _isConnecting = false;
+        _isConnected = false;
+      });
+
+      if (provider.currentHost != null &&
+          provider.currentHost!.lastConnected != null &&
+          DateTime.now()
+                  .difference(provider.currentHost!.lastConnected!)
+                  .inSeconds <=
+              5) {
+        CustomSnackBar(
+          context,
+          message: _tr('force_disconnect_message'),
+          backgroundColor: Colors.deepOrangeAccent,
+          icon: Icons.warning_amber_outlined,
+        ).showModern();
+      } else {
+        CustomSnackBar(
+          context,
+          message: _tr('safe_disconnect_message'),
+          backgroundColor: Colors.green,
+          icon: Icons.exit_to_app_outlined,
+        ).showModern();
+      }
+
+      provider.disconnect();
+    }
   }
 }

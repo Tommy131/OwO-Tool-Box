@@ -149,7 +149,7 @@ class DeDE {
     // ========== Benutzervereinbarung ==========
     L18nKeys.userAgreement: 'Benutzervereinbarung',
     L18nKeys.agreementContent:
-        'Dies ist der Inhalt der Benutzervereinbarung...',
+        'Dieser Anwendungsrahmen dient ausschließlich Lern- und Entwicklungs-Zwecken.\nBitte beachten Sie die geltenden Gesetze und Vorschriften.\nUnterstützt Multi-Plattform-Nutzung auf Mobiltelefonen, Tablets und PCs.\nDer Entwickler behält sich das Recht der endgültigen Auslegung vor.\nDieses Projekt folgt der MIT Open-Source-Lizenz.\nBitte lesen Sie die relevanten Dokumente sorgfältig vor der Nutzung.\nDer Entwickler behält sich das Recht der endgültigen Auslegung vor.',
     L18nKeys.github: 'GitHub',
 
     // ========== Geräteinformationen ==========

@@ -153,7 +153,8 @@ class EsES {
 
     // ========== Acuerdo de usuario ==========
     L18nKeys.userAgreement: 'Acuerdo de usuario',
-    L18nKeys.agreementContent: 'Este es el contenido del acuerdo de usuario...',
+    L18nKeys.agreementContent:
+        'Este marco de aplicación es solo para uso de aprendizaje y desarrollo.\nPor favor, cumpla con las leyes y regulaciones relevantes.\nSoporta múltiples plataformas: móviles, tablets y PC.\nEl desarrollador se reserva el derecho de interpretación final.\nEste proyecto sigue la licencia de código abierto MIT.\nLea detenidamente la documentación relevante antes de usar.\nEl desarrollador se reserva el derecho de interpretación final.',
     L18nKeys.github: 'GitHub',
 
     // ========== Información del dispositivo ==========

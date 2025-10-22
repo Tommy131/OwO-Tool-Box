@@ -135,7 +135,8 @@ class ZhCN {
 
     // ========== 用户协议 ==========
     L18nKeys.userAgreement: '用户协议',
-    L18nKeys.agreementContent: '这是用户协议的内容...',
+    L18nKeys.agreementContent:
+        '1. 本应用框架仅供学习和开发使用\n2. 请遵守相关法律法规\n3. 支持手机、平板、PC多平台\n4. 开发者保留最终解释权\n5. 本项目遵循 MIT 开源协议\n6. 使用前请仔细阅读相关文档\n7. 开发者保留最终解释权',
     L18nKeys.github: 'GitHub',
 
     // ========== 设备信息 ==========

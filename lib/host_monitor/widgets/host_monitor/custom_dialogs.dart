@@ -25,7 +25,11 @@ class CustomDialogs {
                     AlwaysStoppedAnimation<Color>(ScreenTheme.primaryColor),
               ),
               const SizedBox(height: 16),
-              Text(message, style: const TextStyle(color: Colors.white)),
+              Text(message,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  )),
             ],
           ),
         ),

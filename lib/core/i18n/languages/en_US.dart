@@ -147,7 +147,8 @@ class EnUS {
 
     // ========== User Agreement ==========
     L18nKeys.userAgreement: 'User Agreement',
-    L18nKeys.agreementContent: 'This is the content of the user agreement...',
+    L18nKeys.agreementContent:
+        'This application framework is for learning and development use only.\nPlease comply with relevant laws and regulations.\nSupports multi-platform use on mobile phones, tablets, and PCs.\nThe developer reserves the right of final interpretation.\nThis project follows the MIT open-source license.\nPlease read the relevant documentation carefully before use.\nThe developer reserves the right of final interpretation.',
     L18nKeys.github: 'GitHub',
 
     // ========== Device Information ==========

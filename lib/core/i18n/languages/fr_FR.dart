@@ -155,7 +155,8 @@ class FrFR {
 
     // ========== Accord utilisateur ==========
     L18nKeys.userAgreement: 'Accord utilisateur',
-    L18nKeys.agreementContent: 'Voici le contenu de l\'accord utilisateur...',
+    L18nKeys.agreementContent:
+        "Ce cadre d'application est destiné uniquement à des fins d'apprentissage et de développement.\nVeuillez respecter les lois et réglementations en vigueur.\nPrend en charge les multi-plateformes : téléphones mobiles, tablettes et PC.\nLe développeur se réserve le droit d'interprétation finale.\nCe projet suit la licence open-source MIT.\nVeuillez lire attentivement la documentation pertinente avant utilisation.\nLe développeur se réserve le droit d'interprétation finale.",
     L18nKeys.github: 'GitHub',
 
     // ========== Informations sur l'appareil ==========
