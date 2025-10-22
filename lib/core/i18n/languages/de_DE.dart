@@ -213,6 +213,14 @@ class DeDE {
     L18nKeys.clear: 'Löschen',
     L18nKeys.historyCleared: 'Verlauf gelöscht',
 
+    // ========== Dialoge ==========
+    L18nKeys.connectionTimeout: 'Verbindungszeitüberschreitung',
+    L18nKeys.connectionTimeoutMessage:
+        'Verbindung zu Host "{hostName}" nicht möglich\n\nBitte überprüfen Sie:\n• Server läuft\n• Netzwerkverbindung ist stabil\n• Firewall-Einstellungen',
+    L18nKeys.tokenValidationFailed: 'Token-Validierung fehlgeschlagen',
+    L18nKeys.tokenValidationFailedMessage:
+        'Zugriffstoken für Host "{hostName}" ist falsch',
+
     // ========== Host-Monitor-Seite ==========
     L18nKeys.hostMonitor: 'Host-Monitor',
     L18nKeys.loadHostListFailed: 'Laden der Host-Liste fehlgeschlagen',

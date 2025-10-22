@@ -242,6 +242,14 @@ class EnUS {
     L18nKeys.deleteFailed: 'Delete failed',
     L18nKeys.timeout: 'Timeout',
 
+    // ========== Dialogs ==========
+    L18nKeys.connectionTimeout: 'Connection Timeout',
+    L18nKeys.connectionTimeoutMessage:
+        'Unable to connect to host "{hostName}"\n\nPlease check:\n• Server is running\n• Network connection is stable\n• Firewall settings',
+    L18nKeys.tokenValidationFailed: 'Token Validation Failed',
+    L18nKeys.tokenValidationFailedMessage:
+        'Access token for host "{hostName}" is incorrect',
+
     // ========== Host Details Page ==========
     L18nKeys.waitingSystemData: 'Waiting for system data',
     L18nKeys.connectedGettingSystemInfo:

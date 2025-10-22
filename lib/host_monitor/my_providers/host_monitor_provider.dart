@@ -28,6 +28,7 @@ import '../my_models/host_monitor_settings_model.dart';
 import '../my_models/metrics_history_model.dart';
 import '../my_models/system_info_model.dart';
 import '../my_services/alert_service.dart';
+import '../my_services/geoip_service.dart';
 import '../my_services/host_service.dart';
 import '../my_services/storage_service.dart';
 
@@ -64,6 +65,9 @@ class HostMonitorProvider with ChangeNotifier {
 
   /// 告警服务（监控告警和通知）
   final AlertService _alertService = AlertService();
+
+  /// IP地理数据库服务
+  final GeoIPService _geoIPService = GeoIPService();
 
   // ==================== 状态变量 ====================
 
@@ -125,8 +129,11 @@ class HostMonitorProvider with ChangeNotifier {
   /// 获取告警服务
   AlertService get alertService => _alertService;
 
-  // 获取存储服务
+  /// 获取存储服务
   StorageService? get storageService => _storageService;
+
+  /// 获取IP数据库服务
+  GeoIPService get geoIPService => _geoIPService;
 
   /// 是否已连接
   bool get isConnected => _connectionState == ConnectionState.connected;
@@ -171,6 +178,9 @@ class HostMonitorProvider with ChangeNotifier {
 
       // 初始化告警服务
       await _alertService.initialize();
+
+      // 初始化IP数据库服务
+      await _geoIPService.initialize();
 
       // 监听告警服务变化
       _alertService.addListener(_onAlertServiceChanged);

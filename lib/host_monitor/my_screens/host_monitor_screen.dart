@@ -15,7 +15,6 @@
  * @Telegram     : https://t.me/HanskiJay
  * @GitHub       : https://github.com/Tommy131
  */
-// lib/screens/host_monitor_screen.dart
 import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:provider/provider.dart';
 
@@ -45,7 +44,7 @@ class HostMonitorScreen extends StatefulWidget {
 class _HostMonitorScreenState extends State<HostMonitorScreen> {
   late List<HostModel> _hosts;
   late Map<String, GeoIPInfo?> _geoInfoMap;
-  late GeoIPService _geoIPService;
+  late HostMonitorProvider _provider;
 
   bool _isLoading = false;
   bool _isRefreshing = false;
@@ -61,24 +60,22 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
   @override
   void initState() {
     super.initState();
+    _provider = context.read<HostMonitorProvider>();
+
     _hosts = [];
     _geoInfoMap = {};
-    _geoIPService = GeoIPService();
     _loadHosts();
     _checkConnection();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = context.read<HostMonitorProvider>();
-      provider.addListener(_onProviderStateChanged);
+      _provider.addListener(_onProviderStateChanged);
     });
   }
 
 // Provider 状态变化回调
   void _onProviderStateChanged() {
-    final provider = context.read<HostMonitorProvider>();
-
     // 检测到断开连接
-    if (!provider.isConnected && !provider.isConnecting && _isConnected) {
+    if (!_provider.isConnected && !_provider.isConnecting && _isConnected) {
       AppLogger.debug('[HostMonitorScreen] 检测到连接断开,返回主机列表');
 
       _updateState(() {
@@ -87,10 +84,10 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
       });
 
       // 显示断开提示
-      if (mounted && provider.errorMessage != null) {
+      if (mounted && _provider.errorMessage != null) {
         CustomSnackBar(
           context,
-          message: provider.errorMessage!,
+          message: _provider.errorMessage!,
           backgroundColor: Colors.red.shade700,
           icon: Icons.error_outline,
           duration: const Duration(seconds: 3),
@@ -99,19 +96,24 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
     }
 
     // 同步连接状态
-    else if (provider.isConnected != _isConnected ||
-        provider.isConnecting != _isConnecting) {
+    else if (_provider.isConnected != _isConnected ||
+        _provider.isConnecting != _isConnecting) {
       _updateState(() {
-        _isConnecting = provider.isConnecting;
-        _isConnected = provider.isConnected;
+        _isConnecting = _provider.isConnecting;
+        _isConnected = _provider.isConnected;
       });
     }
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _provider = context.read<HostMonitorProvider>();
+  }
+
+  @override
   void dispose() {
-    final provider = context.read<HostMonitorProvider>();
-    provider.removeListener(_onProviderStateChanged);
+    _provider.removeListener(_onProviderStateChanged);
 
     super.dispose();
   }
@@ -124,8 +126,7 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
     });
 
     try {
-      final provider = context.read<HostMonitorProvider>();
-      final hosts = await provider.getSavedHosts();
+      final hosts = await _provider.getSavedHosts();
 
       _updateState(() {
         _hosts = hosts;
@@ -156,7 +157,7 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
         return;
       }
 
-      final geoInfos = await _geoIPService.batchGetGeoInfo(ipsToFetch);
+      final geoInfos = await _provider.geoIPService.batchGetGeoInfo(ipsToFetch);
       _updateState(() {
         _geoInfoMap.addAll(geoInfos);
         _isLoadingGeoInfo = false;
@@ -201,11 +202,10 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
 
   /// 检查连接缓存
   void _checkConnection() {
-    final provider = context.read<HostMonitorProvider>();
-    if (provider.currentHost != null) {
+    if (_provider.currentHost != null) {
       setState(() {
-        _isConnecting = provider.isConnecting;
-        _isConnected = provider.isConnected;
+        _isConnecting = _provider.isConnecting;
+        _isConnected = _provider.isConnected;
       });
     }
   }
@@ -262,9 +262,8 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
   }
 
   AppBar _buildAppBar() {
-    final provider = context.read<HostMonitorProvider>();
-    final hostName = provider.currentHost != null
-        ? provider.currentHost!.name
+    final hostName = _provider.currentHost != null
+        ? _provider.currentHost!.name
         : _tr('host_monitor');
 
     return AppBar(
@@ -287,7 +286,7 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
       ),
       actions: [
         _buildAlertButton(),
-        if (!provider.isConnecting && !provider.isConnected) ...[
+        if (!_provider.isConnecting && !_provider.isConnected) ...[
           _buildIconButton(
             icon: _isRefreshing
                 ? const SizedBox(
@@ -334,7 +333,7 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
       margin: const EdgeInsets.only(left: 4, right: 8),
       child: Consumer<HostMonitorProvider>(
         builder: (context, provider, _) {
-          final count = provider.alertService.unacknowledgedCount;
+          final count = _provider.alertService.unacknowledgedCount;
           return Stack(
             children: [
               IconButton(
@@ -681,7 +680,6 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
         itemBuilder: (_, index) => HostCards(
           host: _hosts[index],
           geoInfo: _geoInfoMap[_hosts[index].address],
-          context: context,
           onTap: () async {
             setState(() {
               _isConnecting = true;
@@ -750,21 +748,19 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
   }
 
   Future<bool> _connectToHost(HostModel host) async {
-    final provider = context.read<HostMonitorProvider>();
-
-    host = provider.currentHost ?? host;
-    final result = await provider.connect(host);
+    host = _provider.currentHost ?? host;
+    final result = await _provider.connect(host);
 
     if (mounted) {
-      if (provider.errorMessage != null &&
-          provider.errorMessage!.contains(_tr('timeout'))) {
+      if (_provider.errorMessage != null &&
+          _provider.errorMessage!.contains(_tr('timeout'))) {
         CustomDialogs.showTimeoutDialog(context, host);
-      } else if (provider.errorMessage == 'TOKEN_VERIFICATION_FAILED') {
+      } else if (_provider.errorMessage == 'TOKEN_VERIFICATION_FAILED') {
         CustomDialogs.showTokenErrorDialog(context, host);
-      } else if (provider.connectionState == ConnectionState.connected) {
+      } else if (_provider.connectionState == ConnectionState.connected) {
         setState(() {
           _isConnecting = false;
-          _isConnected = provider.isConnected;
+          _isConnected = _provider.isConnected;
         });
         CustomSnackBar(
           context,
@@ -777,30 +773,29 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
           title: 'Error',
           icon: Icons.error_outline,
           iconColor: Colors.redAccent,
-          content: provider.errorMessage ?? _tr('connection_failed'),
+          content: _provider.errorMessage ?? _tr('connection_failed'),
         );
       }
     }
 
     if (!result) {
       // 清除连接状态
-      provider.disconnect();
+      _provider.disconnect();
     }
     return result;
   }
 
   void _onDisconnect() {
-    final provider = context.read<HostMonitorProvider>();
-    if (provider.isConnected || provider.isConnecting) {
+    if (_provider.isConnected || _provider.isConnecting) {
       _updateState(() {
         _isConnecting = false;
         _isConnected = false;
       });
 
-      if (provider.currentHost != null &&
-          provider.currentHost!.lastConnected != null &&
+      if (_provider.currentHost != null &&
+          _provider.currentHost!.lastConnected != null &&
           DateTime.now()
-                  .difference(provider.currentHost!.lastConnected!)
+                  .difference(_provider.currentHost!.lastConnected!)
                   .inSeconds <=
               5) {
         CustomSnackBar(
@@ -818,7 +813,7 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
         ).showModern();
       }
 
-      provider.disconnect();
+      _provider.disconnect();
     }
   }
 }

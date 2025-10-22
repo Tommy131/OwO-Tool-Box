@@ -97,7 +97,6 @@ class AlertHistoryScreen extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
               ),
             ),
           ),
@@ -131,7 +130,6 @@ class AlertHistoryScreen extends StatelessWidget {
             _tr(context, 'no_alert_records'),
             style: const TextStyle(
               fontSize: 18,
-              color: Colors.white70,
             ),
           ),
         ],
@@ -304,12 +302,8 @@ class AlertHistoryScreen extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        title: Text(_tr(context, 'clear_history'),
-            style: const TextStyle(color: Colors.white)),
-        content: Text(
-          _tr(context, 'confirm_clear_alert_history'),
-          style: const TextStyle(color: Colors.white70),
-        ),
+        title: Text(_tr(context, 'clear_history')),
+        content: Text(_tr(context, 'confirm_clear_alert_history')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),

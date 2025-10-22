@@ -405,16 +405,9 @@ class AlertService extends ChangeNotifier {
     bool vibrationEnabled = true,
   }) async {
     try {
-      // 生成唯一的通知 ID（使用告警记录 ID 的哈希值）
       final notificationId = alert.id.hashCode;
-
-      // 根据告警类型选择通知标题和图标
       final title = _getAlertTitle(alert.type);
-
-      // 使用告警消息作为通知正文
       final body = alert.message;
-
-      // 构建通知的 payload，用于点击后的处理
       final payload = json.encode({
         'type': 'alert',
         'alertId': alert.id,
@@ -422,17 +415,26 @@ class AlertService extends ChangeNotifier {
         'hostName': alert.hostName,
       });
 
-      // 根据配置决定是否使用声音
       if (soundEnabled) {
-        // 使用带声音的通知
-        await _notificationService.showNotificationWithSound(
-          id: notificationId,
-          title: title,
-          body: body,
-          soundFile: _getAlertSound(alert.type), // 根据告警类型选择不同声音
-        );
+        try {
+          // 尝试使用自定义声音
+          await _notificationService.showNotificationWithSound(
+            id: notificationId,
+            title: title,
+            body: body,
+            soundFile: _getAlertSound(alert.type),
+          );
+        } catch (e) {
+          // 如果自定义声音失败,降级为普通通知
+          AppLogger.warning('[AlertService] 自定义声音失败,使用默认通知');
+          await _notificationService.showNotification(
+            id: notificationId,
+            title: title,
+            body: body,
+            payload: payload,
+          );
+        }
       } else {
-        // 使用普通通知
         await _notificationService.showNotification(
           id: notificationId,
           title: title,
@@ -445,7 +447,7 @@ class AlertService extends ChangeNotifier {
           '[AlertService] 告警通知已发送: ID=$notificationId, Type=${alert.type}');
     } catch (e) {
       AppLogger.error('[AlertService] 发送告警通知失败', e);
-      rethrow;
+      // 不再 rethrow,避免阻断后续流程
     }
   }
 

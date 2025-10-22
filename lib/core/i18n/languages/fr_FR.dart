@@ -211,6 +211,14 @@ class FrFR {
         'Impossible de se connecter à l\'hôte, veuillez vérifier la configuration',
     L18nKeys.connectionTestError: 'Erreur de test de connexion',
 
+    // ========== Dialogues ==========
+    L18nKeys.connectionTimeout: 'Délai de connexion dépassé',
+    L18nKeys.connectionTimeoutMessage:
+        'Impossible de se connecter à l\'hôte "{hostName}"\n\nVeuillez vérifier :\n• Le serveur est en cours d\'exécution\n• La connexion réseau est stable\n• Les paramètres du pare-feu',
+    L18nKeys.tokenValidationFailed: 'Échec de la validation du token',
+    L18nKeys.tokenValidationFailedMessage:
+        'Le token d\'accès pour l\'hôte "{hostName}" est incorrect',
+
     // ========== Page d'historique des alertes ==========
     L18nKeys.alertHistory: 'Historique des alertes',
     L18nKeys.clearHistory: 'Effacer l\'historique',

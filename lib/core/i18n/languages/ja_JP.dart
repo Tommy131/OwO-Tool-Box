@@ -189,6 +189,14 @@ class JaJP {
     L18nKeys.connectionFailedMessage: 'ホストに接続できません。設定を確認してください',
     L18nKeys.connectionTestError: '接続テストエラー',
 
+    // ========== ダイアログ ==========
+    L18nKeys.connectionTimeout: '接続タイムアウト',
+    L18nKeys.connectionTimeoutMessage:
+        'ホスト "{hostName}" に接続できません\n\n確認してください：\n• サーバーが実行中であること\n• ネットワーク接続が安定していること\n• ファイアウォールの設定',
+    L18nKeys.tokenValidationFailed: 'トークン検証失敗',
+    L18nKeys.tokenValidationFailedMessage:
+        'ホスト "{hostName}" のアクセストークンが正しくありません',
+
     // ========== アラート履歴ページ ==========
     L18nKeys.alertHistory: 'アラート履歴',
     L18nKeys.clearHistory: '履歴をクリア',

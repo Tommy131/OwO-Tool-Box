@@ -279,6 +279,7 @@ class NotificationService {
             channelId,
             channelName,
             channelDescription: channelDescription ?? '$channelName渠道',
+            icon: 'notification_icon',
             importance: importance,
             priority: priority,
             showWhen: true,
@@ -345,6 +346,7 @@ class NotificationService {
       _progressChannelId,
       _progressChannelName,
       channelDescription: '显示进度的通知',
+      icon: 'notification_icon',
       importance: Importance.low,
       priority: Priority.low,
       showProgress: true,
@@ -395,6 +397,7 @@ class NotificationService {
       _bigTextChannelId,
       _bigTextChannelName,
       channelDescription: '显示大量文本的通知',
+      icon: 'notification_icon',
       importance: Importance.high,
       priority: Priority.high,
       styleInformation: BigTextStyleInformation(
@@ -445,6 +448,7 @@ class NotificationService {
       _bigPictureChannelId,
       _bigPictureChannelName,
       channelDescription: '显示图片的通知',
+      icon: 'notification_icon',
       importance: Importance.high,
       priority: Priority.high,
       styleInformation: BigPictureStyleInformation(
@@ -578,6 +582,7 @@ class NotificationService {
       _actionChannelId,
       _actionChannelName,
       channelDescription: '带操作按钮的通知',
+      icon: 'notification_icon',
       importance: Importance.high,
       priority: Priority.high,
       actions: [
@@ -627,6 +632,7 @@ class NotificationService {
       _soundChannelId,
       _soundChannelName,
       channelDescription: '带自定义声音的通知',
+      icon: 'notification_icon',
       importance: Importance.high,
       priority: Priority.high,
       sound: soundFile != null
@@ -672,6 +678,7 @@ class NotificationService {
       _badgeChannelId,
       _badgeChannelName,
       channelDescription: '带徽章数字的通知',
+      icon: 'notification_icon',
       importance: Importance.high,
       priority: Priority.high,
     );

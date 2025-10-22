@@ -182,6 +182,13 @@ class L18nKeys {
   static const String connectionFailedMessage = 'connection_failed_message';
   static const String connectionTestError = 'connection_test_error';
 
+  // ========== 对话框 ==========
+  static const String connectionTimeout = 'connection_timeout';
+  static const String connectionTimeoutMessage = 'connection_timeout_message';
+  static const String tokenValidationFailed = 'token_validation_failed';
+  static const String tokenValidationFailedMessage =
+      'token_validation_failed_message';
+
   // ========== 告警历史页面 ==========
   static const String alertHistory = 'alert_history';
   static const String clearHistory = 'clear_history';

@@ -5,10 +5,9 @@ import '../../format_utils.dart';
 import '../../my_models/host_model.dart';
 import '../../my_services/geoip_service.dart';
 
-class HostCards extends StatelessWidget {
+class HostCards extends StatefulWidget {
   final HostModel host;
   final GeoIPInfo? geoInfo;
-  final BuildContext context;
   final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
@@ -17,16 +16,46 @@ class HostCards extends StatelessWidget {
     super.key,
     required this.host,
     this.geoInfo,
-    required this.context,
     required this.onTap,
     required this.onEdit,
     required this.onDelete,
   });
 
   @override
+  State<HostCards> createState() => _HostCardsState();
+}
+
+class _HostCardsState extends State<HostCards> {
+  bool _isIpVisible = true; // IP地址可见性状态
+
+  /// 切换IP可见性
+  void _toggleIpVisibility() {
+    setState(() {
+      _isIpVisible = !_isIpVisible;
+    });
+  }
+
+  /// 获取显示的地址文本
+  String _getDisplayAddress() {
+    if (_isIpVisible) {
+      return '${widget.host.address}:${widget.host.port}';
+    }
+
+    // 隐藏IP地址,保留端口
+    final ipParts = widget.host.address.split('.');
+    if (ipParts.length == 4) {
+      // IPv4地址: 显示为 ***.***.***.***:port
+      return '***.***.***.${ipParts[3]}:${widget.host.port}';
+    }
+
+    // 如果不是标准IPv4,则完全隐藏
+    return '***:${widget.host.port}';
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = FormatUtils.getStatusColor(host.status);
+    final color = FormatUtils.getStatusColor(widget.host.status);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -44,7 +73,7 @@ class HostCards extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onTap,
+          onTap: widget.onTap,
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -60,7 +89,7 @@ class HostCards extends StatelessWidget {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              host.name,
+                              widget.host.name,
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
                               ),
@@ -81,21 +110,23 @@ class HostCards extends StatelessWidget {
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              '${host.address}:${host.port}',
+                              _getDisplayAddress(),
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.onSurface
                                     .withOpacity(0.6),
+                                fontFamily: _isIpVisible ? 'monospace' : null,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
                       ),
-                      if (geoInfo != null && geoInfo?.countryCode != 'LOCAL')
+                      if (widget.geoInfo != null &&
+                          widget.geoInfo?.countryCode != 'LOCAL')
                         Padding(
                           padding: const EdgeInsets.only(top: 4),
                           child: Text(
-                            geoInfo!.fullLocation,
+                            widget.geoInfo!.fullLocation,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color:
                                   theme.colorScheme.onSurface.withOpacity(0.5),
@@ -105,21 +136,48 @@ class HostCards extends StatelessWidget {
                         ),
                       const SizedBox(height: 6),
                       _buildStatusChip(
-                          color, FormatUtils.getStatusText(host.status)),
+                        color,
+                        FormatUtils.getStatusText(widget.host.status),
+                      ),
                     ],
                   ),
                 ),
-                // 新增：编辑和删除按钮
+                // 右侧按钮组
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    // 新增：显示/隐藏IP按钮
+                    IconButton(
+                      icon: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        transitionBuilder: (child, animation) {
+                          return ScaleTransition(
+                            scale: animation,
+                            child: child,
+                          );
+                        },
+                        child: Icon(
+                          _isIpVisible
+                              ? Icons.visibility_rounded
+                              : Icons.visibility_off_rounded,
+                          key: ValueKey(_isIpVisible),
+                          size: 20,
+                          color: theme.colorScheme.secondary,
+                        ),
+                      ),
+                      onPressed: _toggleIpVisibility,
+                      tooltip: _isIpVisible ? '隐藏IP地址' : '显示IP地址',
+                      padding: const EdgeInsets.all(8),
+                      constraints: const BoxConstraints(),
+                    ),
+                    const SizedBox(width: 4),
                     IconButton(
                       icon: Icon(
                         Icons.edit_rounded,
                         size: 20,
                         color: theme.colorScheme.primary,
                       ),
-                      onPressed: onEdit,
+                      onPressed: widget.onEdit,
                       tooltip: '编辑',
                       padding: const EdgeInsets.all(8),
                       constraints: const BoxConstraints(),
@@ -131,7 +189,7 @@ class HostCards extends StatelessWidget {
                         size: 20,
                         color: theme.colorScheme.error,
                       ),
-                      onPressed: onDelete,
+                      onPressed: widget.onDelete,
                       tooltip: '删除',
                       padding: const EdgeInsets.all(8),
                       constraints: const BoxConstraints(),
@@ -160,7 +218,10 @@ class HostCards extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-              color: color.withOpacity(0.4), blurRadius: 4, spreadRadius: 1)
+            color: color.withOpacity(0.4),
+            blurRadius: 4,
+            spreadRadius: 1,
+          )
         ],
       ),
     );
@@ -189,7 +250,7 @@ class HostCards extends StatelessWidget {
   Widget _buildCountryFlag() {
     final theme = Theme.of(context);
 
-    if (geoInfo == null) {
+    if (widget.geoInfo == null) {
       return Container(
         width: 20,
         height: 14,
@@ -212,7 +273,7 @@ class HostCards extends StatelessWidget {
       );
     }
 
-    if (geoInfo!.countryCode == 'LOCAL') {
+    if (widget.geoInfo!.countryCode == 'LOCAL') {
       return _buildFlagContainer(
         icon: Icons.home_rounded,
         bgColor: Colors.blue[50]!,
@@ -221,7 +282,7 @@ class HostCards extends StatelessWidget {
       );
     }
 
-    if (geoInfo!.countryCode == 'UN') {
+    if (widget.geoInfo!.countryCode == 'UN') {
       return _buildFlagContainer(
         icon: Icons.public_rounded,
         bgColor: theme.colorScheme.surfaceContainerHighest,
@@ -231,14 +292,18 @@ class HostCards extends StatelessWidget {
     }
 
     return Tooltip(
-      message: geoInfo!.countryName,
+      message: widget.geoInfo!.countryName,
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: theme.dividerColor, width: 0.5),
           borderRadius: BorderRadius.circular(3),
         ),
-        child: Flag.fromString(geoInfo!.countryCode,
-            height: 14, width: 20, fit: BoxFit.cover),
+        child: Flag.fromString(
+          widget.geoInfo!.countryCode,
+          height: 14,
+          width: 20,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }

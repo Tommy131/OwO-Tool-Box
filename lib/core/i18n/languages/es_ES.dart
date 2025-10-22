@@ -209,6 +209,14 @@ class EsES {
         'No se puede conectar al host, por favor verifique la configuración',
     L18nKeys.connectionTestError: 'Error de prueba de conexión',
 
+    // ========== Diálogos ==========
+    L18nKeys.connectionTimeout: 'Tiempo de conexión agotado',
+    L18nKeys.connectionTimeoutMessage:
+        'No se puede conectar al host "{hostName}"\n\nPor favor, verifique:\n• El servidor está en funcionamiento\n• La conexión de red es estable\n• La configuración del firewall',
+    L18nKeys.tokenValidationFailed: 'Validación de token fallida',
+    L18nKeys.tokenValidationFailedMessage:
+        'El token de acceso para el host "{hostName}" es incorrecto',
+
     // ========== Página de historial de alertas ==========
     L18nKeys.alertHistory: 'Historial de alertas',
     L18nKeys.clearHistory: 'Limpiar historial',

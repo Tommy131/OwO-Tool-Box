@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../my_models/host_model.dart';
 import '../../screen_theme.dart';
+import '../../../core/i18n/app_localization.dart';
+import '../../../core/i18n/localization_keys.dart';
 
 class CustomDialogs {
+  static String _tr(BuildContext context, String key) {
+    return AppLocalization.of(context).translate(key);
+  }
+
   static void showLoadingDialog(BuildContext context, String message) {
     showDialog(
       context: context,
@@ -112,8 +118,10 @@ class CustomDialogs {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                       ),
-                      child: const Text('取消',
-                          style: TextStyle(color: Colors.white70)),
+                      child: Text(
+                        _tr(context, L18nKeys.cancel),
+                        style: const TextStyle(color: Colors.white70),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -213,8 +221,10 @@ class CustomDialogs {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
                     ),
-                    child: const Text('确定',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: Text(
+                      _tr(context, L18nKeys.acknowledge),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
               ),
@@ -265,9 +275,9 @@ class CustomDialogs {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                '连接超时',
-                style: TextStyle(
+              Text(
+                _tr(context, L18nKeys.connectionTimeout),
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -275,7 +285,8 @@ class CustomDialogs {
               ),
               const SizedBox(height: 12),
               Text(
-                '无法连接到主机 "${host.name}"\n\n请检查：\n• 服务器是否正在运行\n• 网络连接是否正常\n• 防火墙设置',
+                _tr(context, L18nKeys.connectionTimeoutMessage)
+                    .replaceAll('{hostName}', host.name),
                 textAlign: TextAlign.left,
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.7),
@@ -298,9 +309,9 @@ class CustomDialogs {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text(
-                        '关闭',
-                        style: TextStyle(color: Colors.white70),
+                      child: Text(
+                        _tr(context, L18nKeys.close),
+                        style: const TextStyle(color: Colors.white70),
                       ),
                     ),
                   ),
@@ -324,9 +335,9 @@ class CustomDialogs {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: const Text(
-                          '重试',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        child: Text(
+                          _tr(context, L18nKeys.retry),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -380,9 +391,9 @@ class CustomDialogs {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                '令牌验证失败',
-                style: TextStyle(
+              Text(
+                _tr(context, L18nKeys.tokenValidationFailed),
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -390,7 +401,8 @@ class CustomDialogs {
               ),
               const SizedBox(height: 12),
               Text(
-                '主机 "${host.name}" 的访问令牌不正确',
+                _tr(context, L18nKeys.tokenValidationFailedMessage)
+                    .replaceAll('{hostName}', host.name),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.7),
@@ -413,9 +425,9 @@ class CustomDialogs {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text(
-                        '关闭',
-                        style: TextStyle(color: Colors.white70),
+                      child: Text(
+                        _tr(context, L18nKeys.close),
+                        style: const TextStyle(color: Colors.white70),
                       ),
                     ),
                   ),
@@ -439,9 +451,9 @@ class CustomDialogs {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: const Text(
-                          '修改令牌',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        child: Text(
+                          _tr(context, L18nKeys.modifyToken),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),

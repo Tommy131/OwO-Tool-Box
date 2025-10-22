@@ -225,6 +225,13 @@ class ZhCN {
     L18nKeys.deleteFailed: '删除失败',
     L18nKeys.timeout: '超时',
 
+    // ========== 对话框 ==========
+    L18nKeys.connectionTimeout: '连接超时',
+    L18nKeys.connectionTimeoutMessage:
+        '无法连接到主机 "{hostName}"\n\n请检查：\n• 服务器是否正在运行\n• 网络连接是否正常\n• 防火墙设置',
+    L18nKeys.tokenValidationFailed: '令牌验证失败',
+    L18nKeys.tokenValidationFailedMessage: '主机 "{hostName}" 的访问令牌不正确',
+
     // ========== 主机详情页面 ==========
     L18nKeys.waitingSystemData: '等待系统数据',
     L18nKeys.connectedGettingSystemInfo: '已连接，正在获取系统信息...',
