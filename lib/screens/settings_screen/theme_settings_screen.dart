@@ -1,76 +1,82 @@
 // ============================================================================
-// 设置页面内容
+// 主题设置页面
 // ============================================================================
 
 import 'package:flutter/material.dart';
-import 'package:owo_system_tools/host_monitor/settings_screen/host_monitor_settings_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../core/layouts/responsive_break_points.dart';
-import '../core/providers/locale_provider.dart';
-import '../core/providers/matrix_rain_provider.dart';
-import '../core/providers/theme_provider.dart';
-import '../core/theme/theme_config.dart';
-import '../core/i18n/app_localization.dart';
-import '../core/i18n/language_config.dart';
-import '../core/i18n/localization_keys.dart';
+import '../../core/layouts/responsive_break_points.dart';
+import '../../core/providers/matrix_rain_provider.dart';
+import '../../core/providers/theme_provider.dart';
+import '../../core/theme/theme_config.dart';
+import '../../core/i18n/app_localization.dart';
+import '../../core/i18n/localization_keys.dart';
 
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+class ThemeSettingsScreen extends StatelessWidget {
+  final VoidCallback? onBack;
+
+  const ThemeSettingsScreen({super.key, this.onBack});
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalization.of(context);
     final isMobile = ResponsiveBreakpoints.isMobile(context);
     final isDesktop = ResponsiveBreakpoints.isDesktop(context);
     final isTablet = ResponsiveBreakpoints.isTablet(context);
 
-    return Scaffold(
-      appBar: isMobile
-          ? AppBar(
-              title: Text(localizations.translate(L18nKeys.settings)),
-            )
-          : null,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(isDesktop
-                ? 48
-                : isTablet
-                    ? 32
-                    : 16),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: isDesktop
-                    ? 800
-                    : isTablet
-                        ? 600
-                        : double.infinity,
+    return SafeArea(
+      child: Column(
+        children: [
+          // 非移动端显示返回按钮
+          if (!isMobile)
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: isDesktop ? 48 : 32,
+                vertical: 16,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  if (!isMobile) ...[
-                    Text(
-                      localizations.translate(L18nKeys.settings),
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    const SizedBox(height: 24),
-                  ],
-                  _buildThemeModeSection(context),
-                  const SizedBox(height: 16),
-                  _buildThemeColorSection(context),
-                  const SizedBox(height: 16),
-                  _buildEffectsSection(context),
-                  const SizedBox(height: 16),
-                  _buildLanguageSection(context),
-                  const SizedBox(height: 16),
-                  const HostMonitorSettingsScreen(),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: onBack,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    AppLocalization.of(context)
+                        .translate(L18nKeys.themeSettings),
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
                 ],
               ),
             ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(isDesktop
+                  ? 48
+                  : isTablet
+                      ? 32
+                      : 16),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: isDesktop
+                      ? 800
+                      : isTablet
+                          ? 600
+                          : double.infinity,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildThemeModeSection(context),
+                    const SizedBox(height: 16),
+                    _buildThemeColorSection(context),
+                    const SizedBox(height: 16),
+                    _buildEffectsSection(context),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -94,7 +100,7 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  localizations.translate(L18nKeys.themeSettings),
+                  localizations.translate(L18nKeys.themeMode),
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ],
@@ -149,7 +155,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  /// 主题配色选择区域（默认/科技/自然等）
+  /// 主题配色选择区域
   Widget _buildThemeColorSection(BuildContext context) {
     final localizations = AppLocalization.of(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -197,6 +203,7 @@ class SettingsScreen extends StatelessWidget {
     IconData icon,
     ThemeProvider provider,
   ) {
+    final localizations = AppLocalization.of(context);
     final isSelected = provider.themeType == type;
 
     return ListTile(
@@ -211,8 +218,8 @@ class SettingsScreen extends StatelessWidget {
       onTap: () async {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-                '${AppLocalization.of(context).translate(L18nKeys.themeColorSettings)}...'),
+            content:
+                Text('${localizations.translate(L18nKeys.changingTheme)}...'),
             duration: const Duration(milliseconds: 500),
           ),
         );
@@ -261,8 +268,6 @@ class SettingsScreen extends StatelessWidget {
                   ),
             ),
             const SizedBox(height: 16),
-
-            // 主开关
             SwitchListTile(
               secondary: Icon(
                 Icons.water_drop_rounded,
@@ -281,8 +286,6 @@ class SettingsScreen extends StatelessWidget {
                 await matrixRainProvider.setMatrixRain(value);
               },
             ),
-
-            // 子选项（仅在启用时显示）
             if (matrixRainProvider.isEnabled) ...[
               const Divider(height: 24),
               Padding(
@@ -368,79 +371,6 @@ class SettingsScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  /// 语言选择区域
-  Widget _buildLanguageSection(BuildContext context) {
-    final localizations = AppLocalization.of(context);
-    final localeProvider = Provider.of<LocaleProvider>(context);
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.language_rounded,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  localizations.translate(L18nKeys.languageSettings),
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ...LanguageConfig.supportedLocales.map((locale) {
-              return _buildLanguageOption(
-                context,
-                locale,
-                LanguageConfig.getLanguageName(locale.languageCode),
-                LanguageConfig.getLanguageFlag(locale.languageCode),
-                localeProvider,
-              );
-            }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLanguageOption(
-    BuildContext context,
-    Locale locale,
-    String title,
-    String flag,
-    LocaleProvider provider,
-  ) {
-    final currentLanguageCode = provider.locale?.languageCode ??
-        Localizations.localeOf(context).languageCode;
-    final isSelected = currentLanguageCode == locale.languageCode;
-
-    return ListTile(
-      leading: Text(flag, style: const TextStyle(fontSize: 24)),
-      title: Text(title),
-      trailing: isSelected
-          ? Icon(
-              Icons.check_circle_rounded,
-              color: Theme.of(context).colorScheme.primary,
-            )
-          : null,
-      onTap: () async {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                '${AppLocalization.of(context).translate(L18nKeys.languageSettings)}...'),
-            duration: const Duration(milliseconds: 500),
-          ),
-        );
-        await provider.setLocale(locale);
-      },
     );
   }
 }

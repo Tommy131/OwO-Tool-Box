@@ -51,13 +51,11 @@ enum ConnectionState {
 /// - 设置持久化
 ///
 /// 使用方式:
-/// ```dart
-/// // 在 main.dart 中注册
+/// 在 main.dart 中注册
 /// ChangeNotifierProvider(create: (_) => HostMonitorProvider()..initialize())
 ///
-/// // 在页面中使用
+/// 在页面中使用
 /// final provider = context.watch<HostMonitorProvider>();
-/// ```
 class HostMonitorProvider with ChangeNotifier {
   // ==================== 服务实例 ====================
 
@@ -127,11 +125,34 @@ class HostMonitorProvider with ChangeNotifier {
   /// 获取告警服务
   AlertService get alertService => _alertService;
 
+  // 获取存储服务
+  StorageService? get storageService => _storageService;
+
   /// 是否已连接
   bool get isConnected => _connectionState == ConnectionState.connected;
 
   /// 是否正在连接
   bool get isConnecting => _connectionState == ConnectionState.connecting;
+
+  // ==================== 新增：数据去重和节流控制相关变量 ====================
+
+  /// 上次处理的系统信息哈希值（用于去重）
+  String? _lastProcessedHash;
+
+  /// 节流定时器
+  Timer? _throttleTimer;
+
+  /// 节流间隔（毫秒）
+  static const int _throttleInterval = 500;
+
+  /// 待处理的系统信息
+  SystemInfoModel? _pendingSystemInfo;
+
+  /// 是否有待处理的更新
+  bool _hasPendingUpdate = false;
+
+  /// 数据缓冲区（改为实例变量）
+  String _dataBuffer = '';
 
   // ==================== 初始化方法 ====================
 
@@ -228,6 +249,8 @@ class HostMonitorProvider with ChangeNotifier {
     _errorMessage = null;
     _currentHost = host;
     _lastDataReceived = DateTime.now();
+    _dataBuffer = ''; // ← 重置缓冲区
+    _lastProcessedHash = null; // ← 重置哈希值
     notifyListeners();
 
     try {
@@ -283,16 +306,15 @@ class HostMonitorProvider with ChangeNotifier {
       return;
     }
 
-    String buffer = '';
     bool isAuthenticated = false;
 
     _responseSubscription = responseStream.listen(
       (data) {
         _lastDataReceived = DateTime.now();
-        buffer += data;
+        _dataBuffer += data;
 
         // 处理认证失败
-        if (!isAuthenticated && buffer.contains('错误: 令牌验证失败')) {
+        if (!isAuthenticated && _dataBuffer.contains('错误: 令牌验证失败')) {
           _connectionState = ConnectionState.error;
           _errorMessage = 'TOKEN_VERIFICATION_FAILED';
           disconnect();
@@ -301,15 +323,15 @@ class HostMonitorProvider with ChangeNotifier {
         }
 
         // 处理认证成功
-        if (!isAuthenticated && buffer.contains('验证成功')) {
+        if (!isAuthenticated && _dataBuffer.contains('验证成功')) {
           isAuthenticated = true;
           _onConnectionEstablished();
           return;
         }
 
-        // 处理系统信息数据
+        // 处理系统信息数据（使用优化后的方法）
         if (isAuthenticated) {
-          _processSystemInfoBuffer(buffer);
+          _processSystemInfoBuffer(); // ← 这里改用优化方法
         }
       },
       onError: (error) {
@@ -350,41 +372,99 @@ class HostMonitorProvider with ChangeNotifier {
   ///
   /// 参数:
   /// - buffer: 数据缓冲区
-  void _processSystemInfoBuffer(String buffer) {
-    while (buffer.contains('{') && buffer.contains('}')) {
-      final startIndex = buffer.indexOf('{');
-      final endIndex = _findMatchingBrace(buffer, startIndex);
+  /// 优化的系统信息缓冲区处理（带去重和节流）
+  void _processSystemInfoBuffer() {
+    while (_dataBuffer.contains('{') && _dataBuffer.contains('}')) {
+      final startIndex = _dataBuffer.indexOf('{');
+      final endIndex = _findMatchingBrace(_dataBuffer, startIndex);
 
       if (endIndex == -1) break;
 
-      final jsonStr = buffer.substring(startIndex, endIndex + 1);
+      final jsonStr = _dataBuffer.substring(startIndex, endIndex + 1);
 
       try {
+        // 计算数据哈希值
+        final currentHash = jsonStr.hashCode.toString();
+
+        // 去重检查：如果与上次处理的数据相同，跳过
+        if (_lastProcessedHash == currentHash) {
+          AppLogger.debug('[HostMonitorProvider] 跳过重复数据');
+          _dataBuffer = _dataBuffer.substring(endIndex + 1);
+          continue;
+        }
+
         final jsonData = json.decode(jsonStr);
-        _systemInfo = SystemInfoModel.fromJson(jsonData);
+        final newSystemInfo = SystemInfoModel.fromJson(jsonData);
 
-        // 添加指标数据点
-        _metricsHistory.addDataPoint(
-          _systemInfo!.cpuUsagePercent,
-          _systemInfo!.memoryUsagePercent,
-          _systemInfo!.diskAvgUsagePercent,
-          _systemInfo!.totalUploadSpeed / 1024,
-          _systemInfo!.totalDownloadSpeed / 1024,
-          _systemInfo!.loadAverage.load1min,
-          _systemInfo!.loadAverage.load5min,
-          _systemInfo!.loadAverage.load15min,
-        );
+        // 更新哈希值
+        _lastProcessedHash = currentHash;
 
-        // 检查告警
-        _checkAlerts();
-
-        notifyListeners();
+        // 使用节流机制更新UI
+        _throttledUpdate(newSystemInfo);
       } catch (e) {
         AppLogger.debug('[HostMonitorProvider] JSON 解析失败: $e');
       }
 
-      buffer = buffer.substring(endIndex + 1);
+      _dataBuffer = _dataBuffer.substring(endIndex + 1);
     }
+  }
+
+  /// 节流更新UI
+  ///
+  /// 在指定时间间隔内只执行一次更新，避免频繁刷新
+  void _throttledUpdate(SystemInfoModel newSystemInfo) {
+    _pendingSystemInfo = newSystemInfo;
+    _hasPendingUpdate = true;
+
+    // 如果已有节流定时器在运行，等待它完成
+    if (_throttleTimer?.isActive ?? false) {
+      return;
+    }
+
+    // 立即执行第一次更新
+    _applyUpdate();
+
+    // 启动节流定时器
+    _throttleTimer = Timer(
+      const Duration(milliseconds: _throttleInterval),
+      () {
+        if (_hasPendingUpdate) {
+          _applyUpdate();
+        }
+      },
+    );
+  }
+
+  /// 应用更新到UI
+  void _applyUpdate() {
+    if (_pendingSystemInfo == null) return;
+
+    _systemInfo = _pendingSystemInfo;
+    _hasPendingUpdate = false;
+
+    // 添加指标数据点
+    _metricsHistory.addDataPoint(
+      _systemInfo!.cpuUsagePercent,
+      _systemInfo!.memoryUsagePercent,
+      _systemInfo!.diskAvgUsagePercent,
+      _systemInfo!.totalUploadSpeed / 1024,
+      _systemInfo!.totalDownloadSpeed / 1024,
+      _systemInfo!.loadAverage.load1min,
+      _systemInfo!.loadAverage.load5min,
+      _systemInfo!.loadAverage.load15min,
+    );
+
+    // 检查告警
+    _checkAlerts();
+
+    // 通知UI更新
+    notifyListeners();
+  }
+
+  /// 停止节流定时器
+  void _stopThrottleTimer() {
+    _throttleTimer?.cancel();
+    _throttleTimer = null;
   }
 
   /// 查找匹配的右括号
@@ -442,6 +522,10 @@ class HostMonitorProvider with ChangeNotifier {
     _currentHost = null;
     _metricsHistory.clear();
     _lastDataReceived = null;
+    _dataBuffer = ''; // ← 清空缓冲区
+    _lastProcessedHash = null; // ← 重置哈希值
+    _pendingSystemInfo = null; // ← 清空待处理数据
+    _hasPendingUpdate = false; // ← 重置更新标志
 
     notifyListeners();
   }
@@ -565,6 +649,7 @@ class HostMonitorProvider with ChangeNotifier {
     // 停止所有定时器
     _stopAutoRefresh();
     _stopConnectionMonitoring();
+    _stopThrottleTimer(); // ← 清理节流定时器
 
     // 取消订阅
     _responseSubscription?.cancel();

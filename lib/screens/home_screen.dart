@@ -1,5 +1,5 @@
 // ============================================================================
-// 首页内容
+// 首页内容 - 优化版
 // ============================================================================
 
 import 'package:flutter/material.dart';
@@ -13,130 +13,233 @@ import '../core/i18n/app_localization.dart';
 import '../core/i18n/localization_keys.dart';
 import '../core/widgets/cards/feature_card.dart';
 
+/// 主页屏幕
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalization.of(context);
     final isMobile = ResponsiveBreakpoints.isMobile(context);
-    final isTablet = ResponsiveBreakpoints.isTablet(context);
-    final isDesktop = ResponsiveBreakpoints.isDesktop(context);
+    final localizations = AppLocalization.of(context);
 
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isCyberpunk = themeProvider.themeType == ThemeType.cyberpunk;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    String deviceType;
-    if (isMobile) {
-      deviceType = localizations.translate(L18nKeys.mobileDevice);
-    } else if (isTablet) {
-      deviceType = localizations.translate(L18nKeys.tabletDevice);
-    } else {
-      deviceType = localizations.translate(L18nKeys.desktopDevice);
-    }
-
-    // ✅ 移除 MatrixRain 包裹，直接返回内容
     return Scaffold(
       appBar: isMobile
           ? AppBar(
               title: Text(localizations.translate(L18nKeys.appTitle)),
             )
           : null,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(isDesktop
-                ? 48
-                : isTablet
-                    ? 32
-                    : 16),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: isDesktop
-                    ? 1200
-                    : isTablet
-                        ? 800
-                        : 600,
+      body: const SafeArea(
+        child: _HomeContent(),
+      ),
+    );
+  }
+}
+
+/// 主页内容组件
+class _HomeContent extends StatelessWidget {
+  const _HomeContent();
+
+  @override
+  Widget build(BuildContext context) {
+    final responsiveHelper = _ResponsiveHelper(context);
+
+    return Center(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(responsiveHelper.padding),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: responsiveHelper.maxWidth,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _AnimatedWelcomeIcon(
+                size: responsiveHelper.iconSize,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 800),
-                    builder: (context, value, child) {
-                      return Transform.scale(
-                        scale: value,
-                        child: Opacity(
-                          opacity: value,
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: Icon(
-                      isCyberpunk
-                          ? Icons.electric_bolt_rounded
-                          : Icons.rocket_launch_rounded,
-                      size: isDesktop
-                          ? 140
-                          : isTablet
-                              ? 100
-                              : 80,
-                      color: Theme.of(context).colorScheme.primary,
-                      shadows: isCyberpunk && isDark
-                          ? [
-                              Shadow(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .primary
-                                    .withOpacity(0.8),
-                                blurRadius: 20,
-                              ),
-                            ]
-                          : null,
-                    ),
-                  ),
-                  SizedBox(height: isDesktop ? 32 : 24),
-                  Text(
-                    localizations.translate(L18nKeys.welcome),
-                    style: Theme.of(context).textTheme.displaySmall,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    localizations.translate(L18nKeys.welcomeMessage),
-                    style: Theme.of(context).textTheme.titleLarge,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    localizations.translate(L18nKeys.welcomeDescription),
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withOpacity(0.7),
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: isDesktop ? 48 : 32),
-                  _buildDeviceInfoCard(context, deviceType),
-                  SizedBox(height: isDesktop ? 32 : 24),
-                  _buildFeatureGrid(context),
-                ],
-              ),
-            ),
+              SizedBox(height: responsiveHelper.sectionSpacing),
+              _WelcomeText(),
+              SizedBox(height: responsiveHelper.sectionSpacing),
+              const _DeviceInfoCard(),
+              SizedBox(height: responsiveHelper.cardSpacing),
+              const _FeatureGrid(),
+            ],
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildDeviceInfoCard(BuildContext context, String deviceType) {
+/// 响应式辅助类 - 集中管理尺寸配置
+class _ResponsiveHelper {
+  final BuildContext context;
+
+  _ResponsiveHelper(this.context);
+
+  bool get isMobile => ResponsiveBreakpoints.isMobile(context);
+  bool get isTablet => ResponsiveBreakpoints.isTablet(context);
+  bool get isDesktop => ResponsiveBreakpoints.isDesktop(context);
+
+  double get padding => isDesktop
+      ? 48
+      : isTablet
+          ? 32
+          : 16;
+  double get maxWidth => isDesktop
+      ? 1200
+      : isTablet
+          ? 800
+          : 600;
+  double get iconSize => isDesktop
+      ? 140
+      : isTablet
+          ? 100
+          : 80;
+  double get sectionSpacing => isDesktop ? 48 : 32;
+  double get cardSpacing => isDesktop ? 32 : 24;
+
+  int get gridColumns => isDesktop
+      ? 2
+      : isTablet
+          ? 2
+          : 1;
+  double get gridAspectRatio => isDesktop
+      ? 3.5
+      : isTablet
+          ? 3.0
+          : 3.5;
+  double? get gridItemHeight => isMobile ? 80 : null;
+}
+
+/// 动画欢迎图标
+class _AnimatedWelcomeIcon extends StatefulWidget {
+  final double size;
+
+  const _AnimatedWelcomeIcon({required this.size});
+
+  @override
+  State<_AnimatedWelcomeIcon> createState() => _AnimatedWelcomeIconState();
+}
+
+class _AnimatedWelcomeIconState extends State<_AnimatedWelcomeIcon>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOutBack,
+      ),
+    );
+
+    _opacityAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeIn,
+      ),
+    );
+
+    // 启动动画
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
+    final isCyberpunk = themeProvider.themeType == ThemeType.cyberpunk;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Opacity(
+            opacity: _opacityAnimation.value.clamp(0.0, 1.0), // 确保值在有效范围内
+            child: child,
+          ),
+        );
+      },
+      child: Icon(
+        isCyberpunk ? Icons.electric_bolt_rounded : Icons.rocket_launch_rounded,
+        size: widget.size,
+        color: Theme.of(context).colorScheme.primary,
+        shadows: isCyberpunk && isDark
+            ? [
+                Shadow(
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                  blurRadius: 20,
+                ),
+              ]
+            : null,
+      ),
+    );
+  }
+}
+
+/// 欢迎文本组件
+class _WelcomeText extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     final localizations = AppLocalization.of(context);
-    final size = MediaQuery.of(context).size;
-    final isWideScreen = ResponsiveBreakpoints.isWideScreen(context);
+    final theme = Theme.of(context);
+
+    return Column(
+      children: [
+        Text(
+          localizations.translate(L18nKeys.welcome),
+          style: theme.textTheme.displaySmall,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 16),
+        Text(
+          localizations.translate(L18nKeys.welcomeMessage),
+          style: theme.textTheme.titleLarge,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          localizations.translate(L18nKeys.welcomeDescription),
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.7),
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+}
+
+/// 设备信息卡片
+class _DeviceInfoCard extends StatelessWidget {
+  const _DeviceInfoCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = AppLocalization.of(context);
+    final deviceInfo = _DeviceInfo(context);
 
     return Card(
       child: Padding(
@@ -155,106 +258,71 @@ class HomeScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const Divider(height: 24),
-            _buildInfoRow(
-              context,
-              localizations.translate(L18nKeys.deviceType),
-              deviceType,
+            _InfoRow(
+              label: localizations.translate(L18nKeys.deviceType),
+              value: deviceInfo.deviceType,
             ),
             const SizedBox(height: 10),
-            _buildInfoRow(
-              context,
-              localizations.translate(L18nKeys.screenSize),
-              '${size.width.toInt()} × ${size.height.toInt()}',
+            _InfoRow(
+              label: localizations.translate(L18nKeys.screenSize),
+              value: deviceInfo.screenSize,
             ),
             const SizedBox(height: 10),
-            _buildInfoRow(
-              context,
-              localizations.translate(L18nKeys.layoutMode),
-              isWideScreen
-                  ? localizations.translate(L18nKeys.adaptiveLayout)
-                  : localizations.translate(L18nKeys.mobileDevice),
+            _InfoRow(
+              label: localizations.translate(L18nKeys.layoutMode),
+              value: deviceInfo.layoutMode,
             ),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildFeatureGrid(BuildContext context) {
-    final isDesktop = ResponsiveBreakpoints.isDesktop(context);
-    final isTablet = ResponsiveBreakpoints.isTablet(context);
-    final navigationProvider =
-        Provider.of<NavigationProvider>(context, listen: false);
+/// 设备信息辅助类
+class _DeviceInfo {
+  final BuildContext context;
 
-    final features = [
-      {
-        'icon': Icons.palette_rounded,
-        'title': AppLocalization.of(context).translate(L18nKeys.themeSettings),
-        'description':
-            AppLocalization.of(context).translate(L18nKeys.themeSettings),
-        'onTap': () => navigationProvider.setIndex(1),
-      },
-      {
-        'icon': Icons.language_rounded,
-        'title':
-            AppLocalization.of(context).translate(L18nKeys.languageSettings),
-        'description':
-            AppLocalization.of(context).translate(L18nKeys.languageSettings),
-        'onTap': () => navigationProvider.setIndex(1),
-      },
-      {
-        'icon': Icons.info_rounded,
-        'title': AppLocalization.of(context).translate(L18nKeys.about),
-        'description': AppLocalization.of(context).translate(L18nKeys.appInfo),
-        'onTap': () => navigationProvider.setIndex(2),
-      },
-      {
-        'icon': Icons.devices_rounded,
-        'title': AppLocalization.of(context).translate(L18nKeys.adaptiveLayout),
-        'description':
-            AppLocalization.of(context).translate(L18nKeys.deviceInfo),
-        'onTap': () {},
-      },
-    ];
+  _DeviceInfo(this.context);
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: isDesktop
-            ? 2
-            : isTablet
-                ? 2
-                : 1,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: isDesktop
-            ? 3.5
-            : isTablet
-                ? 3.0
-                : 3.5,
-        mainAxisExtent: isDesktop
-            ? null
-            : isTablet
-                ? null
-                : 80,
-      ),
-      itemCount: features.length,
-      itemBuilder: (context, index) {
-        final feature = features[index];
-        return FeatureCard(
-          icon: feature['icon'] as IconData,
-          title: feature['title'] as String,
-          description: feature['description'] as String,
-          onTap: feature['onTap'] as VoidCallback,
-        );
-      },
-    );
+  String get deviceType {
+    final localizations = AppLocalization.of(context);
+    if (ResponsiveBreakpoints.isMobile(context)) {
+      return localizations.translate(L18nKeys.mobileDevice);
+    } else if (ResponsiveBreakpoints.isTablet(context)) {
+      return localizations.translate(L18nKeys.tabletDevice);
+    } else {
+      return localizations.translate(L18nKeys.desktopDevice);
+    }
   }
 
-  Widget _buildInfoRow(BuildContext context, String label, String value) {
-    // ✅ 修复：使用更清晰的颜色方案
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  String get screenSize {
+    final size = MediaQuery.of(context).size;
+    return '${size.width.toInt()} × ${size.height.toInt()}';
+  }
+
+  String get layoutMode {
+    final localizations = AppLocalization.of(context);
+    return ResponsiveBreakpoints.isWideScreen(context)
+        ? localizations.translate(L18nKeys.adaptiveLayout)
+        : localizations.translate(L18nKeys.mobileDevice);
+  }
+}
+
+/// 信息行组件 - 可复用的标签-值显示
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _InfoRow({
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -263,10 +331,9 @@ class HomeScreen extends StatelessWidget {
           flex: 2,
           child: Text(
             label,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  // ✅ 修复：深色模式下更亮的颜色
-                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade700,
-                ),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: isDark ? Colors.grey.shade400 : Colors.grey.shade700,
+            ),
           ),
         ),
         const SizedBox(width: 8),
@@ -274,11 +341,10 @@ class HomeScreen extends StatelessWidget {
           flex: 3,
           child: Text(
             value,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  // ✅ 修复：使用主题的 onSurface 颜色
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.onSurface,
+            ),
             textAlign: TextAlign.end,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -287,4 +353,88 @@ class HomeScreen extends StatelessWidget {
       ],
     );
   }
+}
+
+/// 功能网格
+class _FeatureGrid extends StatelessWidget {
+  const _FeatureGrid();
+
+  @override
+  Widget build(BuildContext context) {
+    final responsiveHelper = _ResponsiveHelper(context);
+    final features = _FeatureData.getFeatures(context);
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: responsiveHelper.gridColumns,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        childAspectRatio: responsiveHelper.gridAspectRatio,
+        mainAxisExtent: responsiveHelper.gridItemHeight,
+      ),
+      itemCount: features.length,
+      itemBuilder: (context, index) => features[index],
+    );
+  }
+}
+
+/// 功能数据类 - 集中管理功能卡片配置
+class _FeatureData {
+  static List<Widget> getFeatures(BuildContext context) {
+    final localizations = AppLocalization.of(context);
+    final navigationProvider = context.read<NavigationProvider>();
+
+    final featureConfigs = [
+      _FeatureConfig(
+        icon: Icons.palette_rounded,
+        titleKey: L18nKeys.themeSettings,
+        descriptionKey: L18nKeys.themeSettings,
+        onTap: () => navigationProvider.setIndex(3),
+      ),
+      _FeatureConfig(
+        icon: Icons.language_rounded,
+        titleKey: L18nKeys.languageSettings,
+        descriptionKey: L18nKeys.languageSettings,
+        onTap: () => navigationProvider.setIndex(3),
+      ),
+      _FeatureConfig(
+        icon: Icons.monitor_outlined,
+        titleKey: L18nKeys.monitor,
+        descriptionKey: L18nKeys.hostMonitor,
+        onTap: () => navigationProvider.setIndex(1),
+      ),
+      _FeatureConfig(
+        icon: Icons.info_rounded,
+        titleKey: L18nKeys.about,
+        descriptionKey: L18nKeys.appInfo,
+        onTap: () => navigationProvider.setIndex(2),
+      ),
+    ];
+
+    return featureConfigs
+        .map((config) => FeatureCard(
+              icon: config.icon,
+              title: localizations.translate(config.titleKey),
+              description: localizations.translate(config.descriptionKey),
+              onTap: config.onTap,
+            ))
+        .toList();
+  }
+}
+
+/// 功能配置类
+class _FeatureConfig {
+  final IconData icon;
+  final String titleKey;
+  final String descriptionKey;
+  final VoidCallback onTap;
+
+  const _FeatureConfig({
+    required this.icon,
+    required this.titleKey,
+    required this.descriptionKey,
+    required this.onTap,
+  });
 }

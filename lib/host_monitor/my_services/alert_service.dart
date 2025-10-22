@@ -10,7 +10,7 @@
  * @Date         : 2025-10-18
  * @Author       : HanskiJay
  * @LastEditors  : HanskiJay
- * @LastEditTime : 2025-10-18
+ * @LastEditTime : 2025-10-20
  * @E-Mail       : support@owoblog.com
  * @Telegram     : https://t.me/HanskiJay
  * @GitHub       : https://github.com/Tommy131
@@ -165,7 +165,6 @@ class AlertService extends ChangeNotifier {
 
       if (jsonString != null) {
         _settings = HostMonitorSettingsModel.fromJson(json.decode(jsonString));
-        // AppLogger.debug('[AlertService] 配置加载成功');
       }
     } catch (e) {
       AppLogger.error('[AlertService] 配置加载失败', e);
@@ -183,7 +182,6 @@ class AlertService extends ChangeNotifier {
       await prefs.setString(
           'host_monitor_settings', json.encode(settings.toJson()));
 
-      // AppLogger.debug('[AlertService] 配置更新成功');
       notifyListeners();
     } catch (e) {
       AppLogger.error('[AlertService] 配置更新失败', e);
@@ -229,6 +227,25 @@ class AlertService extends ChangeNotifier {
     await _saveHistory();
 
     AppLogger.debug('[AlertService] 历史记录已清空');
+    notifyListeners();
+  }
+
+  /// 获取未确认的告警列表
+  List<AlertRecord> getUnacknowledgedAlerts() {
+    return _alertHistory.where((a) => !a.acknowledged).toList();
+  }
+
+  /// 获取已确认的告警列表
+  List<AlertRecord> getAcknowledgedAlerts() {
+    return _alertHistory.where((a) => a.acknowledged).toList();
+  }
+
+  /// 清除已确认的告警
+  Future<void> clearAcknowledgedAlerts() async {
+    _alertHistory.removeWhere((a) => a.acknowledged);
+    await _saveHistory();
+
+    AppLogger.debug('[AlertService] 已确认的告警已清除');
     notifyListeners();
   }
 
@@ -468,9 +485,6 @@ class AlertService extends ChangeNotifier {
       default:
         return 'alert_default'; // 普通告警使用默认音效
     }
-
-    // 如果没有自定义音效文件，可以返回 null
-    // return null;
   }
 
   // ========== 告警确认 ==========

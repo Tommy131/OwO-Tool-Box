@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/i18n/app_localization.dart';
+import '../../../../core/i18n/localization_keys.dart';
 import '../common/card_header.dart';
 
 class TechStackCard extends StatelessWidget {
@@ -7,42 +9,48 @@ class TechStackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalization.of(context);
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CardHeader(
+            CardHeader(
               icon: Icons.build,
-              title: '技术栈',
+              title: localizations.translate(L18nKeys.techStack),
               iconSize: 28,
             ),
             const SizedBox(height: 20),
             _buildTechItem(
-              'Flutter',
-              '前端跨平台框架',
+              context,
+              localizations.translate(L18nKeys.flutter),
+              localizations.translate(L18nKeys.flutterDescription),
               Icons.phone_android,
               Colors.blue,
             ),
             const SizedBox(height: 12),
             _buildTechItem(
-              'Go',
-              '高性能后端服务',
+              context,
+              localizations.translate(L18nKeys.goLang),
+              localizations.translate(L18nKeys.goLangDescription),
               Icons.memory,
               Colors.cyan,
             ),
             const SizedBox(height: 12),
             _buildTechItem(
-              'TCP/IP',
-              '网络通信协议',
+              context,
+              localizations.translate(L18nKeys.tcpIp),
+              localizations.translate(L18nKeys.tcpIpDescription),
               Icons.wifi,
               Colors.green,
             ),
             const SizedBox(height: 12),
             _buildTechItem(
-              'Material Design',
-              '现代化 UI 设计',
+              context,
+              localizations.translate(L18nKeys.materialDesign),
+              localizations.translate(L18nKeys.materialDesignDescription),
               Icons.palette,
               Colors.purple,
             ),
@@ -53,6 +61,7 @@ class TechStackCard extends StatelessWidget {
   }
 
   Widget _buildTechItem(
+    BuildContext context,
     String tech,
     String description,
     IconData icon,

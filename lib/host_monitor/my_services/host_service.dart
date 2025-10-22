@@ -88,8 +88,10 @@ class HostService {
 
       socket.listen(
         (data) {
-          final response = utf8.decode(data);
-          responseController.add(response);
+          if (!responseController.isClosed) {
+            final response = utf8.decode(data);
+            responseController.add(response);
+          }
         },
         onError: (error) {
           AppLogger.debug('主机连接错误 [${host.name}]: $error');

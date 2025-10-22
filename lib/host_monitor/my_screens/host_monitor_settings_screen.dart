@@ -1,13 +1,22 @@
+// ============================================================================
+// 主机监控设置页面
+// ============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/i18n/app_localization.dart';
+import '../../core/i18n/localization_keys.dart';
+import '../../core/layouts/responsive_break_points.dart';
 import '../my_models/host_monitor_settings_model.dart';
 import '../my_providers/host_monitor_provider.dart';
-import 'widgets/settings_cards.dart';
-import 'widgets/threshold_slider.dart';
+import '../widgets/settings/settings_cards.dart';
+import '../widgets/settings/threshold_slider.dart';
 
 class HostMonitorSettingsScreen extends StatefulWidget {
-  const HostMonitorSettingsScreen({super.key});
+  final VoidCallback? onBack;
+
+  const HostMonitorSettingsScreen({super.key, this.onBack});
 
   @override
   State<HostMonitorSettingsScreen> createState() =>
@@ -61,47 +70,106 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
     super.dispose();
   }
 
+  String _t(String key) {
+    key = AppLocalization.of(context).translate(key);
+    return key;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '主机监控设置',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+    final isMobile = ResponsiveBreakpoints.isMobile(context);
+    final isDesktop = ResponsiveBreakpoints.isDesktop(context);
+    final isTablet = ResponsiveBreakpoints.isTablet(context);
+
+    return SafeArea(
+      child: Column(
+        children: [
+          // 非移动端显示返回按钮和标题
+          if (!isMobile && widget.onBack != null)
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: isDesktop ? 48 : 32,
+                vertical: 16,
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: widget.onBack,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    _t(L18nKeys.hostMonitorSettings),
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                ],
+              ),
+            ),
+          Expanded(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(isDesktop
+                    ? 48
+                    : isTablet
+                        ? 32
+                        : 16),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: isDesktop
+                        ? 800
+                        : isTablet
+                            ? 600
+                            : double.infinity,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 移动端或独立使用时显示标题
+                      if (isMobile || widget.onBack == null) ...[
+                        Text(
+                          _t(L18nKeys.hostMonitorSettings),
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                      _buildRefreshSettings(),
+                      const SizedBox(height: 16),
+                      _buildHostCheckSettings(),
+                      const SizedBox(height: 16),
+                      _buildAlertGeneralSettings(),
+                      const SizedBox(height: 16),
+                      _buildAlertThresholdSettings(),
+                      const SizedBox(height: 16),
+                      _buildNotificationSettings(),
+                      const SizedBox(height: 16),
+                      if (_hasChanges) _buildSaveButton(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
-        _buildRefreshSettings(),
-        const SizedBox(height: 16),
-        _buildHostCheckSettings(),
-        const SizedBox(height: 16),
-        _buildAlertGeneralSettings(),
-        const SizedBox(height: 16),
-        _buildAlertThresholdSettings(),
-        const SizedBox(height: 16),
-        _buildNotificationSettings(),
-        const SizedBox(height: 16),
-        if (_hasChanges) _buildSaveButton(),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildRefreshSettings() {
     return SettingsCard(
-      title: '刷新设置',
+      title: _t(L18nKeys.refreshSettings),
       icon: Icons.refresh,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InputFieldCard(
-            label: '主机轮询间隔',
-            hint: '输入刷新间隔（秒）',
-            suffix: '秒',
+            label: _t(L18nKeys.hostPollingInterval),
+            hint: _t(L18nKeys.enterRefreshInterval),
+            suffix: _t(L18nKeys.seconds),
             controller: _intervalController,
-            description: '建议设置为1-10秒之间，过短可能影响性能',
+            description: _t(L18nKeys.recommendedInterval),
           ),
         ],
       ),
@@ -110,25 +178,25 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
 
   Widget _buildHostCheckSettings() {
     return SettingsCard(
-      title: '主机检测设置',
+      title: _t(L18nKeys.hostCheckSettings),
       icon: Icons.monitor_heart,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InputFieldCard(
-            label: '检测超时时间',
-            hint: '输入超时时间（秒）',
-            suffix: '秒',
+            label: _t(L18nKeys.checkTimeout),
+            hint: _t(L18nKeys.enterTimeout),
+            suffix: _t(L18nKeys.seconds),
             controller: _hostCheckTimeoutController,
-            description: '检测主机在线状态的超时时间，建议3-10秒',
+            description: _t(L18nKeys.timeoutDescription),
           ),
           const SizedBox(height: 20),
           InputFieldCard(
-            label: '后台检测间隔',
-            hint: '输入检测间隔（分钟）',
-            suffix: '分钟',
+            label: _t(L18nKeys.backgroundCheckInterval),
+            hint: _t(L18nKeys.enterCheckInterval),
+            suffix: _t(L18nKeys.minutes),
             controller: _hostCheckIntervalController,
-            description: '后台静默检测主机列表状态的间隔时间，建议5-30分钟',
+            description: _t(L18nKeys.checkIntervalDescription),
           ),
         ],
       ),
@@ -137,11 +205,11 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
 
   Widget _buildAlertGeneralSettings() {
     return SettingsCard(
-      title: '告警设置',
+      title: _t(L18nKeys.alertSettings),
       icon: Icons.warning_amber,
       child: SwitchCard(
-        title: '启用告警',
-        subtitle: '开启后将在资源使用超过阈值时发送通知',
+        title: _t(L18nKeys.enableAlert),
+        subtitle: _t(L18nKeys.enableAlertDescription),
         value: _settings.enabledAlert,
         onChanged: (value) {
           _updateAlertSettings(
@@ -154,13 +222,13 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
 
   Widget _buildAlertThresholdSettings() {
     return SettingsCard(
-      title: '告警阈值',
+      title: _t(L18nKeys.alertThreshold),
       icon: Icons.tune,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ThresholdSlider(
-            label: 'CPU 使用率',
+            label: _t(L18nKeys.cpuUsage),
             value: _settings.cpuThreshold.toDouble(),
             min: 50,
             max: 100,
@@ -173,7 +241,7 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
           ),
           const SizedBox(height: 16),
           ThresholdSlider(
-            label: '内存使用率',
+            label: _t(L18nKeys.memoryUsage),
             value: _settings.memoryThreshold.toDouble(),
             min: 50,
             max: 100,
@@ -186,7 +254,7 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
           ),
           const SizedBox(height: 16),
           ThresholdSlider(
-            label: '磁盘使用率',
+            label: _t(L18nKeys.diskUsage),
             value: _settings.diskThreshold.toDouble(),
             min: 50,
             max: 100,
@@ -199,7 +267,7 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
           ),
           const SizedBox(height: 16),
           ThresholdSlider(
-            label: '上传速率',
+            label: _t(L18nKeys.uploadSpeed),
             value: _settings.networkUploadThreshold,
             min: 1024,
             max: 102400,
@@ -213,7 +281,7 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
           ),
           const SizedBox(height: 16),
           ThresholdSlider(
-            label: '下载速率',
+            label: _t(L18nKeys.downloadSpeed),
             value: _settings.networkDownloadThreshold,
             min: 1024,
             max: 102400,
@@ -232,13 +300,13 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
 
   Widget _buildNotificationSettings() {
     return SettingsCard(
-      title: '通知设置',
+      title: _t(L18nKeys.notificationSettings),
       icon: Icons.notifications,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SwitchCard(
-            title: '断开连接通知',
+            title: _t(L18nKeys.disconnectNotification),
             value: _settings.notifyOnDisconnect,
             onChanged: (value) {
               _updateAlertSettings(
@@ -247,7 +315,7 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
             },
           ),
           SwitchCard(
-            title: '声音提示',
+            title: _t(L18nKeys.soundAlert),
             value: _settings.soundEnabled,
             onChanged: (value) {
               _updateAlertSettings(
@@ -256,8 +324,8 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
             },
           ),
           SwitchCard(
-            title: '震动提示',
-            subtitle: '仅在移动设备上生效',
+            title: _t(L18nKeys.vibrationAlert),
+            subtitle: _t(L18nKeys.vibrationAlertDescription),
             value: _settings.vibrationEnabled,
             onChanged: (value) {
               _updateAlertSettings(
@@ -271,7 +339,6 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
   }
 
   Widget _buildSaveButton() {
-    // final localizations = AppLocalization.of(context);
     final theme = Theme.of(context);
 
     return SizedBox(
@@ -302,10 +369,9 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          child: const Text(
-            '保存',
-            // localizations.translate(L18nKeys.saveSettings),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          child: Text(
+            _t(L18nKeys.save),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -326,8 +392,9 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
 
     if (intervalSeconds! > 60) {
       final confirmed = await _showConfirmDialog(
-        '刷新间隔较长',
-        '您设置的刷新间隔为$intervalSeconds秒，这可能导致数据更新不及时。确定继续？',
+        _t(L18nKeys.longRefreshInterval),
+        _t(L18nKeys.longRefreshIntervalWarning)
+            .replaceAll('{interval}', intervalSeconds.toString()),
       );
       if (!confirmed) return;
     }
@@ -341,27 +408,27 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
       hostCheckInterval: hostCheckInterval!,
     );
 
-    // 按需调用方法
     await provider.updateSettings(newSettings);
 
     setState(() => _hasChanges = false);
-    _showSnackBar('设置已保存', Colors.green);
+    _showSnackBar(_t(L18nKeys.settingsSaved), Colors.green);
   }
 
   bool _validateInputs(int? interval, int? timeout, int? checkInterval) {
     final theme = Theme.of(context);
     if (interval == null || interval < 1) {
-      _showSnackBar('请输入有效的刷新间隔（至少1秒）', theme.colorScheme.error);
+      _showSnackBar(
+          _t(L18nKeys.invalidRefreshInterval), theme.colorScheme.error);
       return false;
     }
 
     if (timeout == null || timeout < 1 || timeout > 60) {
-      _showSnackBar('请输入有效的检测超时时间（1-60秒）', theme.colorScheme.error);
+      _showSnackBar(_t(L18nKeys.invalidTimeout), theme.colorScheme.error);
       return false;
     }
 
     if (checkInterval == null || checkInterval < 1 || checkInterval > 1440) {
-      _showSnackBar('请输入有效的检测间隔（1-1440分钟）', theme.colorScheme.error);
+      _showSnackBar(_t(L18nKeys.invalidCheckInterval), theme.colorScheme.error);
       return false;
     }
 
@@ -381,11 +448,11 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            child: Text(_t(L18nKeys.cancel)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('确定'),
+            child: Text(_t(L18nKeys.ok)),
           ),
         ],
       ),

@@ -67,4 +67,33 @@ class ScreenTheme {
       ),
     );
   }
+
+  // 亮色主题
+  static ThemeData get lightTheme {
+    return ThemeData(
+      brightness: Brightness.light,
+      primaryColor: primaryColor,
+      scaffoldBackgroundColor: backgroundColor,
+      cardColor: const Color(0x955A5A5A),
+      colorScheme: const ColorScheme.light(
+        primary: primaryColor,
+        secondary: secondaryColor,
+        surface: surfaceColor,
+      ),
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+        displayMedium: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+        bodyLarge: TextStyle(fontSize: 16, color: Colors.black),
+        bodyMedium: TextStyle(fontSize: 14, color: Colors.black),
+      ),
+    );
+  }
 }

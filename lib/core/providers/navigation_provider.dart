@@ -9,9 +9,7 @@ import '../utils/logger.dart';
 class NavigationProvider with ChangeNotifier {
   int _selectedIndex = 0;
 
-  // ✅ 添加 currentIndex getter（保持向后兼容）
   int get selectedIndex => _selectedIndex;
-  int get currentIndex => _selectedIndex; // ✅ 新增
 
   void setIndex(int index) {
     _selectedIndex = index;
