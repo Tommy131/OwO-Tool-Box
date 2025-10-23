@@ -26,8 +26,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/services/notification_service.dart';
 import '../../core/utils/logger.dart';
 
-import '../my_models/host_monitor_settings_model.dart';
-import '../my_models/system_info_model.dart';
+import '../models/host_monitor_settings_model.dart';
+import '../models/system_info_model.dart';
 
 // ==================== 告警类型枚举 ====================
 /// 定义系统监控的各种告警类型

@@ -2,8 +2,8 @@ import 'package:flag/flag_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../format_utils.dart';
-import '../../my_models/host_model.dart';
-import '../../my_services/geoip_service.dart';
+import '../../models/host_model.dart';
+import '../../services/geoip_service.dart';
 
 class HostCards extends StatefulWidget {
   final HostModel host;

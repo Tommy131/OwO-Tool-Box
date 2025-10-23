@@ -10,7 +10,8 @@ import '../../core/i18n/localization_keys.dart';
 
 import 'theme_settings_screen.dart';
 import 'language_settings_screen.dart';
-import '../../host_monitor/my_screens/host_monitor_settings_screen.dart';
+// Host Monitor
+import '../../host_monitor/screens/host_monitor_settings_screen.dart';
 
 // 定义设置页面类型枚举
 enum SettingsPageType {

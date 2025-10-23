@@ -23,8 +23,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../format_utils.dart';
-import '../my_models/system_info_model.dart';
-import '../my_providers/host_monitor_provider.dart';
+import '../models/system_info_model.dart';
+import '../providers/host_monitor_provider.dart';
 import '../widgets/animated_background.dart';
 import '../widgets/metric_chart.dart';
 import '../../core/i18n/app_localization.dart';

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:owo_system_tools/host_monitor/my_services/host_service.dart';
+import 'package:owo_system_tools/host_monitor/services/host_service.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/i18n/app_localization.dart';
-import '../my_models/host_model.dart';
+import '../models/host_model.dart';
 import '../../core/utils/logger.dart';
-import '../my_providers/host_monitor_provider.dart';
+import '../providers/host_monitor_provider.dart';
 import '../widgets/animated_background.dart';
 import '../widgets/custom_snack_bar.dart';
 import '../widgets/host_monitor/custom_dialogs.dart';
@@ -223,8 +223,9 @@ class _HostEditScreenState extends State<HostEditScreen> {
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             validator: (v) {
-              if (v == null || v.trim().isEmpty)
+              if (v == null || v.trim().isEmpty) {
                 return _tr('please_enter_port');
+              }
               final port = int.tryParse(v.trim());
               return (port == null || port < 1 || port > 65535)
                   ? _tr('port_range_error')

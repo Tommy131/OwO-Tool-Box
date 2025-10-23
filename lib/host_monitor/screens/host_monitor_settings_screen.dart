@@ -8,8 +8,8 @@ import 'package:provider/provider.dart';
 import '../../core/i18n/app_localization.dart';
 import '../../core/i18n/localization_keys.dart';
 import '../../core/layouts/responsive_break_points.dart';
-import '../my_models/host_monitor_settings_model.dart';
-import '../my_providers/host_monitor_provider.dart';
+import '../models/host_monitor_settings_model.dart';
+import '../providers/host_monitor_provider.dart';
 import '../widgets/settings/settings_cards.dart';
 import '../widgets/settings/threshold_slider.dart';
 

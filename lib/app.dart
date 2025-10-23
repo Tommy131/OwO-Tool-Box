@@ -7,7 +7,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:owo_system_tools/host_monitor/my_providers/host_monitor_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'core/layouts/desktop_layout.dart';
@@ -17,11 +16,16 @@ import 'core/layouts/tablet_layout.dart';
 import 'core/providers/locale_provider.dart';
 import 'core/providers/matrix_rain_provider.dart';
 import 'core/providers/navigation_provider.dart';
-import 'screens/screen_navigation_helper.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/i18n/app_localization.dart';
 import 'core/i18n/language_config.dart';
 import 'core/i18n/localization_delegate.dart';
+import 'screens/screen_navigation_helper.dart';
+// Host Monitor
+import 'host_monitor/providers/host_monitor_provider.dart';
+// SSL Manager
+import 'ssl_manager/providers/certificate_provider.dart';
+import 'ssl_manager/providers/ssl_settings_provider.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -30,11 +34,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        // core
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => MatrixRainProvider()),
+        // Host Monitor
         ChangeNotifierProvider(create: (_) => HostMonitorProvider()),
+        // SSL Manager
+        ChangeNotifierProvider(create: (_) => SSLSettingsProvider()),
+        ChangeNotifierProvider(create: (_) => CertificateProvider()),
       ],
       child: Consumer2<ThemeProvider, LocaleProvider>(
         builder: (context, themeProvider, localeProvider, child) {

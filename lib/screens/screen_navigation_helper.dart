@@ -10,7 +10,7 @@ import '../core/i18n/localization_keys.dart';
 import '../core/test_screens/components_demo_screen.dart';
 import '../core/test_screens/notification_demo_page.dart';
 import '../core/test_screens/test_matrix_screen.dart';
-import '../host_monitor/my_screens/host_monitor_screen.dart';
+import '../host_monitor/screens/host_monitor_screen.dart';
 import 'about_screen/about_screen.dart';
 import 'home_screen.dart';
 import 'settings_screen/settings_screen.dart';

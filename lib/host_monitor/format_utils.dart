@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'my_models/host_model.dart';
+import 'models/host_model.dart';
 
 /// 格式化工具类
 class FormatUtils {

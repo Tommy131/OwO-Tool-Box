@@ -20,8 +20,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/i18n/app_localization.dart';
-import '../my_providers/host_monitor_provider.dart';
-import '../my_services/alert_service.dart';
+import '../providers/host_monitor_provider.dart';
+import '../services/alert_service.dart';
 import '../screen_theme.dart';
 import '../widgets/animated_background.dart';
 

@@ -20,7 +20,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../../core/utils/logger.dart';
-import '../my_models/host_model.dart';
+import '../models/host_model.dart';
 
 /// 主机连接信息类
 class _HostConnection {

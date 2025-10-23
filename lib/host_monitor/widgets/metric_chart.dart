@@ -18,7 +18,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-import '../my_models/metrics_history_model.dart';
+import '../models/metrics_history_model.dart';
 
 class MetricsChart extends StatelessWidget {
   final List<MetricPoint> dataPoints;

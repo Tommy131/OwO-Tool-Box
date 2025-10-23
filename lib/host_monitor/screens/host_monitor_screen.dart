@@ -20,10 +20,10 @@ import 'package:provider/provider.dart';
 
 import '../../core/utils/logger.dart';
 import '../../core/i18n/app_localization.dart';
-import '../my_models/host_model.dart';
-import '../my_providers/host_monitor_provider.dart';
-import '../my_services/host_service.dart';
-import '../my_services/geoip_service.dart';
+import '../models/host_model.dart';
+import '../providers/host_monitor_provider.dart';
+import '../services/host_service.dart';
+import '../services/geoip_service.dart';
 import '../screen_theme.dart';
 import '../widgets/animated_background.dart';
 import '../widgets/custom_snack_bar.dart';

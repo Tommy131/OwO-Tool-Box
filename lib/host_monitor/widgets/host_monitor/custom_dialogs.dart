@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../my_models/host_model.dart';
+import '../../models/host_model.dart';
 import '../../screen_theme.dart';
 import '../../../core/i18n/app_localization.dart';
 import '../../../core/i18n/localization_keys.dart';
