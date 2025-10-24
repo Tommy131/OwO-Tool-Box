@@ -1429,6 +1429,10 @@ class _GenerateCertDialogState extends State<_GenerateCertDialog> {
           'orgUnit',
           'city'
         ];
+
+        final textColor = (Theme.of(context).brightness == Brightness.dark)
+            ? Colors.white
+            : Colors.black;
         field = TextFormField(
           controller: _controllers[key],
           decoration: InputDecoration(
@@ -1439,8 +1443,8 @@ class _GenerateCertDialogState extends State<_GenerateCertDialog> {
               fontSize: 10,
               color: Colors.green,
             ),
-            hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
-            labelStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+            hintStyle: TextStyle(color: textColor.withOpacity(0.5)),
+            labelStyle: TextStyle(color: textColor.withOpacity(0.5)),
           ),
           keyboardType: key == 'validity' ? TextInputType.number : null,
           validator: requiredFields.contains(key)
