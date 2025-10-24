@@ -10,10 +10,12 @@ import '../core/i18n/localization_keys.dart';
 import '../core/test_screens/components_demo_screen.dart';
 import '../core/test_screens/notification_demo_page.dart';
 import '../core/test_screens/test_matrix_screen.dart';
-import '../host_monitor/screens/host_monitor_screen.dart';
-import 'about_screen/about_screen.dart';
 import 'home_screen.dart';
+import 'about_screen/about_screen.dart';
 import 'settings_screen/settings_screen.dart';
+
+import '../host_monitor/screens/host_monitor_screen.dart';
+import '../ssl_manager/screens/ssl_home_screen.dart';
 
 class NavigationItem {
   final IconData icon;
@@ -41,11 +43,19 @@ class ScreenNavigationHelper {
             labelKey: L18nKeys.home,
             page: const HomeScreen(),
           ),
+          // **Host Monitor
           NavigationItem(
             icon: Icons.monitor_outlined,
             selectedIcon: Icons.monitor,
             labelKey: L18nKeys.monitor,
             page: const HostMonitorScreen(),
+          ),
+          // **SSL Manager
+          NavigationItem(
+            icon: Icons.security_outlined,
+            selectedIcon: Icons.security,
+            labelKey: L18nKeys.ssl,
+            page: const SSLHomeScreen(),
           ),
           NavigationItem(
             icon: Icons.info_outlined,

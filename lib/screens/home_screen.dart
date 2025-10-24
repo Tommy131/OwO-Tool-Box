@@ -19,7 +19,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = ResponsiveBreakpoints.isMobile(context);
+    final isMobile = ResponsiveBreakpoints(context).isMobile();
     final localizations = AppLocalization.of(context);
 
     return Scaffold(
@@ -41,26 +41,26 @@ class _HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsiveHelper = _ResponsiveHelper(context);
+    final responsiveBreakpoints = ResponsiveBreakpoints(context);
 
     return Center(
       child: SingleChildScrollView(
-        padding: EdgeInsets.all(responsiveHelper.padding),
+        padding: EdgeInsets.all(responsiveBreakpoints.padding),
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            maxWidth: responsiveHelper.maxWidth,
+            maxWidth: responsiveBreakpoints.maxWidth,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _AnimatedWelcomeIcon(
-                size: responsiveHelper.iconSize,
+                size: responsiveBreakpoints.iconSize,
               ),
-              SizedBox(height: responsiveHelper.sectionSpacing),
+              SizedBox(height: responsiveBreakpoints.sectionSpacing),
               _WelcomeText(),
-              SizedBox(height: responsiveHelper.sectionSpacing),
+              SizedBox(height: responsiveBreakpoints.sectionSpacing),
               const _DeviceInfoCard(),
-              SizedBox(height: responsiveHelper.cardSpacing),
+              SizedBox(height: responsiveBreakpoints.cardSpacing),
               const _FeatureGrid(),
             ],
           ),
@@ -68,47 +68,6 @@ class _HomeContent extends StatelessWidget {
       ),
     );
   }
-}
-
-/// 响应式辅助类 - 集中管理尺寸配置
-class _ResponsiveHelper {
-  final BuildContext context;
-
-  _ResponsiveHelper(this.context);
-
-  bool get isMobile => ResponsiveBreakpoints.isMobile(context);
-  bool get isTablet => ResponsiveBreakpoints.isTablet(context);
-  bool get isDesktop => ResponsiveBreakpoints.isDesktop(context);
-
-  double get padding => isDesktop
-      ? 48
-      : isTablet
-          ? 32
-          : 16;
-  double get maxWidth => isDesktop
-      ? 1200
-      : isTablet
-          ? 800
-          : 600;
-  double get iconSize => isDesktop
-      ? 140
-      : isTablet
-          ? 100
-          : 80;
-  double get sectionSpacing => isDesktop ? 48 : 32;
-  double get cardSpacing => isDesktop ? 32 : 24;
-
-  int get gridColumns => isDesktop
-      ? 2
-      : isTablet
-          ? 2
-          : 1;
-  double get gridAspectRatio => isDesktop
-      ? 3.5
-      : isTablet
-          ? 3.0
-          : 3.5;
-  double? get gridItemHeight => isMobile ? 80 : null;
 }
 
 /// 动画欢迎图标
@@ -287,9 +246,10 @@ class _DeviceInfo {
 
   String get deviceType {
     final localizations = AppLocalization.of(context);
-    if (ResponsiveBreakpoints.isMobile(context)) {
+    final responsiveBreakpoints = ResponsiveBreakpoints(context);
+    if (responsiveBreakpoints.isMobile()) {
       return localizations.translate(L18nKeys.mobileDevice);
-    } else if (ResponsiveBreakpoints.isTablet(context)) {
+    } else if (responsiveBreakpoints.isTablet()) {
       return localizations.translate(L18nKeys.tabletDevice);
     } else {
       return localizations.translate(L18nKeys.desktopDevice);
@@ -303,7 +263,7 @@ class _DeviceInfo {
 
   String get layoutMode {
     final localizations = AppLocalization.of(context);
-    return ResponsiveBreakpoints.isWideScreen(context)
+    return ResponsiveBreakpoints(context).isWideScreen()
         ? localizations.translate(L18nKeys.adaptiveLayout)
         : localizations.translate(L18nKeys.mobileDevice);
   }
@@ -361,18 +321,18 @@ class _FeatureGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsiveHelper = _ResponsiveHelper(context);
+    final responsiveBreakpoints = ResponsiveBreakpoints(context);
     final features = _FeatureData.getFeatures(context);
 
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: responsiveHelper.gridColumns,
+        crossAxisCount: responsiveBreakpoints.gridColumns,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
-        childAspectRatio: responsiveHelper.gridAspectRatio,
-        mainAxisExtent: responsiveHelper.gridItemHeight,
+        childAspectRatio: responsiveBreakpoints.gridAspectRatio,
+        mainAxisExtent: responsiveBreakpoints.gridItemHeight,
       ),
       itemCount: features.length,
       itemBuilder: (context, index) => features[index],

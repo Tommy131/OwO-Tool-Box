@@ -189,12 +189,14 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
         _isRefreshing = false;
       });
 
-      CustomSnackBar(
-        context,
-        message: _tr('host_status_refreshed'),
-        backgroundColor: Colors.green.shade700,
-        icon: Icons.check_circle_outline,
-      ).showModern();
+      if (mounted) {
+        CustomSnackBar(
+          context,
+          message: _tr('host_status_refreshed'),
+          backgroundColor: Colors.green.shade700,
+          icon: Icons.check_circle_outline,
+        ).showModern();
+      }
     } catch (e) {
       _handleError('${_tr('refresh_failed')}: $e');
     }
@@ -203,7 +205,7 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
   /// 检查连接缓存
   void _checkConnection() {
     if (_provider.currentHost != null) {
-      setState(() {
+      _updateState(() {
         _isConnecting = _provider.isConnecting;
         _isConnected = _provider.isConnected;
       });
@@ -681,7 +683,7 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
           host: _hosts[index],
           geoInfo: _geoInfoMap[_hosts[index].address],
           onTap: () async {
-            setState(() {
+            _updateState(() {
               _isConnecting = true;
             });
             await _connectToHost(_hosts[index]);
@@ -727,7 +729,7 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
                   message: _tr('host_deleted'),
                   backgroundColor: Colors.green,
                 ).showModern();
-                setState(() {
+                _updateState(() {
                   _hosts.removeWhere((h) => h.id == host.id);
                 });
               }
@@ -758,7 +760,7 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
       } else if (_provider.errorMessage == 'TOKEN_VERIFICATION_FAILED') {
         CustomDialogs.showTokenErrorDialog(context, host);
       } else if (_provider.connectionState == ConnectionState.connected) {
-        setState(() {
+        _updateState(() {
           _isConnecting = false;
           _isConnected = _provider.isConnected;
         });

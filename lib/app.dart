@@ -96,6 +96,7 @@ class AdaptiveScaffold extends StatelessWidget with WidgetsBindingObserver {
     // 初始化主机监测管理器
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HostMonitorProvider>().initialize();
+      context.read<SSLSettingsProvider>().initialize();
     });
 
     final localizations = AppLocalization.of(context);

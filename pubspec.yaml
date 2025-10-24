@@ -1,67 +1,101 @@
+# 🎯 **项目基本配置**：定义应用名称、版本、发布设置和SDK环境要求。
 name: owo_system_tools
-description: A comprehensive Flutter application framework for multi-project development.
-publish_to: 'none'
+description: A multifunctional system tools app based of flutter.
+publish_to: 'none'  # 私有包，不发布到pub.dev
 
-version: 1.0.0+1
+version: 1.0.0+1  # 版本号：主版本.次版本.补丁版本+构建号
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'  # 支持的Dart SDK版本范围，确保兼容性
 
+# 📦 **依赖项（Dependencies）**：运行时必需的包，按功能分类组织，便于维护。
 dependencies:
+  # **核心Flutter框架**：基础UI和平台集成。
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
-  provider: ^6.0.0
-  intl: ^0.20.2
-  get_it: ^7.6.0
-  logger: ^2.0.0
-  shared_preferences: ^2.2.2
-  bitsdojo_window: ^0.1.6
-  fl_chart: ^0.66.0
-  url_launcher: ^6.2.2
-  http: ^1.5.0
-  dartssh2: ^2.9.0
-  flutter_secure_storage: ^8.0.0
-  path_provider: ^2.1.1
-  cupertino_icons: ^1.0.6
-  flutter_local_notifications: ^19.4.2
-  timezone: ^0.10.1
-  flag: ^7.0.0
-  country_codes: ^3.0.0
 
+  # **状态管理 & 依赖注入**：处理应用状态和依赖注入。
+  provider: ^6.0.0  # 简单高效的状态管理解决方案
+  get_it: ^7.6.0  # 服务定位器，用于依赖注入
+
+  # **国际化 & 本地化**：支持多语言和区域设置。
+  flutter_localizations:
+    sdk: flutter  # Flutter内置本地化支持
+  intl: ^0.20.2  # 国际化工具，用于格式化和翻译
+
+  # **日志 & 调试**：应用日志记录。
+  logger: ^2.0.0  # 美观的控制台日志输出
+
+  # **存储 & 安全**：本地数据持久化和安全存储。
+  shared_preferences: ^2.2.2  # 简单键值对存储
+  flutter_secure_storage: ^8.0.0  # 加密存储敏感数据
+
+  # **平台特定功能**：桌面窗口管理和路径处理。
+  bitsdojo_window: ^0.1.6  # 自定义桌面窗口行为
+  path_provider: ^2.1.1  # 获取平台特定目录路径
+
+  # **网络 & 通信**：HTTP请求和SSH连接。
+  http: ^1.5.0  # 轻量级HTTP客户端
+
+  # **UI组件 & 图表**：可视化元素。
+  fl_chart: ^0.66.0  # 响应式图表库
+
+  # **通知 & 时区**：推送通知和时区处理。
+  flutter_local_notifications: ^19.4.2  # 本地通知插件
+  timezone: ^0.10.1  # 时区数据库集成
+
+  # **地理 & 国家**：国家代码和旗帜显示。
+  flag: ^7.0.0  # 国家旗帜图标
+  country_codes: ^3.0.0  # 国家代码工具
+
+  # **工具 & 实用**：UUID生成、文件选择和进程管理。
+  uuid: ^4.5.1  # 通用唯一标识符生成
+  file_picker: ^10.3.3  # 文件选择对话框
+  process_run: ^1.2.4  # 运行外部进程
+  url_launcher: ^6.2.2  # 启动URL或应用
+
+# 🛠️ **开发依赖（Dev Dependencies）**：仅用于开发和测试的包。
 dev_dependencies:
   flutter_test:
-    sdk: flutter
-  flutter_lints: ^3.0.0
-  flutter_launcher_icons: ^0.13.1
+    sdk: flutter  # Flutter测试框架
+  flutter_lints: ^3.0.0  # 代码风格和最佳实践检查
+  flutter_launcher_icons: ^0.13.1  # 生成应用图标
 
+# 🎨 **Flutter配置**：资产、字体和Material Design支持。
 flutter:
-  uses-material-design: true
-  assets:
-    - assets/images/
-    - assets/icons/
-  fonts:
-    - family: Microsoft-YaHei
-      fonts:
-        - asset: assets/fonts/Microsoft-YaHei-Regular.ttf
-        - asset: assets/fonts/Microsoft-YaHei-Bold.ttf
-          weight: 700
+  uses-material-design: true  # 启用Material Design组件
 
+  # **资产文件**：图片和图标目录。
+  assets:
+    - assets/images/  # 应用图片资源
+    - assets/icons/   # 应用图标资源
+
+  # **自定义字体**：加载外部字体文件。
+  # fonts:
+  #   - family: Microsoft-YaHei  # 字体家族名称
+  #     fonts:
+  #       - asset: assets/fonts/Microsoft-YaHei-Regular.ttf  # 常规字重
+  #       - asset: assets/fonts/Microsoft-YaHei-Bold.ttf
+  #         weight: 700  # 粗体字重（700）
+
+# 🖼️ **应用图标配置**：跨平台图标生成，使用flutter_launcher_icons插件。
 flutter_icons:
-  android: true
-  ios: true
-  image_path: "assets/icons/app_icon.png"
-  min_sdk_android: 21 # android min sdk min:16, default 21
+  android: true  # 生成Android图标
+  ios: true  # 生成iOS图标
+  image_path: "assets/icons/app_icon.png"  # 源图标文件
+  min_sdk_android: 21  # Android最低SDK版本（默认21，最小16）
+
   web:
-    generate: true
+    generate: true  # 生成Web图标
     image_path: "assets/icons/app_icon.png"
-    background_color: "#eeeeee"
-    theme_color: "#fea31a"
+    background_color: "#eeeeee"  # Web背景色
+    theme_color: "#fea31a"  # Web主题色
+
   windows:
-    generate: true
+    generate: true  # 生成Windows图标
     image_path: "assets/icons/app_icon.png"
-    icon_size: 64 # min:48, max:256, default: 48
+    icon_size: 64  # 图标尺寸（范围48-256，默认48）
+
   macos:
-    generate: true
+    generate: true  # 生成macOS图标
     image_path: "assets/icons/app_icon.png"

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:owo_system_tools/host_monitor/services/host_service.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/utils/logger.dart';
 import '../../core/i18n/app_localization.dart';
 import '../models/host_model.dart';
-import '../../core/utils/logger.dart';
+import '../services/host_service.dart';
 import '../providers/host_monitor_provider.dart';
 import '../widgets/animated_background.dart';
 import '../widgets/custom_snack_bar.dart';

@@ -19,9 +19,10 @@ class LanguageSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalization.of(context);
-    final isMobile = ResponsiveBreakpoints.isMobile(context);
-    final isDesktop = ResponsiveBreakpoints.isDesktop(context);
-    final isTablet = ResponsiveBreakpoints.isTablet(context);
+    final responsiveBreakpoints = ResponsiveBreakpoints(context);
+    final isMobile = responsiveBreakpoints.isMobile();
+    final isDesktop = responsiveBreakpoints.isDesktop();
+    final isTablet = responsiveBreakpoints.isTablet();
 
     return SafeArea(
       child: Column(

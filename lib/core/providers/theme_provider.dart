@@ -22,6 +22,9 @@ class ThemeProvider with ChangeNotifier {
   /// 获取当前深色主题
   ThemeData get darkTheme => ThemeConfig.getDarkTheme(_themeType);
 
+  /// 判断是否为深色模式
+  bool get isDarkMode => _themeMode == ThemeMode.dark;
+
   ThemeProvider() {
     _loadTheme();
   }
@@ -68,6 +71,15 @@ class ThemeProvider with ChangeNotifier {
       AppLogger.info('主题类型切换成功: $type');
     } catch (e, stackTrace) {
       AppLogger.error('设置主题类型失败', e, stackTrace);
+    }
+  }
+
+  /// 切换主题模式
+  void toggleTheme() {
+    if (_themeMode == ThemeMode.light) {
+      setThemeMode(ThemeMode.dark);
+    } else {
+      setThemeMode(ThemeMode.light);
     }
   }
 

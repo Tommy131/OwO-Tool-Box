@@ -64,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           localizations.translate(L18nKeys.languageSettings),
       subtitle: (localizations) =>
           localizations.translate(L18nKeys.selectAppLanguage),
-      icon: Icons.language_rounded,
+      icon: Icons.g_translate_rounded,
       builder: (onBack) => LanguageSettingsScreen(onBack: onBack),
     ),
     SettingsPageConfig(
@@ -93,7 +93,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalization.of(context);
-    final isMobile = ResponsiveBreakpoints.isMobile(context);
+    final isMobile = ResponsiveBreakpoints(context).isMobile();
 
     return Scaffold(
       appBar: isMobile
@@ -139,9 +139,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildMainSettings() {
     final localizations = AppLocalization.of(context);
-    final isMobile = ResponsiveBreakpoints.isMobile(context);
-    final isDesktop = ResponsiveBreakpoints.isDesktop(context);
-    final isTablet = ResponsiveBreakpoints.isTablet(context);
+    final responsiveBreakpoints = ResponsiveBreakpoints(context);
+    final isMobile = responsiveBreakpoints.isMobile();
+    final isDesktop = responsiveBreakpoints.isDesktop();
+    final isTablet = responsiveBreakpoints.isTablet();
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -151,13 +152,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ? 32
                 : 16),
         child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: isDesktop
+          constraints: const BoxConstraints(
+              /* maxWidth: isDesktop
                 ? 800
                 : isTablet
                     ? 600
-                    : double.infinity,
-          ),
+                    : double.infinity, */
+              ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

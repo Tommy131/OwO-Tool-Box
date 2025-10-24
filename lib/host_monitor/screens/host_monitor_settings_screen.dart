@@ -77,9 +77,10 @@ class _HostMonitorSettingsScreenState extends State<HostMonitorSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = ResponsiveBreakpoints.isMobile(context);
-    final isDesktop = ResponsiveBreakpoints.isDesktop(context);
-    final isTablet = ResponsiveBreakpoints.isTablet(context);
+    final responsiveBreakpoints = ResponsiveBreakpoints(context);
+    final isMobile = responsiveBreakpoints.isMobile();
+    final isDesktop = responsiveBreakpoints.isDesktop();
+    final isTablet = responsiveBreakpoints.isTablet();
 
     return SafeArea(
       child: Column(
