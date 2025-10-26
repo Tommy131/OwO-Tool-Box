@@ -7,7 +7,6 @@ import '../../core/i18n/localization_keys.dart';
 import '../../core/providers/theme_provider.dart';
 import '../providers/certificate_provider.dart';
 import 'certificate_management_screen.dart';
-import 'crl_manager_screen.dart';
 import 'settings_screen.dart';
 import 'openssl_config_screen.dart';
 
@@ -20,7 +19,6 @@ class SSLHomeScreen extends StatefulWidget {
 
 enum Screens {
   certificateManagementScreen,
-  crlManagerScreen,
   openSSLConfigScreen,
   settingsScreen,
 }
@@ -50,14 +48,6 @@ class _SSLHomeScreenState extends State<SSLHomeScreen> {
           color: Colors.lightGreen,
           screen: const CertificateManagementScreen(),
           screenType: Screens.certificateManagementScreen,
-        ),
-        (
-          title: () => _tr(L18nKeys.sslCertificates),
-          subtitle: () => _tr(L18nKeys.sslManageCertificates),
-          icon: Icons.content_paste_off_outlined,
-          color: Colors.deepOrange,
-          screen: const CrlManagerScreen(),
-          screenType: Screens.crlManagerScreen,
         ),
         (
           title: () => _tr(L18nKeys.sslConfig),
