@@ -16,13 +16,50 @@ class AppLocalization {
 
   /// 翻译指定的键
   String translate(String key) {
-    final languageCode = locale.languageCode;
-    final translations = LanguageConfig.getTranslations(languageCode);
+    // 使用完整的 Locale 對象獲取翻譯
+    final translations = LanguageConfig.getTranslations(locale);
     return translations[key] ?? key;
   }
 
   /// 获取当前语言的所有翻译
   Map<String, String> get currentTranslations {
-    return LanguageConfig.getTranslations(locale.languageCode);
+    return LanguageConfig.getTranslations(locale);
   }
+
+  /// 從 Locale 獲取對應的語言代碼（用於內部處理）
+  static String getLanguageCodeFromLocale(Locale locale) {
+    // 處理中文的特殊情況
+    if (locale.languageCode == 'zh') {
+      if (locale.countryCode == 'HK') {
+        return 'hk'; // 香港繁體
+      }
+      return 'zh'; // 簡體中文（默認）
+    }
+
+    // 其他語言直接返回 languageCode
+    return locale.languageCode;
+  }
+}
+
+class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalization> {
+  const AppLocalizationDelegate();
+
+  @override
+  bool isSupported(Locale locale) {
+    // 檢查是否在支援的語言列表中
+    return LanguageConfig.supportedLocales.any(
+      (supportedLocale) =>
+          supportedLocale.languageCode == locale.languageCode &&
+          (supportedLocale.countryCode == locale.countryCode ||
+              locale.countryCode == null),
+    );
+  }
+
+  @override
+  Future<AppLocalization> load(Locale locale) async {
+    return AppLocalization(locale);
+  }
+
+  @override
+  bool shouldReload(AppLocalizationDelegate old) => false;
 }

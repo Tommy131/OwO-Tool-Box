@@ -17,7 +17,7 @@ import 'core/providers/locale_provider.dart';
 import 'core/providers/matrix_rain_provider.dart';
 import 'core/providers/navigation_provider.dart';
 import 'core/providers/theme_provider.dart';
-import 'core/i18n/app_localization.dart';
+import 'core/i18n/app_localization.dart' hide AppLocalizationDelegate;
 import 'core/i18n/language_config.dart';
 import 'core/i18n/localization_delegate.dart';
 import 'screens/screen_navigation_helper.dart';

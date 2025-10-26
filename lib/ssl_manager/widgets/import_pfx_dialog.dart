@@ -120,6 +120,19 @@ class _ImportPFXDialogState extends State<ImportPFXDialog> {
         // 忽略临时文件清理错误
       }
 
+      // ========== 提取證書詳細信息 ==========
+      Map<String, String> extractedDetails = {};
+      try {
+        extractedDetails =
+            await _opensslService.extractCertificateDetails(certPath);
+        debugPrint('Extracted certificate details from PFX: $extractedDetails');
+      } catch (e) {
+        debugPrint(
+            'Warning: Failed to extract detailed certificate info from PFX: $e');
+        // 繼續執行，即使提取詳細信息失敗
+      }
+      // ========== 添加結束 ==========
+
       // 创建证书对象
       final subject = certInfo['subject'] as Map<String, String>;
       final certificate = Certificate(
@@ -142,7 +155,7 @@ class _ImportPFXDialogState extends State<ImportPFXDialog> {
           'email': subject['emailAddress'] ?? '',
           'serial': certInfo['serial'] as String? ?? '',
           'imported': 'true',
-          'importedFrom': 'PFX',
+          'importedFrom': 'PFX', // ========== 添加提取的詳細信息 ==========
         },
       );
 

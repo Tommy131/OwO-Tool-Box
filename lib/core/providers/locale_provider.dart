@@ -49,7 +49,7 @@ class LocaleProvider with ChangeNotifier {
 
   /// 设置语言
   Future<void> setLocale(Locale locale) async {
-    if (_locale?.languageCode == locale.languageCode) {
+    if (_locale == locale) {
       AppLogger.info('语言未改变，跳过设置');
       return;
     }

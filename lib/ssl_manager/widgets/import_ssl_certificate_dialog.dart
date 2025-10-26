@@ -362,6 +362,19 @@ class _ImportSSLCertificateDialogState
         chainPath: _hasChain ? _chainPathController.text : null,
       );
 
+      // ========== 提取證書詳細信息 ==========
+      Map<String, String> extractedDetails = {};
+      try {
+        extractedDetails = await _opensslService
+            .extractCertificateDetails(importResult['certPath']!);
+        debugPrint('Extracted certificate details from SSL: $extractedDetails');
+      } catch (e) {
+        debugPrint(
+            'Warning: Failed to extract detailed certificate info from SSL: $e');
+        // 繼續執行，即使提取詳細信息失敗
+      }
+      // ========== 添加結束 ==========
+
       // 创建证书对象
       final subject = _certInfo!['subject'] as Map<String, String>;
       final issuer = _certInfo!['issuer'] as Map<String, String>;
@@ -396,6 +409,7 @@ class _ImportSSLCertificateDialogState
           'imported': 'true',
           'importedFrom': 'SSL Certificate',
           if (_chainLength != null) 'chainLength': _chainLength.toString(),
+          ...extractedDetails,
         },
       );
 

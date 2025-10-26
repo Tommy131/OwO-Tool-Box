@@ -283,6 +283,18 @@ class _ImportCertificateDialogState extends State<ImportCertificateDialog> {
         await keyFile.copy(newKeyPath);
       }
 
+      // ========== 提取證書詳細信息 ==========
+      Map<String, String> extractedDetails = {};
+      try {
+        extractedDetails =
+            await _opensslService.extractCertificateDetails(newCertPath);
+        debugPrint('Extracted certificate details: $extractedDetails');
+      } catch (e) {
+        debugPrint('Warning: Failed to extract detailed certificate info: $e');
+        // 繼續執行，即使提取詳細信息失敗
+      }
+      // ========== 添加結束 ==========
+
       final subject = _certInfo!['subject'] as Map<String, String>;
       final certificate = Certificate(
         id: _uuid.v4(),
@@ -305,6 +317,7 @@ class _ImportCertificateDialogState extends State<ImportCertificateDialog> {
           'email': subject['emailAddress'] ?? '',
           'serial': _certInfo!['serial'] as String? ?? '',
           'imported': 'true',
+          ...extractedDetails,
         },
       );
 

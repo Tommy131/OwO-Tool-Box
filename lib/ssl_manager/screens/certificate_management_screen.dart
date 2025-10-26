@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
@@ -266,23 +267,94 @@ class _CertificateManagementScreenState
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(cert.name),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: details.map((d) => _DetailRow(d.$1, d.$2)).toList(),
+        title: Row(
+          children: [
+            Expanded(child: Text(cert.name)),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: cert.type == 'CA'
+                    ? Colors.blue.withOpacity(0.1)
+                    : Colors.green.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                cert.type,
+                style: TextStyle(
+                  color: cert.type == 'CA' ? Colors.blue : Colors.green,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (cert.isExpired || cert.daysUntilExpiry <= 30)
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: cert.isExpired
+                          ? Colors.red.withOpacity(0.1)
+                          : Colors.orange.withOpacity(0.1),
+                      border: Border.all(
+                        color: cert.isExpired ? Colors.red : Colors.orange,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          cert.isExpired ? Icons.error : Icons.warning,
+                          color: cert.isExpired ? Colors.red : Colors.orange,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            cert.isExpired
+                                ? _tr(L18nKeys.thisCertificateHasExpired)
+                                : '${_tr(L18nKeys.thisCertificateWillExpireIn)} ${cert.daysUntilExpiry} ${_tr(L18nKeys.days)}',
+                            style: TextStyle(
+                              color:
+                                  cert.isExpired ? Colors.red : Colors.orange,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ...details.map((d) => _DetailRow(d.$1, d.$2)),
+              ],
+            ),
           ),
         ),
         actions: [
+          // ========== 直接列出所有按鈕（推薦） ==========
           if (cert.details['fullChainPath'] != null)
             TextButton.icon(
-              onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content: Text(
-                        '${_tr(L18nKeys.certPath)}: ${cert.details['fullChainPath']}')),
-              ),
-              icon: const Icon(Icons.copy),
+              onPressed: () async {
+                await Clipboard.setData(
+                  ClipboardData(text: cert.details['fullChainPath']!),
+                );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Copied to Clipboard!'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
+              icon: const Icon(Icons.copy, size: 18),
               label: Text(_tr(L18nKeys.certCopyFullChainPath)),
             ),
           TextButton(

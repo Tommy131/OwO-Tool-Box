@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/i18n/app_localization.dart';
@@ -5,6 +7,7 @@ import '../../core/i18n/localization_keys.dart';
 import '../../core/providers/theme_provider.dart';
 import '../providers/certificate_provider.dart';
 import 'certificate_management_screen.dart';
+import 'crl_manager_screen.dart';
 import 'settings_screen.dart';
 import 'openssl_config_screen.dart';
 
@@ -17,6 +20,7 @@ class SSLHomeScreen extends StatefulWidget {
 
 enum Screens {
   certificateManagementScreen,
+  crlManagerScreen,
   openSSLConfigScreen,
   settingsScreen,
 }
@@ -46,6 +50,14 @@ class _SSLHomeScreenState extends State<SSLHomeScreen> {
           color: Colors.lightGreen,
           screen: const CertificateManagementScreen(),
           screenType: Screens.certificateManagementScreen,
+        ),
+        (
+          title: () => _tr(L18nKeys.sslCertificates),
+          subtitle: () => _tr(L18nKeys.sslManageCertificates),
+          icon: Icons.content_paste_off_outlined,
+          color: Colors.deepOrange,
+          screen: const CrlManagerScreen(),
+          screenType: Screens.crlManagerScreen,
         ),
         (
           title: () => _tr(L18nKeys.sslConfig),
@@ -107,6 +119,18 @@ class _SSLHomeScreenState extends State<SSLHomeScreen> {
   }
 
   Widget _buildWelcomeArea() {
+    if (!Platform.isWindows) {
+      return const Center(
+        child: Text(
+          'Sorry, SSL Manager supports only in Windows system.',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    }
+
     final theme = Theme.of(context);
     final certificateProvider = context.watch<CertificateProvider>();
 

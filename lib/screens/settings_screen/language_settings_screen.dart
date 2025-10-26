@@ -100,8 +100,8 @@ class LanguageSettingsScreen extends StatelessWidget {
               return _buildLanguageOption(
                 context,
                 locale,
-                LanguageConfig.getLanguageName(locale.languageCode),
-                LanguageConfig.getLanguageFlag(locale.languageCode),
+                LanguageConfig.getLanguageName(locale),
+                LanguageConfig.getLanguageFlag(locale),
                 localeProvider,
               );
             }),
@@ -119,9 +119,8 @@ class LanguageSettingsScreen extends StatelessWidget {
     LocaleProvider provider,
   ) {
     final localizations = AppLocalization.of(context);
-    final currentLanguageCode = provider.locale?.languageCode ??
-        Localizations.localeOf(context).languageCode;
-    final isSelected = currentLanguageCode == locale.languageCode;
+    final currentLocal = provider.locale ?? Localizations.localeOf(context);
+    final isSelected = currentLocal == locale;
 
     return ListTile(
       leading: Text(flag, style: const TextStyle(fontSize: 24)),
