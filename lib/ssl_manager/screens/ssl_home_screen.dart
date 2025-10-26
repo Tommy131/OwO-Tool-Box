@@ -7,6 +7,7 @@ import '../../core/i18n/localization_keys.dart';
 import '../../core/providers/theme_provider.dart';
 import '../providers/certificate_provider.dart';
 import 'certificate_management_screen.dart';
+import 'crl_management_screen.dart';
 import 'settings_screen.dart';
 import 'openssl_config_screen.dart';
 
@@ -19,6 +20,7 @@ class SSLHomeScreen extends StatefulWidget {
 
 enum Screens {
   certificateManagementScreen,
+  crlManagerScreen,
   openSSLConfigScreen,
   settingsScreen,
 }
@@ -34,32 +36,40 @@ class _SSLHomeScreenState extends State<SSLHomeScreen> {
   /// 导航数据
   List<
       ({
-        String Function() title,
-        String Function() subtitle,
+        String title,
+        String subtitle,
         IconData icon,
         Color color,
         Widget screen,
         Screens screenType,
       })> get navigationItems => [
         (
-          title: () => _tr(L18nKeys.sslCertificates),
-          subtitle: () => _tr(L18nKeys.sslManageCertificates),
+          title: _tr(L18nKeys.sslCertificates),
+          subtitle: _tr(L18nKeys.sslManageCertificates),
           icon: Icons.folder,
           color: Colors.lightGreen,
           screen: const CertificateManagementScreen(),
           screenType: Screens.certificateManagementScreen,
         ),
         (
-          title: () => _tr(L18nKeys.sslConfig),
-          subtitle: () => _tr(L18nKeys.sslOpenSSLConfiguration),
+          title: '证书吊销管理',
+          subtitle: _tr(L18nKeys.sslManageCertificates),
+          icon: Icons.content_paste_off_outlined,
+          color: Colors.lightGreen,
+          screen: const CrlManagementScreen(),
+          screenType: Screens.crlManagerScreen,
+        ),
+        (
+          title: _tr(L18nKeys.sslConfig),
+          subtitle: _tr(L18nKeys.sslOpenSSLConfiguration),
           icon: Icons.settings_applications,
           color: Colors.orange,
           screen: const OpenSSLConfigScreen(),
           screenType: Screens.openSSLConfigScreen,
         ),
         (
-          title: () => _tr(L18nKeys.settings),
-          subtitle: () => _tr(L18nKeys.sslAppSettings),
+          title: _tr(L18nKeys.settings),
+          subtitle: _tr(L18nKeys.sslAppSettings),
           icon: Icons.settings,
           color: Colors.blueGrey,
           screen: const SettingsScreen(),
@@ -78,7 +88,7 @@ class _SSLHomeScreenState extends State<SSLHomeScreen> {
       appBar: AppBar(
         title: Text((_currentScreen == null)
             ? _tr(L18nKeys.sslCertificateManager)
-            : _getNavigationItems.title()),
+            : _getNavigationItems.title),
         leading: (_currentScreen != null)
             ? IconButton(
                 icon: const Icon(Icons.arrow_back),
@@ -206,8 +216,8 @@ class _SSLHomeScreenState extends State<SSLHomeScreen> {
             children: navigationItems
                 .map(
                   (item) => _NavigationCard(
-                    title: item.title(),
-                    subtitle: item.subtitle(),
+                    title: item.title,
+                    subtitle: item.subtitle,
                     icon: item.icon,
                     color: item.color,
                     onTap: () {

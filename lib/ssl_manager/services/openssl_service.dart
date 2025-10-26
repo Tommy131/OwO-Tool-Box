@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:process_run/shell.dart';
+import 'package:process_run/shell.dart' as shell;
 import 'package:uuid/uuid.dart';
 import '../models/certificate.dart';
 import '../models/certificate_purpose.dart';
+import '../models/revoked_certificate.dart';
 
 class OpenSSLService {
   final Shell _shell = Shell();
@@ -15,6 +17,56 @@ class OpenSSLService {
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  // 初始化CA环境
+  Future<CAConfig> initializeCA(String caName, String workDir) async {
+    final caDir = Directory('$workDir/ca');
+    if (!await caDir.exists()) {
+      await caDir.create(recursive: true);
+    }
+
+    final config = CAConfig(
+      caName: caName,
+      caKeyPath: '$workDir/CA/$caName-key.pem',
+      caCertPath: '$workDir/CA/$caName-cert.pem',
+      certPath: '$workDir/SSL',
+      indexPath: '$workDir/CA/index.txt',
+      serialPath: '$workDir/CA/serial',
+      crlNumberPath: '$workDir/CA/crlnumber',
+      configPath: '$workDir/openssl.cnf',
+    );
+
+    // 创建必要的文件
+    await _createIndexFile(config.indexPath);
+    await _createSerialFile(config.serialPath);
+    await _createCRLNumberFile(config.crlNumberPath);
+
+    return config;
+  }
+
+  // 创建index.txt文件
+  Future<void> _createIndexFile(String path) async {
+    final file = File(path);
+    if (!await file.exists()) {
+      await file.writeAsString('');
+    }
+  }
+
+  // 创建serial文件
+  Future<void> _createSerialFile(String path) async {
+    final file = File(path);
+    if (!await file.exists()) {
+      await file.writeAsString('1000\n');
+    }
+  }
+
+  // 创建crlnumber文件
+  Future<void> _createCRLNumberFile(String path) async {
+    final file = File(path);
+    if (!await file.exists()) {
+      await file.writeAsString('1000\n');
     }
   }
 
@@ -969,5 +1021,142 @@ class OpenSSLService {
     }
 
     return result;
+  }
+
+  /// 吊销证书
+  Future<void> revokeCertificate(
+    CAConfig config,
+    String serialNumber,
+    String reason,
+  ) async {
+    // 查找证书文件
+    final certPath = await _findCertificateBySerial(config, serialNumber);
+
+    if (certPath == null) {
+      throw Exception('未找到序列号为 $serialNumber 的证书');
+    }
+
+    // 执行吊销命令
+    await shell.run('''
+openssl ca -config "${config.configPath}" \
+  -revoke $certPath \
+  -crl_reason $reason
+''');
+  }
+
+  /// 查找证书文件
+  Future<String?> _findCertificateBySerial(
+      CAConfig config, String serial) async {
+    final newCertsDir = Directory(config.certPath);
+
+    if (!await newCertsDir.exists()) {
+      return null;
+    }
+
+    await for (var entity in newCertsDir.list()) {
+      if (entity is File && entity.path.endsWith('.pem')) {
+        try {
+          final result =
+              await shell.run('openssl x509 -in ${entity.path} -noout -serial');
+          final certSerial =
+              result.first.stdout.toString().trim().replaceFirst('serial=', '');
+
+          if (certSerial.toUpperCase() == serial.toUpperCase()) {
+            return entity.path;
+          }
+        } catch (e) {
+          continue;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /// 生成CRL
+  Future<String> generateCRL(CAConfig config) async {
+    final crlPath = '${Directory(config.indexPath).parent.path}/crl.pem';
+
+    // 生成CRL
+    await shell
+        .run('openssl ca -config "${config.configPath}" -gencrl -out $crlPath');
+
+    // 读取CRL内容
+    return await File(crlPath).readAsString();
+  }
+
+  /// 以文本格式显示CRL
+  Future<String> displayCRL(CAConfig config) async {
+    final crlPath = '${Directory(config.indexPath).parent.path}/crl.pem';
+
+    if (!await File(crlPath).exists()) {
+      return 'CRL文件不存在，请先生成CRL';
+    }
+
+    final result = await shell.run('openssl crl -in $crlPath -noout -text');
+    return result.first.stdout.toString();
+  }
+
+  /// 解析index.txt获取吊销证书列表
+  Future<List<RevokedCertificate>> parseRevokedCertificates(
+      CAConfig config) async {
+    final indexFile = File(config.indexPath);
+
+    if (!await indexFile.exists()) {
+      return [];
+    }
+
+    final lines = await indexFile.readAsLines();
+    final revokedCerts = <RevokedCertificate>[];
+
+    for (var line in lines) {
+      if (line.trim().isEmpty) continue;
+
+      final parts = line.split('\t');
+      if (parts.length >= 6 && parts[0] == 'R') {
+        // R状态表示已吊销
+        final serial = parts[3];
+        final subject = parts[5];
+        final revocationInfo = parts[2].split(',');
+
+        DateTime revocationDate = DateTime.now();
+        String reason = '未知';
+
+        if (revocationInfo.isNotEmpty) {
+          try {
+            final dateStr = revocationInfo[0];
+            revocationDate = _parseOpenSSLDate(dateStr);
+          } catch (e) {
+            // 解析失败使用当前时间
+          }
+        }
+
+        if (revocationInfo.length > 1) {
+          reason = _parseRevocationReason(revocationInfo[1]);
+        }
+
+        revokedCerts.add(RevokedCertificate(
+          serialNumber: serial,
+          revocationDate: revocationDate,
+          reason: reason,
+          issuer: subject,
+        ));
+      }
+    }
+
+    return revokedCerts;
+  }
+
+  String _parseRevocationReason(String reasonCode) {
+    const reasonMap = {
+      'keyCompromise': '密钥泄露',
+      'CACompromise': 'CA泄露',
+      'affiliationChanged': '违反政策',
+      'superseded': '替换证书',
+      'cessationOfOperation': '停止使用',
+      'certificateHold': '证书暂停',
+      'unspecified': '其他',
+    };
+    return reasonMap[reasonCode] ?? '其他';
   }
 }
