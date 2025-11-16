@@ -15,6 +15,7 @@
  * @Telegram     : https://t.me/HanskiJay
  * @GitHub       : https://github.com/Tommy131
  */
+
 class MetricsHistoryModel {
   final List<MetricPoint> cpuHistory;
   final List<MetricPoint> memoryHistory;

@@ -1,6 +1,6 @@
 {
-    "name": "owo_system_tools",
-    "short_name": "owo_system_tools",
+    "name": "owo_tool_box",
+    "short_name": "owo_tool_box",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#eeeeee",

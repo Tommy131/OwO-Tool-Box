@@ -1,4 +1,4 @@
-# 🛠️ OwO! System Tools
+# 🛠️ OwO! Tool Box
 
 Flutter 构建的现代化跨平台应用模板，支持响应式布局、多语言切换与桌面窗口管理。适用于 Windows、macOS、Linux、Android 和 iOS。
 
@@ -36,7 +36,7 @@ ResponsiveBuilder(
 通过 `bitsdojo_window` 实现：
 
 - 固定初始窗口尺寸（如 1200x800）
-- 设置窗口标题 `OwO! System Tools`
+- 设置窗口标题 `OwO! Tool Box`
 - 控制最小尺寸
 - 居中显示窗口
 
@@ -47,7 +47,7 @@ if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       ..minSize = Size(800, 600)
       ..size = Size(1200, 800)
       ..alignment = Alignment.center
-      ..title = 'OwO! System Tools'
+      ..title = 'OwO! Tool Box'
       ..show();
   });
 }
@@ -151,4 +151,4 @@ flutter run -d windows   # 也可以替换为 macos, linux, android, ios 等平�
 
 ## 📜 许可证
 
-MIT License © OwO! System Tools Team
+MIT License © OwO! Tool Box Team

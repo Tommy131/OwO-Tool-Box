@@ -16,7 +16,7 @@
  * @GitHub       : https://github.com/Tommy131
  */
 import 'dart:convert';
-import 'package:owo_system_tools/core/utils/logger.dart';
+import 'package:owo_tool_box/core/utils/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/host_model.dart';

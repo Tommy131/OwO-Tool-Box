@@ -1,5 +1,5 @@
 # 🎯 **项目基本配置**：定义应用名称、版本、发布设置和SDK环境要求。
-name: owo_system_tools
+name: owo_tool_box
 description: A multifunctional system tools app based of flutter.
 publish_to: 'none'  # 私有包，不发布到pub.dev
 

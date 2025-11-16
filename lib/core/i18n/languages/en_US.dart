@@ -7,7 +7,7 @@ import '../localization_keys.dart';
 class EnUS {
   static const Map<String, String> translations = {
     // ========== General ==========
-    L18nKeys.appTitle: 'OwO! System Tools',
+    L18nKeys.appTitle: 'OwO! Tool Box',
     L18nKeys.ok: 'OK',
     L18nKeys.cancel: 'Cancel',
 
@@ -21,7 +21,8 @@ class EnUS {
 
     // ========== Welcome Page ==========
     L18nKeys.welcome: 'Welcome',
-    L18nKeys.welcomeMessage: 'A fully-featured Flutter application framework',
+    L18nKeys.welcomeMessage:
+        'A powerful cross-platform system tools suite supporting host monitoring, performance analysis and more',
     L18nKeys.welcomeDescription:
         'Supports multi-platform adaptive layouts, perfectly adapted for mobile, tablet, and desktop devices',
     L18nKeys.exploreFeatures: 'Explore Features',
@@ -110,9 +111,8 @@ class EnUS {
 
     // ========== App Info ==========
     L18nKeys.appInfo: 'App Info',
-    L18nKeys.appName: 'OwO! System Tools',
-    L18nKeys.appDescription:
-        'A powerful cross-platform system tools suite supporting host monitoring, performance analysis and more',
+    L18nKeys.appName: 'App Name',
+    L18nKeys.appDescription: 'App Description',
     L18nKeys.appVersion: 'Version',
     L18nKeys.developerInfo: 'Developer Info',
     L18nKeys.developerName: 'Developer',

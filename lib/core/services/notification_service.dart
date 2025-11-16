@@ -1,3 +1,20 @@
+/*
+ *        _____   _          __  _____   _____   _       _____   _____
+ *      /  _  \ | |        / / /  _  \ |  _  \ | |     /  _  \ /  ___|
+ *      | | | | | |  __   / /  | | | | | |_| | | |     | | | | | |
+ *      | | | | | | /  | / /   | | | | |  _  { | |     | | | | | |   _
+ *      | |_| | | |/   |/ /    | |_| | | |_| | | |___  | |_| | | |_| |
+ *      \_____/ |___/|___/     \_____/ |_____/ |_____| \_____/ \_____/
+ *
+ *  Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
+ * @Date         : 2025-10-22
+ * @Author       : HanskiJay
+ * @LastEditors  : HanskiJay
+ * @LastEditTime : 2025-10-22
+ * @E-Mail       : support@owoblog.com
+ * @Telegram     : https://t.me/HanskiJay
+ * @GitHub       : https://github.com/Tommy131
+ */
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -53,7 +70,7 @@ class NotificationService {
   static const String _iosActionCategoryId = 'actionCategory';
 
   /// Windows 应用配置
-  static const String _windowsAppName = 'OwO! System Tools';
+  static const String _windowsAppName = 'OwO! Tool Box';
   static const String _windowsAppUserModelId = 'com.owoblog.owo_system_tool';
   static const String _windowsGuid = 'a8c22b2c-94e3-4b5d-9a84-3b3e3e3e3e3e';
   static const String _windowsIconPath = '../../assets/icons/app_icon.png';

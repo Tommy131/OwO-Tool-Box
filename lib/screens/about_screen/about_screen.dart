@@ -1,9 +1,26 @@
+/*
+ *        _____   _          __  _____   _____   _       _____   _____
+ *      /  _  \ | |        / / /  _  \ |  _  \ | |     /  _  \ /  ___|
+ *      | | | | | |  __   / /  | | | | | |_| | | |     | | | | | |
+ *      | | | | | | /  | / /   | | | | |  _  { | |     | | | | | |   _
+ *      | |_| | | |/   |/ /    | |_| | | |_| | | |___  | |_| | | |_| |
+ *      \_____/ |___/|___/     \_____/ |_____/ |_____| \_____/ \_____/
+ *
+ *  Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
+ * @Date         : 2025-10-22
+ * @Author       : HanskiJay
+ * @LastEditors  : HanskiJay
+ * @LastEditTime : 2025-10-22
+ * @E-Mail       : support@owoblog.com
+ * @Telegram     : https://t.me/HanskiJay
+ * @GitHub       : https://github.com/Tommy131
+ */
 // ============================================================================
 // 关于页面内容
 // ============================================================================
 
 import 'package:flutter/material.dart';
-import 'package:owo_system_tools/screens/about_screen/widgets/cards/copyright_card.dart';
+import 'package:owo_tool_box/screens/about_screen/widgets/cards/copyright_card.dart';
 
 import '../../core/layouts/responsive_break_points.dart';
 import '../../core/i18n/app_localization.dart';

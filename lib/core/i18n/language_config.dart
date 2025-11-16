@@ -1,14 +1,31 @@
+/*
+ *        _____   _          __  _____   _____   _       _____   _____
+ *      /  _  \ | |        / / /  _  \ |  _  \ | |     /  _  \ /  ___|
+ *      | | | | | |  __   / /  | | | | | |_| | | |     | | | | | |
+ *      | | | | | | /  | / /   | | | | |  _  { | |     | | | | | |   _
+ *      | |_| | | |/   |/ /    | |_| | | |_| | | |___  | |_| | | |_| |
+ *      \_____/ |___/|___/     \_____/ |_____/ |_____| \_____/ \_____/
+ *
+ *  Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
+ * @Date         : 2025-10-22
+ * @Author       : HanskiJay
+ * @LastEditors  : HanskiJay
+ * @LastEditTime : 2025-10-22
+ * @E-Mail       : support@owoblog.com
+ * @Telegram     : https://t.me/HanskiJay
+ * @GitHub       : https://github.com/Tommy131
+ */
 // ============================================================================
 // 语言配置管理
 // ============================================================================
 
 import 'package:flutter/material.dart';
-import 'languages/es_ES.dart';
-import 'languages/fr_FR.dart';
+// import 'languages/es_ES.dart';
+// import 'languages/fr_FR.dart';
 import 'languages/zh_CN.dart';
 import 'languages/en_US.dart';
 import 'languages/de_DE.dart';
-import 'languages/ja_JP.dart';
+// import 'languages/ja_JP.dart';
 import 'languages/zh_HK.dart';
 
 class LanguageConfig {
@@ -18,9 +35,9 @@ class LanguageConfig {
     'hk',
     'en',
     'de',
-    'ja',
-    'fr',
-    'es',
+    // 'ja',
+    // 'fr',
+    // 'es',
   ];
 
   // 支持的Locale列表
@@ -29,9 +46,9 @@ class LanguageConfig {
     Locale('zh', 'HK'),
     Locale('en', 'US'),
     Locale('de', 'DE'),
-    Locale('ja', 'JP'),
-    Locale('fr', 'FR'),
-    Locale('es', 'ES'),
+    // Locale('ja', 'JP'),
+    // Locale('fr', 'FR'),
+    // Locale('es', 'ES'),
   ];
 
   // 语言显示名称映射
@@ -61,12 +78,12 @@ class LanguageConfig {
         return EnUS.translations;
       case 'de':
         return DeDE.translations;
-      case 'ja':
-        return JaJP.translations;
-      case 'fr':
-        return FrFR.translations;
-      case 'es':
-        return EsES.translations;
+      // case 'ja':
+      //   return JaJP.translations;
+      // case 'fr':
+      //   return FrFR.translations;
+      // case 'es':
+      //   return EsES.translations;
       default:
         return ZhCN.translations;
     }
@@ -83,12 +100,12 @@ class LanguageConfig {
         return EnUS.translations;
       case 'de':
         return DeDE.translations;
-      case 'ja':
-        return JaJP.translations;
-      case 'fr':
-        return FrFR.translations;
-      case 'es':
-        return EsES.translations;
+      // case 'ja':
+      //   return JaJP.translations;
+      // case 'fr':
+      //   return FrFR.translations;
+      // case 'es':
+      //   return EsES.translations;
       default:
         return ZhCN.translations;
     }
@@ -105,12 +122,12 @@ class LanguageConfig {
         return const Locale('en', 'US');
       case 'de':
         return const Locale('de', 'DE');
-      case 'ja':
-        return const Locale('ja', 'JP');
-      case 'fr':
-        return const Locale('fr', 'FR');
-      case 'es':
-        return const Locale('es', 'ES');
+      // case 'ja':
+      //   return const Locale('ja', 'JP');
+      // case 'fr':
+      //   return const Locale('fr', 'FR');
+      // case 'es':
+      //   return const Locale('es', 'ES');
       default:
         return const Locale('zh', 'CN');
     }

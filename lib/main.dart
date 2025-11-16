@@ -1,3 +1,20 @@
+/*
+ *        _____   _          __  _____   _____   _       _____   _____
+ *      /  _  \ | |        / / /  _  \ |  _  \ | |     /  _  \ /  ___|
+ *      | | | | | |  __   / /  | | | | | |_| | | |     | | | | | |
+ *      | | | | | | /  | / /   | | | | |  _  { | |     | | | | | |   _
+ *      | |_| | | |/   |/ /    | |_| | | |_| | | |___  | |_| | | |_| |
+ *      \_____/ |___/|___/     \_____/ |_____/ |_____| \_____/ \_____/
+ *
+ *  Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
+ * @Date         : 2025-10-22
+ * @Author       : HanskiJay
+ * @LastEditors  : HanskiJay
+ * @LastEditTime : 2025-10-22
+ * @E-Mail       : support@owoblog.com
+ * @Telegram     : https://t.me/HanskiJay
+ * @GitHub       : https://github.com/Tommy131
+ */
 // ============================================================================
 // 应用入口
 // ============================================================================
@@ -28,7 +45,7 @@ void main() async {
         appWindow.minSize = minSize;
         appWindow.size = initialSize;
         appWindow.alignment = Alignment.center;
-        appWindow.title = 'OwO! System Tools';
+        appWindow.title = 'OwO! Tool Box';
         appWindow.show();
 
         AppLogger.info('桌面窗口初始化完成 - 自定义窗口控制');

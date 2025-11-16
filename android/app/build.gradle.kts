@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.owoblog.owo_system_tools"
+    namespace = "com.owoblog.owo_tool_box"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.owoblog.owo_system_tools"
+        applicationId = "com.owoblog.owo_tool_box"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

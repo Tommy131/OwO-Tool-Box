@@ -7,7 +7,7 @@ import '../localization_keys.dart';
 class ZhHK {
   static const Map<String, String> translations = {
     // ========== 一般 ==========
-    L18nKeys.appTitle: 'OwO! 系統工具',
+    L18nKeys.appTitle: 'OwO! Tool Box',
     L18nKeys.ok: '確定',
     L18nKeys.cancel: '取消',
 
@@ -21,7 +21,7 @@ class ZhHK {
 
     // ========== 歡迎頁面 ==========
     L18nKeys.welcome: '歡迎',
-    L18nKeys.welcomeMessage: '一個功能齊全嘅Flutter應用程式框架',
+    L18nKeys.welcomeMessage: '一款功能強大嘅跨平台系統工具套件，支援主機監控、效能分析等',
     L18nKeys.welcomeDescription: '支援跨平台自適應佈局，完美適配手機、平板同電腦',
     L18nKeys.exploreFeatures: '探索功能',
 
@@ -101,8 +101,8 @@ class ZhHK {
 
     // ========== 應用程式資訊 ==========
     L18nKeys.appInfo: '應用程式資訊',
-    L18nKeys.appName: 'OwO! 系統工具',
-    L18nKeys.appDescription: '一款功能強大嘅跨平台系統工具套件，支援主機監控、效能分析等',
+    L18nKeys.appName: '應用名稱',
+    L18nKeys.appDescription: '應用描述',
     L18nKeys.appVersion: '版本',
     L18nKeys.developerInfo: '開發者資訊',
     L18nKeys.developerName: '開發者',

@@ -7,7 +7,7 @@ import '../localization_keys.dart';
 class DeDE {
   static const Map<String, String> translations = {
     // ========== Allgemein ==========
-    L18nKeys.appTitle: 'OwO! Systemwerkzeuge',
+    L18nKeys.appTitle: 'OwO! Tool Box',
     L18nKeys.ok: 'OK',
     L18nKeys.cancel: 'Abbrechen',
 
@@ -21,7 +21,8 @@ class DeDE {
 
     // ========== Willkommensseite ==========
     L18nKeys.welcome: 'Willkommen',
-    L18nKeys.welcomeMessage: 'Ein vollständiges Flutter-Anwendungs-Framework',
+    L18nKeys.welcomeMessage:
+        'Eine leistungsstarke plattformübergreifende Systemwerkzeug-Suite mit Host-Überwachung, Leistungsanalyse und mehr',
     L18nKeys.welcomeDescription:
         'Unterstützt plattformübergreifende adaptive Layouts, perfekt angepasst für mobile Geräte, Tablets und Desktop-Computer',
     L18nKeys.exploreFeatures: 'Funktionen erkunden',
@@ -112,9 +113,8 @@ class DeDE {
 
     // ========== App-Informationen ==========
     L18nKeys.appInfo: 'App-Informationen',
-    L18nKeys.appName: 'OwO! Systemwerkzeuge',
-    L18nKeys.appDescription:
-        'Eine leistungsstarke plattformübergreifende Systemwerkzeug-Suite mit Host-Überwachung, Leistungsanalyse und mehr',
+    L18nKeys.appName: 'App Name',
+    L18nKeys.appDescription: 'App Beschreibung',
     L18nKeys.appVersion: 'Version',
     L18nKeys.developerInfo: 'Entwicklerinformationen',
     L18nKeys.developerName: 'Entwickler',

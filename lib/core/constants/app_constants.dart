@@ -1,15 +1,27 @@
-// ============================================================================
-// 应用常量配置
-// ============================================================================
-
+/*
+ *        _____   _          __  _____   _____   _       _____   _____
+ *      /  _  \ | |        / / /  _  \ |  _  \ | |     /  _  \ /  ___|
+ *      | | | | | |  __   / /  | | | | | |_| | | |     | | | | | |
+ *      | | | | | | /  | / /   | | | | |  _  { | |     | | | | | |   _
+ *      | |_| | | |/   |/ /    | |_| | | |_| | | |___  | |_| | | |_| |
+ *      \_____/ |___/|___/     \_____/ |_____/ |_____| \_____/ \_____/
+ *
+ *  Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
+ * @Date         : 2025-10-22
+ * @Author       : HanskiJay
+ * @LastEditors  : HanskiJay
+ * @LastEditTime : 2025-10-22
+ * @E-Mail       : support@owoblog.com
+ * @Telegram     : https://t.me/HanskiJay
+ * @GitHub       : https://github.com/Tommy131
+ */
 class AppConstants {
   // 私有构造函数，防止实例化
   AppConstants._();
 
   // ========== 应用信息 ==========
-  static const String appName = 'OwO! System Tools';
+  static const String appName = 'OwO! Tool Box';
   static const String appVersion = '1.0.0';
-  static const String appDescription = 'A multifunctional System Tools';
 
   // ========== 开发者信息 ==========
   static const String developerName = 'HanskiJay';
