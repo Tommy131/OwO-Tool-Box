@@ -24,8 +24,6 @@ import 'dart:io';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 
-import '../../i18n/app_localization.dart';
-
 class WindowButtons extends StatefulWidget {
   const WindowButtons({super.key});
 
@@ -69,13 +67,11 @@ class _WindowButtonsState extends State<WindowButtons> {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalization.of(context);
-
     final buttonColors = WindowButtonColors(
       iconNormal: Theme.of(context).colorScheme.onSurface,
       iconMouseOver: Theme.of(context).colorScheme.onPrimary,
       iconMouseDown: Theme.of(context).colorScheme.onPrimary,
-      mouseOver: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+      mouseOver: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
       mouseDown: Theme.of(context).colorScheme.primary,
     );
 
@@ -90,7 +86,7 @@ class _WindowButtonsState extends State<WindowButtons> {
     return Row(
       children: [
         Tooltip(
-          message: localizations.translate('minimize'),
+          message: 'Minimize',
           waitDuration: const Duration(milliseconds: 500),
           preferBelow: false,
           textStyle: const TextStyle(
@@ -106,9 +102,7 @@ class _WindowButtonsState extends State<WindowButtons> {
           child: MinimizeWindowButton(colors: buttonColors),
         ),
         Tooltip(
-          message: isMaximized
-              ? localizations.translate('restore')
-              : localizations.translate('maximize'),
+          message: isMaximized ? 'Restore' : 'Maximize',
           waitDuration: const Duration(milliseconds: 500),
           preferBelow: false,
           textStyle: const TextStyle(
@@ -124,7 +118,7 @@ class _WindowButtonsState extends State<WindowButtons> {
           child: MaximizeWindowButton(colors: buttonColors),
         ),
         Tooltip(
-          message: localizations.translate('close'),
+          message: 'Close',
           waitDuration: const Duration(milliseconds: 500),
           preferBelow: false,
           textStyle: const TextStyle(

@@ -22,7 +22,7 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 
-import '../buttons/window_buttons.dart';
+import 'window_buttons.dart';
 
 class CustomTitleBar extends StatelessWidget {
   final String title;

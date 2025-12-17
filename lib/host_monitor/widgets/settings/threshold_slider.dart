@@ -51,7 +51,7 @@ class ThresholdSlider extends StatelessWidget {
             activeTrackColor: theme.colorScheme.primary,
             inactiveTrackColor: Colors.white24,
             thumbColor: theme.colorScheme.primary,
-            overlayColor: theme.colorScheme.primary.withOpacity(0.3),
+            overlayColor: theme.colorScheme.primary.withValues(alpha: 0.3),
           ),
           child: Slider(
             value: value,

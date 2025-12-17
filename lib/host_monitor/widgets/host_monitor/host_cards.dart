@@ -81,7 +81,7 @@ class _HostCardsState extends State<HostCards> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.05),
+            color: theme.shadowColor.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -122,7 +122,8 @@ class _HostCardsState extends State<HostCards> {
                           Icon(
                             Icons.location_on_rounded,
                             size: 14,
-                            color: theme.colorScheme.onSurface.withOpacity(0.5),
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.5),
                           ),
                           const SizedBox(width: 4),
                           Expanded(
@@ -130,7 +131,7 @@ class _HostCardsState extends State<HostCards> {
                               _getDisplayAddress(),
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.onSurface
-                                    .withOpacity(0.6),
+                                    .withValues(alpha: 0.6),
                                 fontFamily: _isIpVisible ? 'monospace' : null,
                               ),
                               overflow: TextOverflow.ellipsis,
@@ -145,8 +146,8 @@ class _HostCardsState extends State<HostCards> {
                           child: Text(
                             widget.geoInfo!.fullLocation,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color:
-                                  theme.colorScheme.onSurface.withOpacity(0.5),
+                              color: theme.colorScheme.onSurface
+                                  .withValues(alpha: 0.5),
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -214,7 +215,7 @@ class _HostCardsState extends State<HostCards> {
                     const SizedBox(width: 4),
                     Icon(
                       Icons.chevron_right_rounded,
-                      color: theme.colorScheme.onSurface.withOpacity(0.4),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                     ),
                   ],
                 ),
@@ -235,7 +236,7 @@ class _HostCardsState extends State<HostCards> {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.4),
+            color: color.withValues(alpha: 0.4),
             blurRadius: 4,
             spreadRadius: 1,
           )
@@ -250,9 +251,9 @@ class _HostCardsState extends State<HostCards> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         text,
@@ -282,7 +283,7 @@ class _HostCardsState extends State<HostCards> {
             child: CircularProgressIndicator(
               strokeWidth: 1.5,
               valueColor: AlwaysStoppedAnimation(
-                theme.colorScheme.onSurface.withOpacity(0.4),
+                theme.colorScheme.onSurface.withValues(alpha: 0.4),
               ),
             ),
           ),
@@ -304,7 +305,7 @@ class _HostCardsState extends State<HostCards> {
         icon: Icons.public_rounded,
         bgColor: theme.colorScheme.surfaceContainerHighest,
         borderColor: theme.dividerColor,
-        iconColor: theme.colorScheme.onSurface.withOpacity(0.6),
+        iconColor: theme.colorScheme.onSurface.withValues(alpha: 0.6),
       );
     }
 

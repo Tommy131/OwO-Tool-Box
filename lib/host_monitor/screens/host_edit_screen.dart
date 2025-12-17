@@ -259,7 +259,10 @@ class _HostEditScreenState extends State<HostEditScreen> {
             suffixIcon: IconButton(
               icon: Icon(
                 _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.6),
               ),
               onPressed: () =>
                   setState(() => _isPasswordVisible = !_isPasswordVisible),
@@ -289,8 +292,10 @@ class _HostEditScreenState extends State<HostEditScreen> {
             _tr('required_field_note'),
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.4),
                 ),
           ),
         ],
@@ -309,8 +314,8 @@ class _HostEditScreenState extends State<HostEditScreen> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            colorScheme.primary.withOpacity(0.1),
-            colorScheme.surface.withOpacity(0),
+            colorScheme.primary.withValues(alpha: 0.1),
+            colorScheme.surface.withValues(alpha: 0),
           ],
         ),
       ),
@@ -355,7 +360,7 @@ class _HostEditScreenState extends State<HostEditScreen> {
         color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: colorScheme.outline.withOpacity(0.5),
+          color: colorScheme.outline.withValues(alpha: 0.5),
           width: 1,
         ),
       ),
@@ -364,11 +369,11 @@ class _HostEditScreenState extends State<HostEditScreen> {
         decoration: InputDecoration(
           labelText: '$label *',
           labelStyle: TextStyle(
-            color: colorScheme.onSurface.withOpacity(0.7),
+            color: colorScheme.onSurface.withValues(alpha: 0.7),
           ),
           hintText: hint,
           hintStyle: TextStyle(
-            color: colorScheme.onSurface.withOpacity(0.3),
+            color: colorScheme.onSurface.withValues(alpha: 0.3),
           ),
           prefixIcon: Icon(icon, color: colorScheme.primary),
           suffixIcon: suffixIcon,
@@ -418,7 +423,7 @@ class _HostEditScreenState extends State<HostEditScreen> {
                 backgroundColor: colorScheme.primary,
                 foregroundColor: colorScheme.onPrimary,
                 elevation: 4,
-                shadowColor: colorScheme.primary.withOpacity(0.3),
+                shadowColor: colorScheme.primary.withValues(alpha: 0.3),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -448,7 +453,7 @@ class _HostEditScreenState extends State<HostEditScreen> {
               label: Text(label),
               style: OutlinedButton.styleFrom(
                 side: BorderSide(
-                  color: colorScheme.primary.withOpacity(0.7),
+                  color: colorScheme.primary.withValues(alpha: 0.7),
                   width: 2,
                 ),
                 shape: RoundedRectangleBorder(

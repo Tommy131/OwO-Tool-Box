@@ -322,7 +322,7 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: loading
           ? BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             )
           : null,
@@ -379,7 +379,7 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.red.withOpacity(0.4),
+            color: Colors.red.withValues(alpha: 0.4),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -438,7 +438,7 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
           Text(
             _tr('loading_host_list'),
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],
@@ -477,7 +477,7 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
             child: Icon(
               Icons.computer_outlined,
               size: 80,
-              color: theme.colorScheme.onSurface.withOpacity(0.3),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
             ),
           ),
           const SizedBox(height: 24),
@@ -485,14 +485,14 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
             _tr('no_saved_hosts'),
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
           const SizedBox(height: 12),
           Text(
             _tr('click_to_add_first_host'),
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.5),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             ),
           ),
           const SizedBox(height: 32),
@@ -524,9 +524,9 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.2), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
       ),
       child: Row(
         children: [
@@ -570,7 +570,7 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.05),
+            color: theme.shadowColor.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -666,7 +666,7 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ],
@@ -716,10 +716,12 @@ class _HostMonitorScreenState extends State<HostMonitorScreen> {
             if (confirm != true) return;
 
             try {
-              await context
-                  .read<HostMonitorProvider>()
-                  .storageService!
-                  .deleteHost(host.id);
+              if (mounted) {
+                await context
+                    .read<HostMonitorProvider>()
+                    .storageService!
+                    .deleteHost(host.id);
+              }
               AppLogger.debug(
                   '[HostEditScreen] ${_tr('host_deleted')}: ${host.name}');
 

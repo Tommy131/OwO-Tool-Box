@@ -38,7 +38,8 @@ class CustomDialogs {
             color: ScreenTheme.cardColor,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-                color: ScreenTheme.primaryColor.withOpacity(0.3), width: 1),
+                color: ScreenTheme.primaryColor.withValues(alpha: 0.3),
+                width: 1),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -82,7 +83,7 @@ class CustomDialogs {
               color: (isDestructive
                       ? ScreenTheme.accentColor
                       : ScreenTheme.primaryColor)
-                  .withOpacity(0.5),
+                  .withValues(alpha: 0.5),
               width: 1.5,
             ),
           ),
@@ -96,7 +97,7 @@ class CustomDialogs {
                   color: (isDestructive
                           ? ScreenTheme.accentColor
                           : ScreenTheme.primaryColor)
-                      .withOpacity(0.2),
+                      .withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -118,7 +119,7 @@ class CustomDialogs {
                 content,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 14,
                     height: 1.5),
               ),
@@ -130,7 +131,8 @@ class CustomDialogs {
                       onPressed: () => Navigator.pop(context, false),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(
-                            color: ScreenTheme.primaryColor.withOpacity(0.5)),
+                            color: ScreenTheme.primaryColor
+                                .withValues(alpha: 0.5)),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
@@ -148,7 +150,7 @@ class CustomDialogs {
                         gradient: isDestructive
                             ? LinearGradient(colors: [
                                 ScreenTheme.accentColor,
-                                ScreenTheme.accentColor.withOpacity(0.8)
+                                ScreenTheme.accentColor.withValues(alpha: 0.8)
                               ])
                             : ScreenTheme.primaryGradient,
                         borderRadius: BorderRadius.circular(10),
@@ -194,7 +196,8 @@ class CustomDialogs {
           decoration: BoxDecoration(
             color: ScreenTheme.cardColor,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: iconColor.withOpacity(0.5), width: 1.5),
+            border:
+                Border.all(color: iconColor.withValues(alpha: 0.5), width: 1.5),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -203,7 +206,8 @@ class CustomDialogs {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                    color: iconColor.withOpacity(0.2), shape: BoxShape.circle),
+                    color: iconColor.withValues(alpha: 0.2),
+                    shape: BoxShape.circle),
                 child: Icon(icon, color: iconColor, size: 32),
               ),
               const SizedBox(height: 20),
@@ -217,7 +221,7 @@ class CustomDialogs {
                 content,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 14,
                     height: 1.5),
               ),
@@ -264,12 +268,12 @@ class CustomDialogs {
             color: ScreenTheme.cardColor,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Colors.orange.withOpacity(0.5),
+              color: Colors.orange.withValues(alpha: 0.5),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.orange.withOpacity(0.3),
+                color: Colors.orange.withValues(alpha: 0.3),
                 blurRadius: 30,
                 spreadRadius: 5,
               ),
@@ -282,7 +286,7 @@ class CustomDialogs {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.2),
+                  color: Colors.orange.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -306,7 +310,7 @@ class CustomDialogs {
                     .replaceAll('{hostName}', host.name),
                 textAlign: TextAlign.left,
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 14,
                   height: 1.5,
                 ),
@@ -319,7 +323,8 @@ class CustomDialogs {
                       onPressed: () => Navigator.pop(context),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(
-                          color: ScreenTheme.primaryColor.withOpacity(0.5),
+                          color:
+                              ScreenTheme.primaryColor.withValues(alpha: 0.5),
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
@@ -380,12 +385,12 @@ class CustomDialogs {
             color: ScreenTheme.cardColor,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: ScreenTheme.accentColor.withOpacity(0.5),
+              color: ScreenTheme.accentColor.withValues(alpha: 0.5),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: ScreenTheme.accentColor.withOpacity(0.3),
+                color: ScreenTheme.accentColor.withValues(alpha: 0.3),
                 blurRadius: 30,
                 spreadRadius: 5,
               ),
@@ -398,7 +403,7 @@ class CustomDialogs {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: ScreenTheme.accentColor.withOpacity(0.2),
+                  color: ScreenTheme.accentColor.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -422,7 +427,7 @@ class CustomDialogs {
                     .replaceAll('{hostName}', host.name),
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 14,
                   height: 1.5,
                 ),
@@ -435,7 +440,8 @@ class CustomDialogs {
                       onPressed: () => Navigator.pop(context),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(
-                          color: ScreenTheme.primaryColor.withOpacity(0.5),
+                          color:
+                              ScreenTheme.primaryColor.withValues(alpha: 0.5),
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(

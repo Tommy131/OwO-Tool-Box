@@ -22,11 +22,11 @@
 import 'package:flutter/material.dart';
 // import 'languages/es_ES.dart';
 // import 'languages/fr_FR.dart';
-import 'languages/zh_CN.dart';
-import 'languages/en_US.dart';
-import 'languages/de_DE.dart';
+import 'languages/zh_cn.dart';
+import 'languages/en_us.dart';
+import 'languages/de_de.dart';
 // import 'languages/ja_JP.dart';
-import 'languages/zh_HK.dart';
+import 'languages/zh_hk.dart';
 
 class LanguageConfig {
   // 支持的语言列表

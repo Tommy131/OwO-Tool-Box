@@ -77,7 +77,7 @@ class MetricsChart extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: lineColor.withOpacity(0.2),
+                      color: lineColor.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: lineColor, width: 1),
                     ),
@@ -126,7 +126,7 @@ class MetricsChart extends StatelessWidget {
                   child: Text(
                     '等待数据...',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                 ),
@@ -225,7 +225,7 @@ class MetricsChart extends StatelessWidget {
         horizontalInterval: interval,
         getDrawingHorizontalLine: (value) {
           return FlLine(
-            color: colorScheme.onSurface.withOpacity(0.1),
+            color: colorScheme.onSurface.withValues(alpha: 0.1),
             strokeWidth: 1,
           );
         },
@@ -255,7 +255,7 @@ class MetricsChart extends StatelessWidget {
               return Text(
                 '$label${data.displayUnit}',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurface.withOpacity(0.6),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
                   fontSize: 10,
                 ),
                 textAlign: TextAlign.right,
@@ -283,8 +283,8 @@ class MetricsChart extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                gradientStartColor.withOpacity(0.3),
-                gradientEndColor.withOpacity(0.0),
+                gradientStartColor.withValues(alpha: 0.3),
+                gradientEndColor.withValues(alpha: 0.0),
               ],
             ),
           ),

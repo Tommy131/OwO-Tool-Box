@@ -139,7 +139,7 @@ abstract class BaseTheme {
         onError: Colors.white,
         surfaceContainerHighest:
             isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100,
-        outline: colors.primary.withOpacity(isDark ? 0.4 : 0.3),
+        outline: colors.primary.withValues(alpha: isDark ? 0.4 : 0.3),
       ),
 
       scaffoldBackgroundColor: colors.background ?? defaultBackground,
@@ -160,7 +160,7 @@ abstract class BaseTheme {
       listTileTheme: _buildListTileTheme(colors, isDark),
       iconTheme: IconThemeData(color: colors.primary),
       dividerTheme: DividerThemeData(
-        color: colors.primary.withOpacity(isDark ? 0.3 : 0.2),
+        color: colors.primary.withValues(alpha: isDark ? 0.3 : 0.2),
         thickness: 1,
       ),
       textTheme: _buildTextTheme(colors, isDark),
@@ -186,7 +186,7 @@ abstract class BaseTheme {
     final Color cardBg = colors.cardBackground ??
         (isDark
             ? defaultCardBg
-            : colors.primary.withOpacity(0.03)); // 浅色模式使用主题色的淡色背景
+            : colors.primary.withValues(alpha: 0.03)); // 浅色模式使用主题色的淡色背景
 
     return CardThemeData(
       elevation: styles.cardElevation,
@@ -195,13 +195,13 @@ abstract class BaseTheme {
         borderRadius: BorderRadius.circular(styles.cardBorderRadius),
         side: styles.showCardBorder
             ? BorderSide(
-                color: colors.primary.withOpacity(isDark ? 0.4 : 0.3),
+                color: colors.primary.withValues(alpha: isDark ? 0.4 : 0.3),
                 width: 1.5,
               )
             : BorderSide.none,
       ),
       shadowColor:
-          styles.showGlowEffect ? colors.primary.withOpacity(0.5) : null,
+          styles.showGlowEffect ? colors.primary.withValues(alpha: 0.5) : null,
     );
   }
 
@@ -217,7 +217,7 @@ abstract class BaseTheme {
       backgroundColor: isDark
           ? (colors.cardBackground ?? const Color(0xFF1E1E1E))
           : (colors.surface ??
-              colors.primary.withOpacity(0.05)), // 浅色模式使用主题色淡背景
+              colors.primary.withValues(alpha: 0.05)), // 浅色模式使用主题色淡背景
       foregroundColor: isDark ? colors.primary : Colors.black87,
       iconTheme: IconThemeData(color: colors.primary),
       titleTextStyle: TextStyle(
@@ -225,7 +225,10 @@ abstract class BaseTheme {
         fontSize: 20,
         fontWeight: FontWeight.w600,
         shadows: styles.showGlowEffect && isDark
-            ? [Shadow(color: colors.primary.withOpacity(0.5), blurRadius: 8)]
+            ? [
+                Shadow(
+                    color: colors.primary.withValues(alpha: 0.5), blurRadius: 8)
+              ]
             : null,
       ),
     );
@@ -241,13 +244,17 @@ abstract class BaseTheme {
       backgroundColor: isDark
           ? (colors.cardBackground ?? const Color(0xFF2C2C2C))
           : (colors.background ??
-              colors.primary.withOpacity(0.04)), // 浅色模式使用主题色淡背景
-      indicatorColor: colors.primary.withOpacity(isDark ? 0.2 : 0.15),
+              colors.primary.withValues(alpha: 0.04)), // 浅色模式使用主题色淡背景
+      indicatorColor: colors.primary.withValues(alpha: isDark ? 0.2 : 0.15),
       selectedIconTheme: IconThemeData(
         color: colors.primary,
         size: 28,
         shadows: styles.showGlowEffect && isDark
-            ? [Shadow(color: colors.primary.withOpacity(0.8), blurRadius: 12)]
+            ? [
+                Shadow(
+                    color: colors.primary.withValues(alpha: 0.8),
+                    blurRadius: 12)
+              ]
             : null,
       ),
       // 提高未选中图标的可见度
@@ -262,7 +269,10 @@ abstract class BaseTheme {
         fontWeight: FontWeight.bold,
         fontSize: 12,
         shadows: styles.showGlowEffect && isDark
-            ? [Shadow(color: colors.primary.withOpacity(0.5), blurRadius: 8)]
+            ? [
+                Shadow(
+                    color: colors.primary.withValues(alpha: 0.5), blurRadius: 8)
+              ]
             : null,
       ),
       // 提高未选中文字的可见度
@@ -285,7 +295,7 @@ abstract class BaseTheme {
       backgroundColor: isDark
           ? (colors.cardBackground ?? defaultCardBg)
           : (colors.surface ??
-              colors.primary.withOpacity(0.03)), // 浅色模式使用主题色淡背景
+              colors.primary.withValues(alpha: 0.03)), // 浅色模式使用主题色淡背景
       selectedItemColor: colors.primary,
       unselectedItemColor: isDark ? Colors.grey.shade700 : Colors.grey.shade600,
       selectedIconTheme: const IconThemeData(size: 28),
@@ -326,8 +336,9 @@ abstract class BaseTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(styles.buttonBorderRadius),
         ),
-        shadowColor:
-            styles.showGlowEffect ? colors.primary.withOpacity(0.5) : null,
+        shadowColor: styles.showGlowEffect
+            ? colors.primary.withValues(alpha: 0.5)
+            : null,
       ),
     );
   }
@@ -371,7 +382,7 @@ abstract class BaseTheme {
     return ListTileThemeData(
       iconColor: colors.primary,
       textColor: isDark ? Colors.white : Colors.black87,
-      selectedTileColor: colors.primary.withOpacity(isDark ? 0.15 : 0.1),
+      selectedTileColor: colors.primary.withValues(alpha: isDark ? 0.15 : 0.1),
       selectedColor: colors.primary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );
@@ -384,7 +395,10 @@ abstract class BaseTheme {
         color: isDark ? colors.primary : Colors.black87,
         fontWeight: FontWeight.bold,
         shadows: themeStyles.showGlowEffect && isDark
-            ? [Shadow(color: colors.primary.withOpacity(0.5), blurRadius: 8)]
+            ? [
+                Shadow(
+                    color: colors.primary.withValues(alpha: 0.5), blurRadius: 8)
+              ]
             : null,
       ),
       headlineMedium: TextStyle(

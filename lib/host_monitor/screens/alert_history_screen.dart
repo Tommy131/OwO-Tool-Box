@@ -77,7 +77,7 @@ class AlertHistoryScreen extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            ScreenTheme.primaryColor.withOpacity(0.3),
+            ScreenTheme.primaryColor.withValues(alpha: 0.3),
             Colors.transparent,
           ],
         ),
@@ -158,7 +158,7 @@ class AlertHistoryScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: _getAlertColor(alert.type).withOpacity(0.2),
+                  color: _getAlertColor(alert.type).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -236,7 +236,7 @@ class AlertHistoryScreen extends StatelessWidget {
                 },
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(
-                      color: ScreenTheme.primaryColor.withOpacity(0.5)),
+                      color: ScreenTheme.primaryColor.withValues(alpha: 0.5)),
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -269,7 +269,7 @@ class AlertHistoryScreen extends StatelessWidget {
   }
 
   Color _getAlertBorderColor(AlertType type) {
-    return _getAlertColor(type).withOpacity(0.3);
+    return _getAlertColor(type).withValues(alpha: 0.3);
   }
 
   IconData _getAlertIcon(AlertType type) {
@@ -321,13 +321,15 @@ class AlertHistoryScreen extends StatelessWidget {
 
     if (confirmed == true && context.mounted) {
       await context.read<HostMonitorProvider>().alertService.clearHistory();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_tr(context, 'history_cleared')),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_tr(context, 'history_cleared')),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
   }
 }

@@ -25,7 +25,7 @@ import 'package:provider/provider.dart';
 import '../providers/navigation_provider.dart';
 import '../i18n/app_localization.dart';
 import '../i18n/localization_keys.dart';
-import '../widgets/bars/custom_title_bar.dart';
+import '../widgets/custom_title_bar.dart';
 
 class DesktopLayout extends StatelessWidget {
   final List<Widget> pages;

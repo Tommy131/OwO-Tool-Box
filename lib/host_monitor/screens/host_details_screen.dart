@@ -185,7 +185,7 @@ class _ConnectionCard extends StatelessWidget {
           Text(
             '${host?.address}:${host?.port}',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurface.withOpacity(0.6),
+              color: colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],
@@ -401,7 +401,7 @@ class _CoreChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         border: Border.all(color: color),
         borderRadius: BorderRadius.circular(_Constants.chipBorderRadius),
       ),
@@ -574,9 +574,9 @@ class _DiskItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colorScheme.surface.withOpacity(0.3),
+        color: colorScheme.surface.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(_Constants.itemBorderRadius),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -672,10 +672,10 @@ class _NetworkItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colorScheme.surface.withOpacity(0.3),
+        color: colorScheme.surface.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(_Constants.itemBorderRadius),
         border: Border.all(
-          color: colorScheme.primary.withOpacity(0.3),
+          color: colorScheme.primary.withValues(alpha: 0.3),
         ),
       ),
       child: Column(

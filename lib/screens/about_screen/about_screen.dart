@@ -25,7 +25,7 @@ import 'package:owo_tool_box/screens/about_screen/widgets/cards/copyright_card.d
 import '../../core/layouts/responsive_break_points.dart';
 import '../../core/i18n/app_localization.dart';
 import '../../core/i18n/localization_keys.dart';
-import '../../core/widgets/cards/donation_card.dart';
+import 'widgets/cards/donation_card.dart';
 import 'widgets/cards/app_icon_card.dart';
 import 'widgets/cards/app_info_card.dart';
 import 'widgets/cards/developer_card.dart';

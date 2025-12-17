@@ -24,15 +24,12 @@ import 'package:flutter/material.dart' hide Localizations;
 
 import '../core/i18n/app_localization.dart';
 import '../core/i18n/localization_keys.dart';
-import '../core/test_screens/components_demo_screen.dart';
 import '../core/test_screens/notification_demo_page.dart';
-import '../core/test_screens/test_matrix_screen.dart';
 import 'home_screen.dart';
 import 'about_screen/about_screen.dart';
 import 'settings_screen/settings_screen.dart';
 
 import '../host_monitor/screens/host_monitor_screen.dart';
-import '../ssl_manager/screens/ssl_home_screen.dart';
 
 class NavigationItem {
   final IconData icon;
@@ -67,13 +64,6 @@ class ScreenNavigationHelper {
             labelKey: L18nKeys.monitor,
             page: const HostMonitorScreen(),
           ),
-          // **SSL Manager
-          NavigationItem(
-            icon: Icons.security_outlined,
-            selectedIcon: Icons.security,
-            labelKey: L18nKeys.ssl,
-            page: const SSLHomeScreen(),
-          ),
           NavigationItem(
             icon: Icons.info_outlined,
             selectedIcon: Icons.info,
@@ -88,18 +78,6 @@ class ScreenNavigationHelper {
           ),
           // ------ TEST PAGE START ------
           if (kDebugMode) ...[
-            NavigationItem(
-              icon: Icons.extension_outlined,
-              selectedIcon: Icons.extension,
-              labelKey: 'components_demo',
-              page: const ComponentsDemoScreen(),
-            ),
-            NavigationItem(
-              icon: Icons.grid_view_outlined,
-              selectedIcon: Icons.grid_view,
-              labelKey: 'test_matrix',
-              page: const TestMatrixScreen(),
-            ),
             NavigationItem(
               icon: Icons.notifications_outlined,
               selectedIcon: Icons.notifications,

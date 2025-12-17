@@ -21,10 +21,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../constants/app_constants.dart';
-import '../../models/donation_model.dart';
-import '../../services/donation_service.dart';
-import '../../i18n/app_localization.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/models/donation_model.dart';
+import '../../../../core/services/donation_service.dart';
+import '../../../../core/i18n/app_localization.dart';
 
 class DonationCard extends StatefulWidget {
   const DonationCard({super.key});
@@ -329,14 +329,14 @@ class _DonationCardState extends State<DonationCard> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: rank <= 3
-            ? (badgeColor?.withOpacity(0.1) ?? Colors.transparent)
+            ? (badgeColor?.withValues(alpha: 0.1) ?? Colors.transparent)
             : (isDark
-                ? Colors.grey.shade900.withOpacity(0.3)
+                ? Colors.grey.shade900.withValues(alpha: 0.3)
                 : Colors.grey.shade100),
         borderRadius: BorderRadius.circular(12),
         border: rank <= 3
             ? Border.all(
-                color: badgeColor?.withOpacity(0.3) ?? Colors.transparent,
+                color: badgeColor?.withValues(alpha: 0.3) ?? Colors.transparent,
                 width: 1.5,
               )
             : null,
@@ -372,7 +372,8 @@ class _DonationCardState extends State<DonationCard> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              color:
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -420,7 +421,8 @@ class _DonationCardState extends State<DonationCard> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+              color:
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(

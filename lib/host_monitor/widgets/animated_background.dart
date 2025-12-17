@@ -126,8 +126,8 @@ class BackgroundPainter extends CustomPainter {
 
       paint.shader = RadialGradient(
         colors: [
-          color.withOpacity(0.2),
-          color.withOpacity(0.0),
+          color.withValues(alpha: 0.2),
+          color.withValues(alpha: 0.0),
         ],
       ).createShader(Rect.fromCircle(center: Offset(x, y), radius: r));
 

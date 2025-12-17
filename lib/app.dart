@@ -33,9 +33,6 @@ import 'core/i18n/localization_delegate.dart';
 import 'screens/screen_navigation_helper.dart';
 // Host Monitor
 import 'host_monitor/providers/host_monitor_provider.dart';
-// SSL Manager
-import 'ssl_manager/providers/certificate_provider.dart';
-import 'ssl_manager/providers/ssl_settings_provider.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -51,9 +48,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MatrixRainProvider()),
         // Host Monitor
         ChangeNotifierProvider(create: (_) => HostMonitorProvider()),
-        // SSL Manager
-        ChangeNotifierProvider(create: (_) => SSLSettingsProvider()),
-        ChangeNotifierProvider(create: (_) => CertificateProvider()),
       ],
       child: Consumer2<ThemeProvider, LocaleProvider>(
         builder: (context, themeProvider, localeProvider, child) {
@@ -106,7 +100,6 @@ class AdaptiveScaffold extends StatelessWidget with WidgetsBindingObserver {
     // 初始化主机监测管理器
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HostMonitorProvider>().initialize();
-      context.read<SSLSettingsProvider>().initialize();
     });
 
     final localizations = AppLocalization.of(context);
