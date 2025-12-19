@@ -1,154 +1,120 @@
-# 🛠️ OwO! Tool Box
+# OwO Tool Box
 
-Flutter 构建的现代化跨平台应用模板，支持响应式布局、多语言切换与桌面窗口管理。适用于 Windows、macOS、Linux、Android 和 iOS。
+[中文文档](README_ZH.md)
 
----
+**OwO Tool Box** is a multifunctional system tools application built with Flutter. It is designed to provide a suite of utilities for system administrators and developers, starting with a powerful **Host Monitor** module.
 
-## 🚀 核心特性
+## ✨ Features
 
-### 💻 多平台支持
+### 🖥️ Host Monitor
+A comprehensive tool for monitoring remote servers and hosts.
+- **Real-time Monitoring**: Check the status of your hosts (Online, Offline, Authentication Failed) in real-time.
+- **TCP Connection Management**: Robust TCP connection handling with automatic reconnection strategies.
+- **Secure Authentication**: Token-based authentication system for secure communication with your hosts.
+- **Command Execution**: Send commands directly to your connected hosts.
+- **Batch Operations**: Monitor and update the status of multiple hosts simultaneously.
+- **Alert History**: Keep track of alerts and status changes.
+- **GeoIP Integration**: Visualize host locations.
 
-- ✅ 桌面平台（Windows、macOS、Linux）
-- ✅ 移动平台（Android、iOS）
-- ✅ 网页端支持（Web 可扩展）
+### 🚀 Core Features
+- **Cross-Platform**: Optimized for Windows, macOS, Linux, Android, and iOS.
+- **Responsive Design**: Adaptive layouts that work seamlessly on both desktop and mobile screens.
+- **Theme System**: Built-in support for Light and Dark modes, with system theme synchronization.
+- **Internationalization**: Full multi-language support (English & Chinese).
+- **Custom UI**: Polished desktop experience with custom title bars and window management.
 
-### 📐 响应式布局引擎
+## 📸 Screenshots
 
-基于 `ResponsiveBuilder` 和 `LayoutBuilder` 组件，自动适配：
+| Host Monitor | Host Monitor Settings |
+|:---:|:---:|
+| <img src="assets/images/host_monitor_page.png" width="400"/> | <img src="assets/images/host_monitor_settings_page.png" width="400"/> |
 
-- 📱 `MobileLayout`: 小屏幕
-- 💻 `DesktopLayout`: 大屏幕
-- 🧾 `TabletLayout`: 中等尺寸屏幕
-- 使用 `responsive_break_points.dart` 定义布局切换临界点
+| Host Details (Overview) | Host Details (Graphs) |
+|:---:|:---:|
+| <img src="assets/images/host_details_page-1.png" width="400"/> | <img src="assets/images/host_details_page-2.png" width="400"/> |
 
-```dart
-ResponsiveBuilder(
-  mobile: MobileLayout(),
-  tablet: TabletLayout(),
-  desktop: DesktopLayout(),
-);
+| Host Details (Terminal) | Host Details (Info) |
+|:---:|:---:|
+| <img src="assets/images/host_details_page-3.png" width="400"/> | <img src="assets/images/host_details_page-4.png" width="400"/> |
+
+| Settings | Theme Settings |
+|:---:|:---:|
+| <img src="assets/images/settings_page.png" width="400"/> | <img src="assets/images/theme_settings_page.png" width="400"/> |
+
+| Notification History | Windows Notification |
+|:---:|:---:|
+| <img src="assets/images/notification_history_page.png" width="400"/> | <img src="assets/images/windows_notification.png" width="400"/> |
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Flutter](https://flutter.dev/)
+- **State Management**: [Provider](https://pub.dev/packages/provider)
+- **Dependency Injection**: [GetIt](https://pub.dev/packages/get_it)
+- **Networking**: TCP Sockets, HTTP
+- **Storage**: Shared Preferences, Flutter Secure Storage
+- **UI Components**: FlChart, FlexColorPicker, WindowManager
+
+## 📂 Project Structure
+
 ```
-
----
-
-### 🧭 桌面窗口控制（bitsdojo\_window）
-
-通过 `bitsdojo_window` 实现：
-
-- 固定初始窗口尺寸（如 1200x800）
-- 设置窗口标题 `OwO! Tool Box`
-- 控制最小尺寸
-- 居中显示窗口
-
-```dart
-if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-  doWhenWindowReady(() {
-    appWindow
-      ..minSize = Size(800, 600)
-      ..size = Size(1200, 800)
-      ..alignment = Alignment.center
-      ..title = 'OwO! Tool Box'
-      ..show();
-  });
-}
-```
-
----
-
-### 🌍 国际化（i18n）
-
-项目自定义了一套轻量的国际化系统：
-
-- `AppLocalization` 提供翻译接口
-- 使用 `LanguageConfig` 管理语言映射
-- `localization_keys.dart` 中定义全部翻译键
-- 支持热切换语言（基于 Provider 的 `LocaleProvider`）
-
-#### 支持语言
-
-- 🇨🇳 简体中文（zh\_CN）
-- 🇺🇸 英语（en\_US）
-- 🇩🇪 德语（de\_DE）
-- 🇪🇸 西班牙语（es\_ES）
-- 🇫🇷 法语（fr\_FR）
-- 🇯🇵 日语（ja\_JP）
-
-示例用法：
-
-```dart
-AppLocalization.of(context).translate('welcome');
-```
-
----
-
-### 🎨 动态主题管理
-
-通过 `ThemeProvider`：
-
-- 支持亮/暗主题动态切换
-- 可自定义 MaterialColor 配色
-- 响应系统主题设置
-
----
-
-### 📦 状态管理（Provider）
-
-使用 `provider` 管理应用状态，如：
-
-- `ThemeProvider`: 主题切换
-- `LocaleProvider`: 语言切换
-- `NavigationProvider`: 导航控制
-- `MatrixRainProvider`: 自定义背景效果
-- `HostMonitorProvider`: 设备监控数据管理
-
----
-
-## 📁 项目结构
-
-```bash
 lib/
-├── app.dart                    # App Widget 构建入口
-├── main.dart                   # 程序主入口及窗口初始化
-├── core/
-│   ├── layouts/                # 多平台布局支持
-│   ├── i18n/                   # 国际化支持（语言包、翻译逻辑）
-│   ├── providers/              # 状态管理
-│   ├── constants/              # 全局常量
-├── host_monitor/               # 主机监控逻辑（网络/系统状态）
-├── screens/                    # 页面与导航控制器
+├── apps/               # Independent functional modules
+│   └── host_monitor/   # Host Monitor module
+├── core/               # Core utilities and shared components
+│   ├── constants/      # App constants
+│   ├── i18n/           # Internationalization files
+│   ├── layouts/        # Responsive layout wrappers
+│   ├── models/         # Shared data models
+│   ├── providers/      # Global state providers
+│   ├── services/       # Core services
+│   ├── theme/          # Theme configuration
+│   └── widgets/        # Reusable widgets
+├── pages/              # General application pages (Settings, About)
+├── app.dart            # App entry point and configuration
+└── main.dart           # Application main entry
 ```
 
+## 🚀 Getting Started
+
+### Prerequisites
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (Version 3.9.2 or higher recommended)
+- Dart SDK
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Tommy131/OwO-Tool-Box.git owo_tool_box
+   cd owo_tool_box
+   ```
+
+2. **Install dependencies**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Run the application**
+   ```bash
+   # Run on Windows
+   flutter run -d windows
+
+   # Run on Android
+   flutter run -d android
+   ```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
 ---
-
-## 📲 快速启动
-
-确保你已安装 Flutter SDK，并配置好开发环境。
-
-```bash
-flutter pub get
-flutter run -d windows   # 也可以替换为 macos, linux, android, ios 等平台
-```
-
----
-
-## 📌 依赖列表（部分）
-
-- `flutter`
-- `provider`
-- `bitsdojo_window` （桌面窗口管理）
-- `flutter_localizations`
-
----
-
-## 🧪 推荐改进（如为模板使用）
-
-- ✅ 增加接口服务接入层（如 Dio）
-- ✅ 添加单元测试 & 集成测试支持
-- ✅ 拓展国际化格式支持为 `.arb` 或 `.json`
-- ✅ 加入模块化导航路由系统（如 `go_router`）
-
----
-
-## 📜 许可证
-
-MIT License © OwO! Tool Box Team
+*Built with ❤️ by the OwO Team*
