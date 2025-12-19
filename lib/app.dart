@@ -1,38 +1,26 @@
-/*
- *        _____   _          __  _____   _____   _       _____   _____
- *      /  _  \ | |        / / /  _  \ |  _  \ | |     /  _  \ /  ___|
- *      | | | | | |  __   / /  | | | | | |_| | | |     | | | | | |
- *      | | | | | | /  | / /   | | | | |  _  { | |     | | | | | |   _
- *      | |_| | | |/   |/ /    | |_| | | |_| | | |___  | |_| | | |_| |
- *      \_____/ |___/|___/     \_____/ |_____/ |_____| \_____/ \_____/
- *
- *  Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
- * @Date         : 2025-10-22
- * @Author       : HanskiJay
- * @LastEditors  : HanskiJay
- * @LastEditTime : 2025-10-22
- * @E-Mail       : support@owoblog.com
- * @Telegram     : https://t.me/HanskiJay
- * @GitHub       : https://github.com/Tommy131
- */
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:window_manager/window_manager.dart';
 
-import 'core/layouts/desktop_layout.dart';
-import 'core/layouts/responsive_builder.dart';
-import 'core/layouts/mobile_layout.dart';
-import 'core/layouts/tablet_layout.dart';
-import 'core/providers/locale_provider.dart';
-import 'core/providers/matrix_rain_provider.dart';
-import 'core/providers/navigation_provider.dart';
-import 'core/providers/theme_provider.dart';
-import 'core/i18n/app_localization.dart' hide AppLocalizationDelegate;
+import 'apps/host_monitor/pages/host_monitor_page.dart';
+import 'apps/host_monitor/providers/host_monitor_provider.dart';
+
+import 'core/i18n/app_localization.dart';
 import 'core/i18n/language_config.dart';
-import 'core/i18n/localization_delegate.dart';
-import 'screens/screen_navigation_helper.dart';
-// Host Monitor
-import 'host_monitor/providers/host_monitor_provider.dart';
+import 'core/providers/locale_provider.dart';
+import 'core/theme/theme_provider.dart';
+import 'core/constants/app_constants.dart';
+import 'core/layouts/desktop_layout.dart';
+import 'core/layouts/mobile_layout.dart';
+import 'core/layouts/responsive.dart';
+import 'core/models/navigation_item.dart';
+import 'core/widgets/common/dialog.dart';
+import 'core/widgets/desktop/custom_title_bar.dart';
+import 'pages/about/about_page.dart';
+import 'pages/settings/settings_page.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -41,21 +29,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // core
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
-        ChangeNotifierProvider(create: (_) => NavigationProvider()),
-        ChangeNotifierProvider(create: (_) => MatrixRainProvider()),
         // Host Monitor
         ChangeNotifierProvider(create: (_) => HostMonitorProvider()),
       ],
       child: Consumer2<ThemeProvider, LocaleProvider>(
         builder: (context, themeProvider, localeProvider, child) {
           return MaterialApp(
-            title: 'OwO! Tool Box',
+            title: AppConstants.appName,
             debugShowCheckedModeBanner: false,
-            theme: themeProvider.lightTheme,
-            darkTheme: themeProvider.darkTheme,
+            theme: themeProvider.currentTheme.generateLightTheme(),
+            darkTheme: themeProvider.currentTheme.generateDarkTheme(),
             themeMode: themeProvider.themeMode,
             locale: localeProvider.locale,
             supportedLocales: LanguageConfig.supportedLocales,
@@ -79,8 +64,7 @@ class MyApp extends StatelessWidget {
               }
               return localeProvider.locale;
             },
-
-            home: const AdaptiveScaffold(),
+            home: const MainScreen(),
           );
         },
       ),
@@ -88,42 +72,125 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// ============================================================================
-// 自适应脚手架 - 根据屏幕尺寸自动切换布局
-// ============================================================================
-
-class AdaptiveScaffold extends StatelessWidget with WidgetsBindingObserver {
-  const AdaptiveScaffold({super.key});
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> with WindowListener {
+  int _selectedIndex = 0;
+
+  // 定义导航项
+  final List<NavigationItem> _navigationItems = const [
+    NavigationItem(
+      id: 'host_monitor',
+      title: '监控',
+      icon: Icons.monitor_outlined,
+      activeIcon: Icons.monitor,
+      page: HostMonitorPage(),
+    ),
+    NavigationItem(
+      id: 'about',
+      title: '关于',
+      icon: Icons.info_outlined,
+      activeIcon: Icons.info,
+      page: AboutPage(),
+    ),
+    NavigationItem(
+      id: 'settings',
+      title: '设置',
+      icon: Icons.settings_outlined,
+      activeIcon: Icons.settings,
+      page: SettingsPage(),
+    ),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    windowManager.addListener(this);
+    _init();
+
     // 初始化主机监测管理器
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HostMonitorProvider>().initialize();
     });
+  }
 
-    final localizations = AppLocalization.of(context);
-    final navigationHelper =
-        ScreenNavigationHelper(localizations: localizations);
+  void _init() async {
+    // Add this line to override the default close handler
+    await windowManager.setPreventClose(true);
+    setState(() {});
+  }
 
-    List<NavigationRailDestination> destinationsRail =
-        navigationHelper.getRailDestinations();
-    List<NavigationDestination> destinations =
-        navigationHelper.getDestinations();
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+    super.dispose();
+  }
 
-    return ResponsiveBuilder(
-      mobile: MobileLayout(
-        pages: navigationHelper.getPages(),
-        destinations: destinations,
-      ),
-      tablet: TabletLayout(
-        pages: navigationHelper.getPages(),
-        destinations: destinationsRail,
-      ),
-      desktop: DesktopLayout(
-        pages: navigationHelper.getPages(),
-        destinations: destinationsRail,
-      ),
+  void _onNavigationChanged(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  void onWindowFocus() {
+    // Make sure to call once.
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Column(
+      children: [
+        if (!Platform.isAndroid && !Platform.isIOS) ...[
+          const CustomTitleBar(title: Text(AppConstants.appName)),
+          Divider(height: 1, color: Color(isDark ? 0xFF313131 : 0xFFD6D6D6)),
+        ],
+        Expanded(
+          child: Responsive(
+            // 移动端布局
+            mobile: MobileLayout(
+              navigationItems: _navigationItems,
+              selectedIndex: _selectedIndex,
+              onNavigationChanged: _onNavigationChanged,
+            ),
+            // 桌面端布局
+            desktop: DesktopLayout(
+              navigationItems: _navigationItems,
+              selectedIndex: _selectedIndex,
+              onNavigationChanged: _onNavigationChanged,
+            ),
+          ),
+        ),
+      ],
     );
+  }
+
+  @override
+  void onWindowClose() async {
+    bool isPreventClose = await windowManager.isPreventClose();
+    if (isPreventClose && mounted) {
+      final result = await showAdvancedConfirmDialog(
+        context: context,
+        // style: ConfirmDialogStyle.glass,
+        title: '确认退出程序吗?',
+        content: '',
+        icon: Icons.warning_amber_rounded,
+        confirmColor: Colors.redAccent,
+        confirmText: '确认',
+        cancelText: '取消',
+      );
+
+      if (result == true && mounted) {
+        await windowManager.destroy();
+      }
+    }
   }
 }

@@ -25,12 +25,9 @@ class UrlLauncherHelper {
     final Uri url = Uri.parse(urlString);
     try {
       if (await canLaunchUrl(url)) {
-        await launchUrl(
-          url,
-          mode: LaunchMode.externalApplication,
-        );
+        await launchUrl(url, mode: LaunchMode.externalApplication);
       } else {
-        debugPrint('无法打开链接: $urlString');
+        debugPrint('Cannot open link: $urlString');
       }
     } catch (e) {
       debugPrint('打开链接失败: $e');

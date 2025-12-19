@@ -20,24 +20,16 @@
 // ============================================================================
 
 class L18nKeys {
-  // ========== 通用 ==========
-  static const String appTitle = 'app_title';
+  // ========== 窗口控制 ==========
   static const String ok = 'ok';
   static const String cancel = 'cancel';
+  static const String minimize = 'minimize';
+  static const String maximize = 'maximize';
+  static const String restore = 'restore';
+  static const String close = 'close';
 
-  // ========== 导航 ==========
-  static const String menu = 'menu';
-  static const String home = 'home';
-  static const String settings = 'settings';
-  static const String about = 'about';
-  static const String monitor = 'monitor';
-  static const String ssl = 'ssl';
-
-  // ========== 欢迎页 ==========
-  static const String welcome = 'welcome';
-  static const String welcomeMessage = 'welcome_message';
-  static const String welcomeDescription = 'welcome_description';
-  static const String exploreFeatures = 'explore_features';
+  // ========== 主题设置 ==========
+  static const String themeSettings = 'theme_settings';
 
   // ========== 语言设置 ==========
   static const String languageSettings = 'language_settings';
@@ -48,21 +40,6 @@ class L18nKeys {
   static const String adjustTheme = 'adjust_theme';
   static const String selectAppLanguage = 'select_app_language';
   static const String configureHostMonitor = 'configure_host_monitor';
-
-  // ========== 主题设置 ==========
-  static const String themeMode = 'theme_mode';
-  static const String changingTheme = 'changing_theme';
-  static const String themeSettings = 'theme_settings';
-  static const String themeColorSettings = 'theme_color_settings';
-  static const String cyberpunkTheme = 'cyberpunk_theme';
-  static const String lightTheme = 'light_theme';
-  static const String darkTheme = 'dark_theme';
-  static const String systemTheme = 'system_theme';
-  static const String defaultTheme = 'default_theme';
-  static const String techTheme = 'tech_theme';
-  static const String natureTheme = 'nature_theme';
-  static const String sunsetTheme = 'sunset_theme';
-  static const String oceanTheme = 'ocean_theme';
 
   // ========== 主机监控设置 ==========
   static const String hostMonitorSettings = 'host_monitor_settings';
@@ -102,22 +79,11 @@ class L18nKeys {
   static const String invalidTimeout = 'invalid_timeout';
   static const String invalidCheckInterval = 'invalid_check_interval';
 
-  // ========== 视觉特效 ==========
-  static const String visualEffects = 'visual_effects';
-  static const String visualEffectsDescription = 'visual_effects_description';
-  static const String matrixRainEffect = 'matrix_rain_effect';
-  static const String matrixRainDescription = 'matrix_rain_description';
-  static const String glowEffect = 'glow_effect';
-  static const String glowEffectDescription = 'glow_effect_description';
-  static const String scanningLine = 'scanning_line';
-  static const String scanningLineDescription = 'scanning_line_description';
-  static const String glitchEffect = 'glitch_effect';
-  static const String glitchEffectDescription = 'glitch_effect_description';
-
   // ========== 应用信息 ==========
   static const String appInfo = 'app_info';
   static const String appName = 'app_name';
   static const String appDescription = 'app_description';
+  static const String descriptionMessage = 'description_message';
   static const String appVersion = 'app_version';
   static const String developerInfo = 'developer_info';
   static const String developerName = 'developer_name';
@@ -162,12 +128,6 @@ class L18nKeys {
   static const String desktopDevice = 'desktop_device';
   static const String layoutMode = 'layout_mode';
   static const String adaptiveLayout = 'adaptive_layout';
-
-  // ========== 窗口控制 ==========
-  static const String minimize = 'minimize';
-  static const String maximize = 'maximize';
-  static const String restore = 'restore';
-  static const String close = 'close';
 
   // ========== 主机编辑页面 ==========
   static const String editHost = 'edit_host';
@@ -286,318 +246,4 @@ class L18nKeys {
   static const String download = 'download';
   static const String bytesSent = 'bytes_sent';
   static const String bytesReceived = 'bytes_received';
-
-  // ========== SSL证书管理 ==========
-  static const String sslCertificateManager = 'ssl_certificate_manager';
-  static const String sslBack = 'ssl_back';
-  static const String sslToggleTheme = 'ssl_toggle_theme';
-  static const String sslWelcomeTitle = 'ssl_welcome_title';
-  static const String sslWelcomeSubtitle = 'ssl_welcome_subtitle';
-  static const String sslTotalCertificates = 'ssl_total_certificates';
-  static const String sslCACertificates = 'ssl_ca_certificates';
-  static const String sslSSLCertificates = 'ssl_ssl_certificates';
-  static const String sslExpired = 'ssl_expired';
-  static const String sslNavigation = 'ssl_navigation';
-  static const String sslCertificates = 'ssl_certificates';
-  static const String sslManageCertificates = 'ssl_manage_certificates';
-  static const String sslConfig = 'ssl_config';
-  static const String sslOpenSSLConfiguration = 'ssl_openssl_configuration';
-  static const String sslAppSettings = 'ssl_app_settings';
-
-  // ========== 设置界面 ==========
-  static const String settingsSelectCertDirectory =
-      'settings_select_cert_directory';
-  static const String settingsSelectConfigFile = 'settings_select_config_file';
-  static const String settingsCreateConfigFile = 'settings_create_config_file';
-  static const String settingsRequired = 'settings_required';
-  static const String settingsSaveSuccess = 'settings_save_success';
-  static const String settingsSaveError = 'settings_save_error';
-  static const String settingsCertStorage = 'settings_cert_storage';
-  static const String settingsCertStoragePath = 'settings_cert_storage_path';
-  static const String settingsCertPathHint = 'settings_cert_path_hint';
-  static const String settingsCertStorageDesc = 'settings_cert_storage_desc';
-  static const String settingsOpenSSLConfig = 'settings_openssl_config';
-  static const String settingsConfigFilePath = 'settings_config_file_path';
-  static const String settingsConfigPathHint = 'settings_config_path_hint';
-  static const String settingsCreateNew = 'settings_create_new';
-  static const String settingsSelectExisting = 'settings_select_existing';
-  static const String settingsConfigFileDesc = 'settings_config_file_desc';
-  static const String settingsCACertDefaults = 'settings_ca_cert_defaults';
-  static const String settingsDefaultCAName = 'settings_default_ca_name';
-  static const String settingsCANameHint = 'settings_ca_name_hint';
-  static const String settingsEncryptCAByDefault =
-      'settings_encrypt_ca_by_default';
-  static const String settingsEncryptCADesc = 'settings_encrypt_ca_desc';
-  static const String settingsDefaultCAPassword =
-      'settings_default_ca_password';
-  static const String settingsCAPasswordHint = 'settings_ca_password_hint';
-  static const String settingsPasswordWarning = 'settings_password_warning';
-  static const String settingsAbout = 'settings_about';
-  static const String settingsAppName = 'settings_app_name';
-  static const String settingsAppVersion = 'settings_app_version';
-  static const String settingsAppDescription = 'settings_app_description';
-  static const String settingsPoweredBy = 'settings_powered_by';
-  static const String settingsReset = 'settings_reset';
-  static const String settingsSaveSettings = 'settings_save_settings';
-
-  // ========== OpenSSL配置界面 ==========
-  static const String configLoadError = 'config_load_error';
-  static const String configSaveSuccess = 'config_save_success';
-  static const String configSaveError = 'config_save_error';
-  static const String configResetToDefault = 'config_reset_to_default';
-  static const String configResetConfirm = 'config_reset_confirm';
-  static const String configCancel = 'config_cancel';
-  static const String configReset = 'config_reset';
-  static const String configEditHint = 'config_edit_hint';
-  static const String configPlaceholder = 'config_placeholder';
-  static const String configResetToDefaultBtn = 'config_reset_to_default_btn';
-  static const String configSaveConfiguration = 'config_save_configuration';
-
-// ========== 证书管理界面 ==========
-  static const String certImport = 'cert_import';
-  static const String certGenerateCA = 'cert_generate_ca';
-  static const String certGenerateSSL = 'cert_generate_ssl';
-  static const String certPath = 'cert_path';
-  static const String certCopyFullChainPath = 'cert_copy_full_chain_path';
-  static const String certClose = 'cert_close';
-  static const String certDeleteTitle = 'cert_delete_title';
-  static const String certDeleteConfirm = 'cert_delete_confirm';
-  static const String certCancel = 'cert_cancel';
-  static const String certDelete = 'cert_delete';
-  static const String certDeleteSuccess = 'cert_delete_success';
-  static const String certImportCertificate = 'cert_import_certificate';
-  static const String certImportSSLTitle = 'cert_import_ssl_title';
-  static const String certImportSSLDesc = 'cert_import_ssl_desc';
-  static const String certImportCATitle = 'cert_import_ca_title';
-  static const String certImportCADesc = 'cert_import_ca_desc';
-  static const String certImportPFXTitle = 'cert_import_pfx_title';
-  static const String certImportPFXDesc = 'cert_import_pfx_desc';
-
-// ========== 证书管理屏幕 ==========
-  static const String certSearchPlaceholder = 'cert_search_placeholder';
-  static const String certNoFound = 'cert_no_found';
-
-  // Import SSL Certificate Dialog
-  static const String importSslCertificate = 'import_ssl_certificate';
-  static const String selectSslCertificateFile = 'select_ssl_certificate_file';
-  static const String selectPrivateKeyFile = 'select_private_key_file';
-  static const String selectCertificateChainFile =
-      'select_certificate_chain_file';
-  static const String invalidCertificateFile = 'invalid_certificate_file';
-  static const String caCertificateWarning = 'ca_certificate_warning';
-  static const String importedSslCertificate = 'imported_ssl_certificate';
-  static const String sslCertificateValidatedSuccessfully =
-      'ssl_certificate_validated_successfully';
-  static const String validationError = 'validation_error';
-  static const String invalidPrivateKeyOrPassword =
-      'invalid_private_key_or_password';
-  static const String certificateKeyMismatch = 'certificate_key_mismatch';
-  static const String privateKeyValidatedSuccessfully =
-      'private_key_validated_successfully';
-  static const String noCertificatesFoundInChain =
-      'no_certificates_found_in_chain';
-  static const String certificateChainValidated = 'certificate_chain_validated';
-  static const String certificates = 'certificates';
-  static const String chainValidationError = 'chain_validation_error';
-  static const String pleaseValidateCertificateFirst =
-      'please_validate_certificate_first';
-  static const String pleaseValidatePrivateKeyFirst =
-      'please_validate_private_key_first';
-  static const String pleaseValidateChainFirst = 'please_validate_chain_first';
-  static const String sslCertificateImportedSuccessfully =
-      'ssl_certificate_imported_successfully';
-  static const String importError = 'import_error';
-  static const String importSslCertificateDescription =
-      'import_ssl_certificate_description';
-  static const String sslCertificateFileRequired =
-      'ssl_certificate_file_required';
-  static const String selectPemCrtCerFile = 'select_pem_crt_cer_file';
-  static const String required = 'required';
-  static const String validateCertificate = 'validate_certificate';
-  static const String sslCertificate = 'ssl_certificate';
-  static const String issuer = 'issuer';
-  static const String expiry = 'expiry';
-  static const String certificateNameRequired = 'certificate_name_required';
-  static const String enterFriendlyName = 'enter_friendly_name';
-  static const String includePrivateKey = 'include_private_key';
-  static const String privateKeyFileRequired = 'private_key_file_required';
-  static const String selectPemKeyFile = 'select_pem_key_file';
-  static const String privateKeyIsEncrypted = 'private_key_is_encrypted';
-  static const String privateKeyPasswordRequired =
-      'private_key_password_required';
-  static const String validatePrivateKey = 'validate_private_key';
-  static const String includeCertificateChain = 'include_certificate_chain';
-  static const String intermediateRootCaCertificates =
-      'intermediate_root_ca_certificates';
-  static const String certificateChainFile = 'certificate_chain_file';
-  static const String selectChainPemFile = 'select_chain_pem_file';
-  static const String validateChain = 'validate_chain';
-  static const String chainContains = 'chain_contains';
-  static const String import = 'import';
-
-  // Import PFX Dialog
-  static const String importFromPfx = 'import_from_pfx';
-  static const String selectPfxFile = 'select_pfx_file';
-  static const String pfxFileRequired = 'pfx_file_required';
-  static const String selectPfxOrP12File = 'select_pfx_or_p12_file';
-  static const String pfxPasswordRequired = 'pfx_password_required';
-  static const String pfxImportedSuccessfullyTo =
-      'pfx_imported_successfully_to';
-  static const String folder = 'folder';
-
-  // Import Certificate Dialog (New Keys)
-  static const String importCertificate = 'import_certificate';
-  static const String selectCertificateFile = 'select_certificate_file';
-  static const String certificateFileRequired = 'certificate_file_required';
-  static const String importedCertificate = 'imported_certificate';
-  static const String certificateValidated = 'certificate_validated';
-  static const String expired = 'expired';
-  static const String expiresIn = 'expires_in';
-  static const String days = 'days';
-  static const String certificateImportedSuccessfullyTo =
-      'certificate_imported_successfully_to';
-  static const String type = 'type';
-  static const String certificate = 'certificate';
-  static const String commonName = 'common_name';
-  static const String organization = 'organization';
-  static const String issueDate = 'issue_date';
-  static const String expiryDate = 'expiry_date';
-  static const String daysUntilExpiry = 'days_until_expiry';
-  static const String thisCertificateHasExpired =
-      'this_certificate_has_expired';
-  static const String thisCertificateWillExpireIn =
-      'this_certificate_will_expire_in';
-  static const String daysAgo = 'days_ago';
-
-  // Certificate Management Screen
-  static const certTabAll = 'cert_tab_all';
-  static const certTabCA = 'cert_tab_ca';
-  static const certTabSSL = 'cert_tab_ssl';
-
-  // Certificate Details
-  static const certDetailType = 'cert_detail_type';
-  static const certDetailCommonName = 'cert_detail_common_name';
-  static const certDetailOrganization = 'cert_detail_organization';
-  static const certDetailCountry = 'cert_detail_country';
-  static const certDetailState = 'cert_detail_state';
-  static const certDetailCity = 'cert_detail_city';
-  static const certDetailIssuerCN = 'cert_detail_issuer_cn';
-  static const certDetailIssuerOrg = 'cert_detail_issuer_org';
-  static const certDetailIssueDate = 'cert_detail_issue_date';
-  static const certDetailExpiryDate = 'cert_detail_expiry_date';
-  static const certDetailDaysUntilExpiry = 'cert_detail_days_until_expiry';
-  static const certDetailEncrypted = 'cert_detail_encrypted';
-  static const certDetailSerial = 'cert_detail_serial';
-  static const certDetailFilePath = 'cert_detail_file_path';
-  static const certDetailKeyPath = 'cert_detail_key_path';
-  static const certDetailChainPath = 'cert_detail_chain_path';
-  static const certDetailFullChainPath = 'cert_detail_full_chain_path';
-  static const certDetailChainLength = 'cert_detail_chain_length';
-  static const certDetailImportedFrom = 'cert_detail_imported_from';
-  static const certDetailPurpose = 'cert_detail_purpose';
-  static const certDetailPurposeName = 'cert_detail_purpose_name';
-  static const certYes = 'cert_yes';
-  static const certNo = 'cert_no';
-  static const certNA = 'cert_na';
-  static const certExternal = 'cert_external';
-  static const certCertificates = 'cert_certificates';
-
-  // Generate Certificate Dialog
-  static const certGenTitle = 'cert_gen_title';
-  static const certGenSubtitle = 'cert_gen_subtitle';
-  static const certGenClose = 'cert_gen_close';
-  static const certGenConfigTitle = 'cert_gen_config_title';
-  static const certGenUseCustomConfig = 'cert_gen_use_custom_config';
-  static const certGenUsingConfig = 'cert_gen_using_config';
-  static const certGenUsingDefault = 'cert_gen_using_default';
-  static const certGenConfigApplied = 'cert_gen_config_applied';
-
-  static const certGenPurposeTitle = 'cert_gen_purpose_title';
-  static const certGenSelectPurpose = 'cert_gen_select_purpose';
-  static const certGenPurposeHelper = 'cert_gen_purpose_helper';
-  static const certGenRequired = 'cert_gen_required';
-  static const certGenKeyUsage = 'cert_gen_key_usage';
-  static const certGenExtendedUsage = 'cert_gen_extended_usage';
-  static const certGenCustomKeyUsage = 'cert_gen_custom_key_usage';
-  static const certGenCustomKeyUsageHint = 'cert_gen_custom_key_usage_hint';
-  static const certGenCustomExtKeyUsage = 'cert_gen_custom_ext_key_usage';
-  static const certGenCustomExtKeyUsageHint =
-      'cert_gen_custom_ext_key_usage_hint';
-  static const certGenCommaSeparated = 'cert_gen_comma_separated';
-  static const certGenCommonKeyUsage = 'cert_gen_common_key_usage';
-  static const certGenCommonExtKeyUsage = 'cert_gen_common_ext_key_usage';
-
-  static const certGenCATitle = 'cert_gen_ca_title';
-  static const certGenSelectCA = 'cert_gen_select_ca';
-  static const certGenSelectCAHelper = 'cert_gen_select_ca_helper';
-  static const certGenCAPassword = 'cert_gen_ca_password';
-  static const certGenPleaseSelectCA = 'cert_gen_please_select_ca';
-
-  static const certGenInfoTitle = 'cert_gen_info_title';
-  static const certGenSecurityTitle = 'cert_gen_security_title';
-  static const certGenEncryptKey = 'cert_gen_encrypt_key';
-  static const certGenEncryptKeyDesc = 'cert_gen_encrypt_key_desc';
-  static const certGenPassword = 'cert_gen_password';
-  static const certGenPasswordHelper = 'cert_gen_password_helper';
-
-  static const certGenGenerating = 'cert_gen_generating';
-  static const certGenCancel = 'cert_gen_cancel';
-  static const certGenGenerate = 'cert_gen_generate';
-
-  // Form Fields
-  static const certFieldName = 'cert_field_name';
-  static const certFieldNameHintCA = 'cert_field_name_hint_ca';
-  static const certFieldNameHintSSL = 'cert_field_name_hint_ssl';
-  static const certFieldCountry = 'cert_field_country';
-  static const certFieldState = 'cert_field_state';
-  static const certFieldCity = 'cert_field_city';
-  static const certFieldOrganization = 'cert_field_organization';
-  static const certFieldOrgUnit = 'cert_field_org_unit';
-  static const certFieldCommonName = 'cert_field_common_name';
-  static const certFieldCommonNameHintCA = 'cert_field_common_name_hint_ca';
-  static const certFieldCommonNameHintSSL = 'cert_field_common_name_hint_ssl';
-  static const certFieldEmail = 'cert_field_email';
-  static const certFieldEmailHint = 'cert_field_email_hint';
-  static const certFieldSAN = 'cert_field_san';
-  static const certFieldSANHint = 'cert_field_san_hint';
-  static const certFieldValidity = 'cert_field_validity';
-  static const certFieldFromConfig = 'cert_field_from_config';
-  static const certFieldInvalidNumber = 'cert_field_invalid_number';
-
-  // Success Messages
-  static const certGenSuccessCA = 'cert_gen_success_ca';
-  static const certGenSuccessSSL = 'cert_gen_success_ssl';
-  static const certGenSuccessCustomConfig = 'cert_gen_success_custom_config';
-  static const certGenSuccessPurpose = 'cert_gen_success_purpose';
-  static const certGenError = 'cert_gen_error';
-
-  // Export PFX Dialog
-  static const certExportTitle = 'cert_export_title';
-  static const certExportCertPassword = 'cert_export_cert_password';
-  static const certExportPFXPassword = 'cert_export_pfx_password';
-  static const certExportIncludeCA = 'cert_export_include_ca';
-  static const certExportSelectCA = 'cert_export_select_ca';
-  static const certExportButton = 'cert_export_button';
-  static const certExportSaveTitle = 'cert_export_save_title';
-  static const certExportSuccess = 'cert_export_success';
-  static const certExportError = 'cert_export_error';
-
-  // Certificate Card Status
-  static const certStatusActive = 'cert_status_active';
-  static const certStatusExpired = 'cert_status_expired';
-  static const certStatusExpiringSoon = 'cert_status_expiring_soon';
-
-  // Certificate Card Info Labels
-  static const certCardIssueDate = 'cert_card_issue_date';
-  static const certCardExpiryDate = 'cert_card_expiry_date';
-  static const certCardDaysUntilExpiry = 'cert_card_days_until_expiry';
-  static const certCardDays = 'cert_card_days';
-  static const certCardEncrypted = 'cert_card_encrypted';
-  static const certCardChain = 'cert_card_chain';
-  static const certCardCerts = 'cert_card_certs';
-  static const certCardImported = 'cert_card_imported';
-
-  // Certificate Card Actions
-  static const certActionExport = 'cert_action_export';
-  static const certActionDelete = 'cert_action_delete';
 }

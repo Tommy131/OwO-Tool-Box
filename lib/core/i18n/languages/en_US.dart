@@ -6,26 +6,16 @@ import '../localization_keys.dart';
 
 class EnUS {
   static const Map<String, String> translations = {
-    // ========== General ==========
-    L18nKeys.appTitle: 'OwO! Tool Box',
+    // ========== Window Controls ==========
     L18nKeys.ok: 'OK',
     L18nKeys.cancel: 'Cancel',
+    L18nKeys.minimize: 'Minimize',
+    L18nKeys.maximize: 'Maximize',
+    L18nKeys.restore: 'Restore',
+    L18nKeys.close: 'Close',
 
-    // ========== Navigation ==========
-    L18nKeys.menu: 'Menu',
-    L18nKeys.home: 'Home',
-    L18nKeys.settings: 'Settings',
-    L18nKeys.about: 'About',
-    L18nKeys.monitor: 'Monitor',
-    L18nKeys.ssl: 'SSL Certificate Manager',
-
-    // ========== Welcome Page ==========
-    L18nKeys.welcome: 'Welcome',
-    L18nKeys.welcomeMessage:
-        'A powerful cross-platform system tools suite supporting host monitoring, performance analysis and more',
-    L18nKeys.welcomeDescription:
-        'Supports multi-platform adaptive layouts, perfectly adapted for mobile, tablet, and desktop devices',
-    L18nKeys.exploreFeatures: 'Explore Features',
+    // ========== Theme Settings ==========
+    L18nKeys.themeSettings: 'Theme Settings',
 
     // ========== Language Settings ==========
     L18nKeys.languageSettings: 'Language Settings',
@@ -36,21 +26,6 @@ class EnUS {
     L18nKeys.adjustTheme: 'Adjust theme mode and color scheme',
     L18nKeys.selectAppLanguage: 'Select application display language',
     L18nKeys.configureHostMonitor: 'Configure host monitoring options',
-
-    // ========== Theme Settings ==========
-    L18nKeys.themeMode: 'Theme Mode',
-    L18nKeys.changingTheme: 'Changing Theme',
-    L18nKeys.themeSettings: 'Theme Settings',
-    L18nKeys.themeColorSettings: 'Theme Colors',
-    L18nKeys.cyberpunkTheme: 'Cyberpunk Theme',
-    L18nKeys.lightTheme: 'Light Theme',
-    L18nKeys.darkTheme: 'Dark Theme',
-    L18nKeys.systemTheme: 'System Default',
-    L18nKeys.defaultTheme: 'Default Theme',
-    L18nKeys.techTheme: 'Tech Theme',
-    L18nKeys.natureTheme: 'Nature Theme',
-    L18nKeys.sunsetTheme: 'Sunset Theme',
-    L18nKeys.oceanTheme: 'Ocean Theme',
 
     // ========== Host Monitor Settings ==========
     L18nKeys.hostMonitorSettings: 'Host Monitor Settings',
@@ -97,22 +72,12 @@ class EnUS {
     L18nKeys.invalidCheckInterval:
         'Please enter a valid check interval (1-1440 minutes)',
 
-    // ========== Visual Effects ==========
-    L18nKeys.visualEffects: 'Visual Effects',
-    L18nKeys.visualEffectsDescription: 'Exclusive effects for Cyberpunk theme',
-    L18nKeys.matrixRainEffect: 'Matrix Rain Effect',
-    L18nKeys.matrixRainDescription: 'Matrix-style background animation',
-    L18nKeys.glowEffect: 'Glow Effect',
-    L18nKeys.glowEffectDescription: 'Button and card glow effects',
-    L18nKeys.scanningLine: 'Scanning Line',
-    L18nKeys.scanningLineDescription: 'Screen scanning line animation',
-    L18nKeys.glitchEffect: 'Glitch Effect',
-    L18nKeys.glitchEffectDescription: 'Digital glitch style effects',
-
     // ========== App Info ==========
     L18nKeys.appInfo: 'App Info',
     L18nKeys.appName: 'App Name',
     L18nKeys.appDescription: 'App Description',
+    L18nKeys.descriptionMessage:
+        'A powerful cross-platform system tools suite supporting host monitoring, performance analysis and more',
     L18nKeys.appVersion: 'Version',
     L18nKeys.developerInfo: 'Developer Info',
     L18nKeys.developerName: 'Developer',
@@ -160,12 +125,6 @@ class EnUS {
     L18nKeys.desktopDevice: 'Desktop',
     L18nKeys.layoutMode: 'Layout Mode',
     L18nKeys.adaptiveLayout: 'Adaptive Layout',
-
-    // ========== Window Controls ==========
-    L18nKeys.minimize: 'Minimize',
-    L18nKeys.maximize: 'Maximize',
-    L18nKeys.restore: 'Restore',
-    L18nKeys.close: 'Close',
 
     // ========== Host Edit Page ==========
     L18nKeys.editHost: 'Edit Host',
@@ -291,323 +250,5 @@ class EnUS {
     L18nKeys.download: 'Download',
     L18nKeys.bytesSent: 'Bytes Sent',
     L18nKeys.bytesReceived: 'Bytes Received',
-
-    // ========== SSL Certificate Manager ==========
-    L18nKeys.sslCertificateManager: 'SSL Certificate Manager',
-    L18nKeys.sslBack: 'Back',
-    L18nKeys.sslToggleTheme: 'Toggle Theme',
-    L18nKeys.sslWelcomeTitle: 'Welcome to SSL Certificate Manager',
-    L18nKeys.sslWelcomeSubtitle: 'Easily manage your OpenSSL certificates',
-    L18nKeys.sslTotalCertificates: 'Total Certificates',
-    L18nKeys.sslCACertificates: 'CA Certificates',
-    L18nKeys.sslSSLCertificates: 'SSL Certificates',
-    L18nKeys.sslExpired: 'Expired',
-    L18nKeys.sslNavigation: 'Navigation',
-    L18nKeys.sslCertificates: 'Certificates',
-    L18nKeys.sslManageCertificates: 'Manage Certificates',
-    L18nKeys.sslConfig: 'Configuration',
-    L18nKeys.sslOpenSSLConfiguration: 'OpenSSL Configuration',
-    L18nKeys.sslAppSettings: 'App Settings',
-
-    // ========== Settings Screen ==========
-    L18nKeys.settingsSelectCertDirectory:
-        'Select Certificate Storage Directory',
-    L18nKeys.settingsSelectConfigFile: 'Select OpenSSL Configuration File',
-    L18nKeys.settingsCreateConfigFile: 'Create OpenSSL Configuration File',
-    L18nKeys.settingsRequired: 'Required',
-    L18nKeys.settingsSaveSuccess: 'Settings saved successfully',
-    L18nKeys.settingsSaveError: 'Error saving settings: {error}',
-    L18nKeys.settingsCertStorage: 'Certificate Storage',
-    L18nKeys.settingsCertStoragePath: 'Certificate Storage Path *',
-    L18nKeys.settingsCertPathHint: '/path/to/certificates',
-    L18nKeys.settingsCertStorageDesc:
-        'All generated certificates will be stored in this directory',
-    L18nKeys.settingsOpenSSLConfig: 'OpenSSL Configuration',
-    L18nKeys.settingsConfigFilePath: 'Configuration File Path *',
-    L18nKeys.settingsConfigPathHint: '/path/to/openssl.cnf',
-    L18nKeys.settingsCreateNew: 'Create New',
-    L18nKeys.settingsSelectExisting: 'Select Existing',
-    L18nKeys.settingsConfigFileDesc:
-        'OpenSSL configuration template file. Used when generating certificates.',
-    L18nKeys.settingsCACertDefaults: 'CA Certificate Default Settings',
-    L18nKeys.settingsDefaultCAName: 'Default CA Name *',
-    L18nKeys.settingsCANameHint: 'MyRootCA',
-    L18nKeys.settingsEncryptCAByDefault: 'Encrypt CA by Default',
-    L18nKeys.settingsEncryptCADesc:
-        'Automatically encrypt CA private key when generating',
-    L18nKeys.settingsDefaultCAPassword: 'Default CA Password',
-    L18nKeys.settingsCAPasswordHint: 'Leave empty to prompt each time',
-    L18nKeys.settingsPasswordWarning:
-        'Warning: Not recommended to store passwords in production',
-    L18nKeys.settingsAbout: 'About',
-    L18nKeys.settingsAppName: 'SSL Certificate Manager',
-    L18nKeys.settingsAppVersion: 'Version 1.0.0',
-    L18nKeys.settingsAppDescription:
-        'Professional OpenSSL certificate management application built with Flutter.',
-    L18nKeys.settingsPoweredBy: 'Powered by OpenSSL',
-    L18nKeys.settingsReset: 'Reset',
-    L18nKeys.settingsSaveSettings: 'Save Settings',
-
-    // ========== OpenSSL Configuration Screen ==========
-    L18nKeys.configLoadError: 'Error loading configuration: {error}',
-    L18nKeys.configSaveSuccess: 'Configuration saved successfully',
-    L18nKeys.configSaveError: 'Error saving configuration: {error}',
-    L18nKeys.configResetToDefault: 'Reset to Default',
-    L18nKeys.configResetConfirm:
-        'Are you sure you want to reset the configuration to default? This will overwrite your current configuration.',
-    L18nKeys.configCancel: 'Cancel',
-    L18nKeys.configReset: 'Reset',
-    L18nKeys.configEditHint:
-        'Edit OpenSSL configuration template. This template will be used when generating certificates.',
-    L18nKeys.configPlaceholder: 'OpenSSL configuration...',
-    L18nKeys.configResetToDefaultBtn: 'Reset to Default',
-    L18nKeys.configSaveConfiguration: 'Save Configuration',
-
-    // ========== Certificate Management Screen ==========
-    L18nKeys.certImport: 'Import',
-    L18nKeys.certGenerateCA: 'Generate CA Certificate',
-    L18nKeys.certGenerateSSL: 'Generate SSL Certificate',
-    L18nKeys.certPath: 'Path',
-    L18nKeys.certCopyFullChainPath: 'Copy Full Chain Path',
-    L18nKeys.certClose: 'Close',
-    L18nKeys.certDeleteTitle: 'Delete Certificate',
-    L18nKeys.certDeleteConfirm:
-        'Are you sure you want to delete certificate {name}?',
-    L18nKeys.certCancel: 'Cancel',
-    L18nKeys.certDelete: 'Delete',
-    L18nKeys.certDeleteSuccess: 'Certificate deleted successfully',
-    L18nKeys.certImportCertificate: 'Import Certificate',
-    L18nKeys.certImportSSLTitle: 'Import SSL Certificate',
-    L18nKeys.certImportSSLDesc:
-        'Import complete SSL certificate (certificate + private key + chain)',
-    L18nKeys.certImportCATitle: 'Import CA Certificate',
-    L18nKeys.certImportCADesc: 'Import CA root or intermediate certificate',
-    L18nKeys.certImportPFXTitle: 'Import PFX/P12',
-    L18nKeys.certImportPFXDesc: 'Import PFX or P12 format certificate package',
-
-    // ========== Certificate Management Screen ==========
-    L18nKeys.certSearchPlaceholder: 'Search certificates...',
-    L18nKeys.certNoFound: 'No certificates found',
-
-    // Import SSL Certificate Dialog
-    L18nKeys.importSslCertificate: 'Import SSL Certificate',
-    L18nKeys.selectSslCertificateFile: 'Select SSL Certificate File',
-    L18nKeys.selectPrivateKeyFile: 'Select Private Key File',
-    L18nKeys.selectCertificateChainFile: 'Select Certificate Chain File',
-    L18nKeys.invalidCertificateFile: 'Invalid certificate file',
-    L18nKeys.caCertificateWarning:
-        'This appears to be a CA certificate. Please use "Import PEM Certificate" function.',
-    L18nKeys.importedSslCertificate: 'Imported SSL Certificate',
-    L18nKeys.sslCertificateValidatedSuccessfully:
-        'SSL certificate validated successfully',
-    L18nKeys.validationError: 'Validation Error',
-    L18nKeys.invalidPrivateKeyOrPassword:
-        'Invalid private key file or wrong password',
-    L18nKeys.certificateKeyMismatch: 'Certificate and private key do not match',
-    L18nKeys.privateKeyValidatedSuccessfully:
-        'Private key validated successfully',
-    L18nKeys.noCertificatesFoundInChain: 'No certificates found in chain file',
-    L18nKeys.certificateChainValidated:
-        'Certificate chain validated successfully',
-    L18nKeys.certificates: 'certificates',
-    L18nKeys.chainValidationError: 'Chain validation error',
-    L18nKeys.pleaseValidateCertificateFirst:
-        'Please validate certificate first',
-    L18nKeys.pleaseValidatePrivateKeyFirst: 'Please validate private key first',
-    L18nKeys.pleaseValidateChainFirst: 'Please validate chain first',
-    L18nKeys.sslCertificateImportedSuccessfully:
-        'SSL certificate imported successfully',
-    L18nKeys.importError: 'Import Error',
-    L18nKeys.importSslCertificateDescription:
-        'Import existing SSL certificate with private key and certificate chain. Supports PEM format.',
-    L18nKeys.sslCertificateFileRequired: 'SSL Certificate File (Required)',
-    L18nKeys.selectPemCrtCerFile: 'Select .pem, .crt, or .cer file',
-    L18nKeys.required: 'Required',
-    L18nKeys.validateCertificate: 'Validate Certificate',
-    L18nKeys.sslCertificate: 'SSL Certificate',
-    L18nKeys.issuer: 'Issuer',
-    L18nKeys.expiry: 'Expiry',
-    L18nKeys.certificateNameRequired: 'Certificate Name (Required)',
-    L18nKeys.enterFriendlyName: 'Enter a friendly name',
-    L18nKeys.includePrivateKey: 'Include Private Key',
-    L18nKeys.privateKeyFileRequired: 'Private Key File (Required)',
-    L18nKeys.selectPemKeyFile: 'Select .pem or .key file',
-    L18nKeys.privateKeyIsEncrypted: 'Private key is encrypted',
-    L18nKeys.privateKeyPasswordRequired: 'Private Key Password (Required)',
-    L18nKeys.validatePrivateKey: 'Validate Private Key',
-    L18nKeys.includeCertificateChain: 'Include Certificate Chain',
-    L18nKeys.intermediateRootCaCertificates:
-        'Intermediate and root CA certificates',
-    L18nKeys.certificateChainFile: 'Certificate Chain File',
-    L18nKeys.selectChainPemFile:
-        'Select .pem file containing certificate chain',
-    L18nKeys.validateChain: 'Validate Chain',
-    L18nKeys.chainContains: 'Chain contains',
-    L18nKeys.import: 'Import',
-
-    // Import PFX Dialog
-    L18nKeys.importFromPfx: 'Import from PFX',
-    L18nKeys.selectPfxFile: 'Select PFX File',
-    L18nKeys.pfxFileRequired: 'PFX File (Required)',
-    L18nKeys.selectPfxOrP12File: 'Select .pfx or .p12 file',
-    L18nKeys.pfxPasswordRequired: 'PFX Password (Required)',
-    L18nKeys.pfxImportedSuccessfullyTo: 'PFX imported successfully to',
-    L18nKeys.folder: 'folder',
-
-    // Import Certificate Dialog
-    L18nKeys.importCertificate: 'Import Certificate',
-    L18nKeys.selectCertificateFile: 'Select Certificate File',
-    L18nKeys.certificateFileRequired: 'Certificate File (Required)',
-    L18nKeys.importedCertificate: 'Imported Certificate',
-    L18nKeys.certificateValidated: 'Certificate validated',
-    L18nKeys.expired: 'Expired',
-    L18nKeys.expiresIn: 'Expires in',
-    L18nKeys.days: 'days',
-    L18nKeys.certificateImportedSuccessfullyTo:
-        'Certificate imported successfully to',
-    L18nKeys.type: 'Type',
-    L18nKeys.certificate: 'Certificate',
-    L18nKeys.commonName: 'Common Name',
-    L18nKeys.organization: 'Organization',
-    L18nKeys.issueDate: 'Issue Date',
-    L18nKeys.expiryDate: 'Expiry Date',
-    L18nKeys.daysUntilExpiry: 'Days Until Expiry',
-    L18nKeys.thisCertificateHasExpired: 'This certificate has expired!',
-    L18nKeys.thisCertificateWillExpireIn: 'This certificate will expire in',
-    L18nKeys.daysAgo: 'days ago',
-
-    // Certificate Management Screen
-    L18nKeys.certTabAll: 'All',
-    L18nKeys.certTabCA: 'CA Certificates',
-    L18nKeys.certTabSSL: 'SSL Certificates',
-
-    // Certificate Details
-    L18nKeys.certDetailType: 'Type',
-    L18nKeys.certDetailCommonName: 'Common Name',
-    L18nKeys.certDetailOrganization: 'Organization',
-    L18nKeys.certDetailCountry: 'Country',
-    L18nKeys.certDetailState: 'State/Province',
-    L18nKeys.certDetailCity: 'City',
-    L18nKeys.certDetailIssuerCN: 'Issuer CN',
-    L18nKeys.certDetailIssuerOrg: 'Issuer Organization',
-    L18nKeys.certDetailIssueDate: 'Issue Date',
-    L18nKeys.certDetailExpiryDate: 'Expiry Date',
-    L18nKeys.certDetailDaysUntilExpiry: 'Days Until Expiry',
-    L18nKeys.certDetailEncrypted: 'Encrypted',
-    L18nKeys.certDetailSerial: 'Serial Number',
-    L18nKeys.certDetailFilePath: 'File Path',
-    L18nKeys.certDetailKeyPath: 'Key Path',
-    L18nKeys.certDetailChainPath: 'Chain Path',
-    L18nKeys.certDetailFullChainPath: 'Full Chain Path',
-    L18nKeys.certDetailChainLength: 'Chain Length',
-    L18nKeys.certDetailImportedFrom: 'Imported From',
-    L18nKeys.certDetailPurpose: 'Purpose',
-    L18nKeys.certDetailPurposeName: 'Purpose Name',
-    L18nKeys.certYes: 'Yes',
-    L18nKeys.certNo: 'No',
-    L18nKeys.certNA: 'N/A',
-    L18nKeys.certExternal: 'External',
-    L18nKeys.certCertificates: 'certificates',
-
-    // Generate Certificate Dialog
-    L18nKeys.certGenTitle: 'Generate Certificate',
-    L18nKeys.certGenSubtitle:
-        'Fill in the form below to create your certificate',
-    L18nKeys.certGenClose: 'Close',
-    L18nKeys.certGenConfigTitle: 'OpenSSL Configuration',
-    L18nKeys.certGenUseCustomConfig: 'Use custom OpenSSL config',
-    L18nKeys.certGenUsingDefault: 'Using OpenSSL default configuration',
-    L18nKeys.certGenConfigApplied: 'Configuration defaults applied',
-
-    L18nKeys.certGenPurposeTitle: 'Certificate Purpose',
-    L18nKeys.certGenSelectPurpose: 'Select Purpose *',
-    L18nKeys.certGenPurposeHelper: 'Defines the certificate key usage',
-    L18nKeys.certGenRequired: 'Required',
-    L18nKeys.certGenKeyUsage: 'Key Usage:',
-    L18nKeys.certGenExtendedUsage: 'Extended Usage:',
-    L18nKeys.certGenCustomKeyUsage: 'Custom Key Usage',
-    L18nKeys.certGenCustomKeyUsageHint:
-        'critical, digitalSignature, keyEncipherment',
-    L18nKeys.certGenCustomExtKeyUsage: 'Custom Extended Key Usage',
-    L18nKeys.certGenCustomExtKeyUsageHint:
-        'serverAuth, clientAuth, codeSigning',
-    L18nKeys.certGenCommaSeparated: 'Comma-separated values',
-    L18nKeys.certGenCommonKeyUsage: 'Common Key Usage Values:',
-    L18nKeys.certGenCommonExtKeyUsage: 'Common Extended Key Usage Values:',
-
-    L18nKeys.certGenCATitle: 'CA Certificate Selection',
-    L18nKeys.certGenSelectCA: 'Select CA Certificate *',
-    L18nKeys.certGenSelectCAHelper:
-        'Choose which CA will sign this certificate',
-    L18nKeys.certGenCAPassword: 'CA Password *',
-    L18nKeys.certGenPleaseSelectCA: 'Please select a CA certificate',
-
-    L18nKeys.certGenInfoTitle: 'Certificate Information',
-    L18nKeys.certGenSecurityTitle: 'Security Options',
-    L18nKeys.certGenEncryptKey: 'Encrypt private key',
-    L18nKeys.certGenEncryptKeyDesc: 'Protect the private key with a password',
-    L18nKeys.certGenPassword: 'Password *',
-    L18nKeys.certGenPasswordHelper: 'Enter a strong password',
-
-    L18nKeys.certGenGenerating: 'Generating certificate...',
-    L18nKeys.certGenCancel: 'Cancel',
-    L18nKeys.certGenGenerate: 'Generate Certificate',
-
-    // Form Fields
-    L18nKeys.certFieldName: 'Certificate Name *',
-    L18nKeys.certFieldNameHintCA: 'MyRootCA',
-    L18nKeys.certFieldNameHintSSL: 'example.com',
-    L18nKeys.certFieldCountry: 'Country Code *',
-    L18nKeys.certFieldState: 'State/Province *',
-    L18nKeys.certFieldCity: 'City *',
-    L18nKeys.certFieldOrganization: 'Organization *',
-    L18nKeys.certFieldOrgUnit: 'Organization Unit *',
-    L18nKeys.certFieldCommonName: 'Common Name *',
-    L18nKeys.certFieldCommonNameHintCA: 'My Root CA',
-    L18nKeys.certFieldCommonNameHintSSL: 'example.com',
-    L18nKeys.certFieldEmail: 'Email',
-    L18nKeys.certFieldEmailHint: 'admin@example.com',
-    L18nKeys.certFieldSAN: 'Subject Alternative Names',
-    L18nKeys.certFieldSANHint: 'www.example.com,mail.example.com',
-    L18nKeys.certFieldValidity: 'Validity (days) *',
-    L18nKeys.certFieldFromConfig: 'From config',
-    L18nKeys.certFieldInvalidNumber: 'Invalid number',
-
-    // Success Messages
-    L18nKeys.certGenSuccessCA: 'CA certificate generated successfully',
-    L18nKeys.certGenSuccessSSL: 'SSL certificate generated successfully',
-    L18nKeys.certGenSuccessCustomConfig: ' using custom config',
-    L18nKeys.certGenSuccessPurpose: 'Purpose: ',
-    L18nKeys.certGenError: 'Error: ',
-
-    // Export PFX Dialog
-    L18nKeys.certExportTitle: 'Export to PFX',
-    L18nKeys.certExportCertPassword: 'Certificate Password *',
-    L18nKeys.certExportPFXPassword: 'PFX Password *',
-    L18nKeys.certExportIncludeCA: 'Include CA Certificate',
-    L18nKeys.certExportSelectCA: 'Select CA Certificate',
-    L18nKeys.certExportButton: 'Export',
-    L18nKeys.certExportSaveTitle: 'Save PFX file',
-    L18nKeys.certExportSuccess: 'PFX exported successfully',
-    L18nKeys.certExportError: 'Export error: ',
-
-    // Certificate Card Status
-    L18nKeys.certStatusActive: 'Active',
-    L18nKeys.certStatusExpired: 'Expired',
-    L18nKeys.certStatusExpiringSoon: 'Expiring Soon',
-
-    // Certificate Card Info Labels
-    L18nKeys.certCardIssueDate: 'Issue Date',
-    L18nKeys.certCardExpiryDate: 'Expiry Date',
-    L18nKeys.certCardDaysUntilExpiry: 'Days Until Expiry',
-    L18nKeys.certCardDays: 'days',
-    L18nKeys.certCardEncrypted: 'Encrypted',
-    L18nKeys.certCardChain: 'Chain',
-    L18nKeys.certCardCerts: 'cert(s)',
-    L18nKeys.certCardImported: 'Imported',
-
-    // Certificate Card Actions
-    L18nKeys.certActionExport: 'Export',
-    L18nKeys.certActionDelete: 'Delete',
   };
 }

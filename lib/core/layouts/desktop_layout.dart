@@ -1,98 +1,65 @@
-/*
- *        _____   _          __  _____   _____   _       _____   _____
- *      /  _  \ | |        / / /  _  \ |  _  \ | |     /  _  \ /  ___|
- *      | | | | | |  __   / /  | | | | | |_| | | |     | | | | | |
- *      | | | | | | /  | / /   | | | | |  _  { | |     | | | | | |   _
- *      | |_| | | |/   |/ /    | |_| | | |_| | | |___  | |_| | | |_| |
- *      \_____/ |___/|___/     \_____/ |_____/ |_____| \_____/ \_____/
- *
- *  Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
- * @Date         : 2025-10-22
- * @Author       : HanskiJay
- * @LastEditors  : HanskiJay
- * @LastEditTime : 2025-10-22
- * @E-Mail       : support@owoblog.com
- * @Telegram     : https://t.me/HanskiJay
- * @GitHub       : https://github.com/Tommy131
- */
-// ============================================================================
-// 桌面端布局 - 使用扩展的侧边导航栏 + 窗口控制 + 滚动支持
-// ============================================================================
-
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import '../models/navigation_item.dart';
+import '../widgets/common/custom_app_bar.dart';
+import '../widgets/desktop/sidebar.dart';
 
-import '../providers/navigation_provider.dart';
-import '../i18n/app_localization.dart';
-import '../i18n/localization_keys.dart';
-import '../widgets/custom_title_bar.dart';
-
+/// 桌面端布局
+/// 左侧：可展开/折叠的侧边栏
+/// 右侧：AppBar + 主内容区
 class DesktopLayout extends StatelessWidget {
-  final List<Widget> pages;
-  final List<NavigationRailDestination> destinations;
+  final List<NavigationItem> navigationItems;
+  final int selectedIndex;
+  final Function(int) onNavigationChanged;
+
   const DesktopLayout({
     super.key,
-    required this.pages,
-    required this.destinations,
+    required this.navigationItems,
+    required this.selectedIndex,
+    required this.onNavigationChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalization.of(context);
-    final navigationProvider = Provider.of<NavigationProvider>(context);
+    final currentItem = navigationItems[selectedIndex];
 
     return Scaffold(
-      body: Column(
-        children: [
-          CustomTitleBar(title: localizations.translate(L18nKeys.appTitle)),
-          Expanded(
-            child: Row(
-              children: [
-                // 添加滚动支持的 NavigationRail
-                SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: MediaQuery.of(context).size.height -
-                          kToolbarHeight + // 减去标题栏高度
-                          15, // 加上减去之后的空白占位 = 15 pixels
-                    ),
-                    child: IntrinsicHeight(
-                      child: NavigationRail(
-                        extended: true,
-                        selectedIndex: navigationProvider.selectedIndex,
-                        onDestinationSelected: (index) {
-                          navigationProvider.setIndex(index);
-                        },
-                        leading: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.rocket_launch_rounded,
-                                size: 48,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                localizations.translate(L18nKeys.appTitle),
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                            ],
-                          ),
-                        ),
-                        destinations: destinations,
-                      ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            minWidth: 1000, // 设置最小宽度为 1000px
+          ),
+          child: IntrinsicWidth(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width < 1000
+                  ? 1000
+                  : MediaQuery.of(context).size.width,
+              child: Row(
+                children: [
+                  // 左侧边栏
+                  DesktopSidebar(
+                    items: navigationItems,
+                    selectedIndex: selectedIndex,
+                    onItemSelected: onNavigationChanged,
+                  ),
+
+                  // 右侧主内容区
+                  Expanded(
+                    child: Column(
+                      children: [
+                        // AppBar
+                        CustomAppBar.build(currentItem, context),
+
+                        // 主内容
+                        Expanded(child: currentItem.page),
+                      ],
                     ),
                   ),
-                ),
-                const VerticalDivider(thickness: 1, width: 1),
-                Expanded(
-                  child: pages[navigationProvider.selectedIndex],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

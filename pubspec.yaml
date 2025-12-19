@@ -6,7 +6,7 @@ publish_to: 'none'  # 私有包，不发布到pub.dev
 version: 1.0.0+1  # 版本号：主版本.次版本.补丁版本+构建号
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'  # 支持的Dart SDK版本范围，确保兼容性
+  sdk: '3.9.2'  # 支持的Dart SDK版本，确保兼容性
 
 # 📦 **依赖项（Dependencies）**：运行时必需的包，按功能分类组织，便于维护。
 dependencies:
@@ -31,7 +31,7 @@ dependencies:
   flutter_secure_storage: ^8.0.0  # 加密存储敏感数据
 
   # **平台特定功能**：桌面窗口管理和路径处理。
-  bitsdojo_window: ^0.1.6  # 自定义桌面窗口行为
+  window_manager: ^0.5.1
   path_provider: ^2.1.1  # 获取平台特定目录路径
 
   # **网络 & 通信**：HTTP请求和SSH连接。
@@ -53,6 +53,7 @@ dependencies:
   file_picker: ^10.3.3  # 文件选择对话框
   process_run: ^1.2.4  # 运行外部进程
   url_launcher: ^6.2.2  # 启动URL或应用
+  flex_color_picker: ^3.7.2
 
 # 🛠️ **开发依赖（Dev Dependencies）**：仅用于开发和测试的包。
 dev_dependencies:
@@ -82,11 +83,12 @@ flutter:
 flutter_icons:
   android: true  # 生成Android图标
   ios: true  # 生成iOS图标
+  remove_alpha_ios: true
   image_path: "assets/icons/app_icon.png"  # 源图标文件
   min_sdk_android: 21  # Android最低SDK版本（默认21，最小16）
 
   web:
-    generate: true  # 生成Web图标
+    generate: false  # 生成Web图标
     image_path: "assets/icons/app_icon.png"
     background_color: "#eeeeee"  # Web背景色
     theme_color: "#fea31a"  # Web主题色
@@ -97,5 +99,5 @@ flutter_icons:
     icon_size: 64  # 图标尺寸（范围48-256，默认48）
 
   macos:
-    generate: true  # 生成macOS图标
+    generate: false  # 生成macOS图标
     image_path: "assets/icons/app_icon.png"

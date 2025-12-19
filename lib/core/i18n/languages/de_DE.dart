@@ -6,29 +6,19 @@ import '../localization_keys.dart';
 
 class DeDE {
   static const Map<String, String> translations = {
-    // ========== Allgemein ==========
-    L18nKeys.appTitle: 'OwO! Tool Box',
+    // ========== Fenstersteuerung ==========
     L18nKeys.ok: 'OK',
     L18nKeys.cancel: 'Abbrechen',
+    L18nKeys.minimize: 'Minimieren',
+    L18nKeys.maximize: 'Maximieren',
+    L18nKeys.restore: 'Wiederherstellen',
+    L18nKeys.close: 'Schließen',
 
-    // ========== Navigation ==========
-    L18nKeys.menu: 'Menü',
-    L18nKeys.home: 'Startseite',
-    L18nKeys.settings: 'Einstellungen',
-    L18nKeys.about: 'Über',
-    L18nKeys.monitor: 'Monitor',
-    L18nKeys.ssl: 'SSL-Zertifikatsverwaltung',
-
-    // ========== Willkommensseite ==========
-    L18nKeys.welcome: 'Willkommen',
-    L18nKeys.welcomeMessage:
-        'Eine leistungsstarke plattformübergreifende Systemwerkzeug-Suite mit Host-Überwachung, Leistungsanalyse und mehr',
-    L18nKeys.welcomeDescription:
-        'Unterstützt plattformübergreifende adaptive Layouts, perfekt angepasst für mobile Geräte, Tablets und Desktop-Computer',
-    L18nKeys.exploreFeatures: 'Funktionen erkunden',
+    // ========== Themeneinstellungen ==========
+    L18nKeys.themeSettings: 'Themeneinstellungen',
 
     // ========== Spracheinstellungen ==========
-    L18nKeys.languageSettings: 'Spracheinstellungen',
+    L18nKeys.languageSettings: 'Spracheninstellungen',
     L18nKeys.selectLanguage: 'Sprache auswählen',
     L18nKeys.changingLanguage: 'Sprache wird geändert',
 
@@ -36,21 +26,6 @@ class DeDE {
     L18nKeys.adjustTheme: 'Theme-Modus und Farbschema anpassen',
     L18nKeys.selectAppLanguage: 'Anzeigesprache der Anwendung auswählen',
     L18nKeys.configureHostMonitor: 'Host-Überwachungsoptionen konfigurieren',
-
-    // ========== Theme-Einstellungen ==========
-    L18nKeys.themeMode: 'Theme-Modus',
-    L18nKeys.changingTheme: 'Theme wird geändert',
-    L18nKeys.themeSettings: 'Theme-Einstellungen',
-    L18nKeys.themeColorSettings: 'Theme-Farben',
-    L18nKeys.cyberpunkTheme: 'Cyberpunk-Theme',
-    L18nKeys.lightTheme: 'Helles Theme',
-    L18nKeys.darkTheme: 'Dunkles Theme',
-    L18nKeys.systemTheme: 'Systemstandard',
-    L18nKeys.defaultTheme: 'Standard-Theme',
-    L18nKeys.techTheme: 'Tech-Theme',
-    L18nKeys.natureTheme: 'Natur-Theme',
-    L18nKeys.sunsetTheme: 'Sonnenuntergangs-Theme',
-    L18nKeys.oceanTheme: 'Ozean-Theme',
 
     // ========== Host-Monitor-Einstellungen ==========
     L18nKeys.hostMonitorSettings: 'Host-Monitor-Einstellungen',
@@ -99,22 +74,12 @@ class DeDE {
     L18nKeys.invalidCheckInterval:
         'Bitte geben Sie ein gültiges Überprüfungsintervall ein (1-1440 Minuten)',
 
-    // ========== Visuelle Effekte ==========
-    L18nKeys.visualEffects: 'Visuelle Effekte',
-    L18nKeys.visualEffectsDescription: 'Exklusive Effekte für Cyberpunk-Theme',
-    L18nKeys.matrixRainEffect: 'Matrix-Regen-Effekt',
-    L18nKeys.matrixRainDescription: 'Matrix-Stil Hintergrundanimation',
-    L18nKeys.glowEffect: 'Leuchteffekt',
-    L18nKeys.glowEffectDescription: 'Schaltflächen- und Karten-Leuchteffekte',
-    L18nKeys.scanningLine: 'Scannlinie',
-    L18nKeys.scanningLineDescription: 'Bildschirm-Scannlinien-Animation',
-    L18nKeys.glitchEffect: 'Glitch-Effekt',
-    L18nKeys.glitchEffectDescription: 'Digitale Glitch-Stil-Effekte',
-
     // ========== App-Informationen ==========
     L18nKeys.appInfo: 'App-Informationen',
     L18nKeys.appName: 'App Name',
     L18nKeys.appDescription: 'App Beschreibung',
+    L18nKeys.descriptionMessage:
+        'Eine leistungsstarke plattformübergreifende Systemwerkzeug-Suite mit Host-Überwachung, Leistungsanalyse und mehr',
     L18nKeys.appVersion: 'Version',
     L18nKeys.developerInfo: 'Entwicklerinformationen',
     L18nKeys.developerName: 'Entwickler',
@@ -162,12 +127,6 @@ class DeDE {
     L18nKeys.desktopDevice: 'Desktop',
     L18nKeys.layoutMode: 'Layout-Modus',
     L18nKeys.adaptiveLayout: 'Adaptives Layout',
-
-    // ========== Fenstersteuerung ==========
-    L18nKeys.minimize: 'Minimieren',
-    L18nKeys.maximize: 'Maximieren',
-    L18nKeys.restore: 'Wiederherstellen',
-    L18nKeys.close: 'Schließen',
 
     // ========== Host-Bearbeitungsseite ==========
     L18nKeys.editHost: 'Host bearbeiten',
@@ -295,336 +254,5 @@ class DeDE {
     L18nKeys.download: 'Download',
     L18nKeys.bytesSent: 'Gesendete Bytes',
     L18nKeys.bytesReceived: 'Empfangene Bytes',
-
-    // ========== SSL-Zertifikatsverwaltung ==========
-    L18nKeys.sslCertificateManager: 'SSL-Zertifikatsverwaltung',
-    L18nKeys.sslBack: 'Zurück',
-    L18nKeys.sslToggleTheme: 'Theme wechseln',
-    L18nKeys.sslWelcomeTitle: 'Willkommen bei der SSL-Zertifikatsverwaltung',
-    L18nKeys.sslWelcomeSubtitle:
-        'Verwalten Sie Ihre OpenSSL-Zertifikate einfach',
-    L18nKeys.sslTotalCertificates: 'Zertifikate insgesamt',
-    L18nKeys.sslCACertificates: 'CA-Zertifikate',
-    L18nKeys.sslSSLCertificates: 'SSL-Zertifikate',
-    L18nKeys.sslExpired: 'Abgelaufen',
-    L18nKeys.sslNavigation: 'Navigation',
-    L18nKeys.sslCertificates: 'Zertifikate',
-    L18nKeys.sslManageCertificates: 'Zertifikate verwalten',
-    L18nKeys.sslConfig: 'Konfiguration',
-    L18nKeys.sslOpenSSLConfiguration: 'OpenSSL-Konfiguration',
-    L18nKeys.sslAppSettings: 'App-Einstellungen',
-
-    // ========== Einstellungsbildschirm ==========
-    L18nKeys.settingsSelectCertDirectory:
-        'Zertifikat-Speicherverzeichnis auswählen',
-    L18nKeys.settingsSelectConfigFile: 'OpenSSL-Konfigurationsdatei auswählen',
-    L18nKeys.settingsCreateConfigFile: 'OpenSSL-Konfigurationsdatei erstellen',
-    L18nKeys.settingsRequired: 'Erforderlich',
-    L18nKeys.settingsSaveSuccess: 'Einstellungen erfolgreich gespeichert',
-    L18nKeys.settingsSaveError:
-        'Fehler beim Speichern der Einstellungen: {error}',
-    L18nKeys.settingsCertStorage: 'Zertifikatsspeicher',
-    L18nKeys.settingsCertStoragePath: 'Zertifikatsspeicherpfad *',
-    L18nKeys.settingsCertPathHint: '/pfad/zu/zertifikaten',
-    L18nKeys.settingsCertStorageDesc:
-        'Alle generierten Zertifikate werden in diesem Verzeichnis gespeichert',
-    L18nKeys.settingsOpenSSLConfig: 'OpenSSL-Konfiguration',
-    L18nKeys.settingsConfigFilePath: 'Konfigurationsdateipfad *',
-    L18nKeys.settingsConfigPathHint: '/pfad/zu/openssl.cnf',
-    L18nKeys.settingsCreateNew: 'Neu erstellen',
-    L18nKeys.settingsSelectExisting: 'Vorhandene auswählen',
-    L18nKeys.settingsConfigFileDesc:
-        'OpenSSL-Konfigurationsvorlagendatei. Wird beim Generieren von Zertifikaten verwendet.',
-    L18nKeys.settingsCACertDefaults: 'CA-Zertifikat-Standardeinstellungen',
-    L18nKeys.settingsDefaultCAName: 'Standard-CA-Name *',
-    L18nKeys.settingsCANameHint: 'MeineRootCA',
-    L18nKeys.settingsEncryptCAByDefault: 'CA standardmäßig verschlüsseln',
-    L18nKeys.settingsEncryptCADesc:
-        'CA-Privatschlüssel automatisch verschlüsseln beim Generieren',
-    L18nKeys.settingsDefaultCAPassword: 'Standard-CA-Passwort',
-    L18nKeys.settingsCAPasswordHint: 'Leer lassen, um jedes Mal aufzufordern',
-    L18nKeys.settingsPasswordWarning:
-        'Warnung: Nicht empfohlen, Passwörter in Produktion zu speichern',
-    L18nKeys.settingsAbout: 'Über',
-    L18nKeys.settingsAppName: 'SSL-Zertifikatsverwaltung',
-    L18nKeys.settingsAppVersion: 'Version 1.0.0',
-    L18nKeys.settingsAppDescription:
-        'Professionelle OpenSSL-Zertifikatsverwaltungsanwendung mit Flutter erstellt.',
-    L18nKeys.settingsPoweredBy: 'Powered by OpenSSL',
-    L18nKeys.settingsReset: 'Zurücksetzen',
-    L18nKeys.settingsSaveSettings: 'Einstellungen speichern',
-
-    // ========== OpenSSL-Konfigurationsbildschirm ==========
-    L18nKeys.configLoadError: 'Fehler beim Laden der Konfiguration: {error}',
-    L18nKeys.configSaveSuccess: 'Konfiguration erfolgreich gespeichert',
-    L18nKeys.configSaveError:
-        'Fehler beim Speichern der Konfiguration: {error}',
-    L18nKeys.configResetToDefault: 'Auf Standard zurücksetzen',
-    L18nKeys.configResetConfirm:
-        'Sind Sie sicher, dass Sie die Konfiguration auf Standard zurücksetzen möchten? Dies überschreibt Ihre aktuelle Konfiguration.',
-    L18nKeys.configCancel: 'Abbrechen',
-    L18nKeys.configReset: 'Zurücksetzen',
-    L18nKeys.configEditHint:
-        'OpenSSL-Konfigurationsvorlage bearbeiten. Diese Vorlage wird beim Generieren von Zertifikaten verwendet.',
-    L18nKeys.configPlaceholder: 'OpenSSL-Konfiguration...',
-    L18nKeys.configResetToDefaultBtn: 'Auf Standard zurücksetzen',
-    L18nKeys.configSaveConfiguration: 'Konfiguration speichern',
-
-    // ========== Zertifikatsverwaltungsbildschirm ==========
-    L18nKeys.certImport: 'Importieren',
-    L18nKeys.certGenerateCA: 'CA-Zertifikat generieren',
-    L18nKeys.certGenerateSSL: 'SSL-Zertifikat generieren',
-    L18nKeys.certPath: 'Pfad',
-    L18nKeys.certCopyFullChainPath: 'Vollständigen Chain-Pfad kopieren',
-    L18nKeys.certClose: 'Schließen',
-    L18nKeys.certDeleteTitle: 'Zertifikat löschen',
-    L18nKeys.certDeleteConfirm:
-        'Sind Sie sicher, dass Sie das Zertifikat {name} löschen möchten?',
-    L18nKeys.certCancel: 'Abbrechen',
-    L18nKeys.certDelete: 'Löschen',
-    L18nKeys.certDeleteSuccess: 'Zertifikat erfolgreich gelöscht',
-    L18nKeys.certImportCertificate: 'Zertifikat importieren',
-    L18nKeys.certImportSSLTitle: 'SSL-Zertifikat importieren',
-    L18nKeys.certImportSSLDesc:
-        'Vollständiges SSL-Zertifikat importieren (Zertifikat + Privatschlüssel + Chain)',
-    L18nKeys.certImportCATitle: 'CA-Zertifikat importieren',
-    L18nKeys.certImportCADesc: 'CA-Root- oder Zwischenzertifikat importieren',
-    L18nKeys.certImportPFXTitle: 'PFX/P12 importieren',
-    L18nKeys.certImportPFXDesc:
-        'PFX- oder P12-Format-Zertifikatspaket importieren',
-
-    // ========== Zertifikatsverwaltungsbildschirm ==========
-    L18nKeys.certSearchPlaceholder: 'Zertifikate suchen...',
-    L18nKeys.certNoFound: 'Keine Zertifikate gefunden',
-
-    // SSL-Zertifikat-Import-Dialog
-    L18nKeys.importSslCertificate: 'SSL-Zertifikat importieren',
-    L18nKeys.selectSslCertificateFile: 'SSL-Zertifikatsdatei auswählen',
-    L18nKeys.selectPrivateKeyFile: 'Privatschlüsseldatei auswählen',
-    L18nKeys.selectCertificateChainFile: 'Zertifikatskettendatei auswählen',
-    L18nKeys.invalidCertificateFile: 'Ungültige Zertifikatsdatei',
-    L18nKeys.caCertificateWarning:
-        'Dies scheint ein CA-Zertifikat zu sein. Bitte verwenden Sie die Funktion "PEM-Zertifikat importieren".',
-    L18nKeys.importedSslCertificate: 'SSL-Zertifikat importiert',
-    L18nKeys.sslCertificateValidatedSuccessfully:
-        'SSL-Zertifikat erfolgreich validiert',
-    L18nKeys.validationError: 'Validierungsfehler',
-    L18nKeys.invalidPrivateKeyOrPassword:
-        'Ungültige Privatschlüsseldatei oder falsches Passwort',
-    L18nKeys.certificateKeyMismatch:
-        'Zertifikat und Privatschlüssel stimmen nicht überein',
-    L18nKeys.privateKeyValidatedSuccessfully:
-        'Privatschlüssel erfolgreich validiert',
-    L18nKeys.noCertificatesFoundInChain:
-        'Keine Zertifikate in der Chain-Datei gefunden',
-    L18nKeys.certificateChainValidated:
-        'Zertifikatskette erfolgreich validiert',
-    L18nKeys.certificates: 'Zertifikate',
-    L18nKeys.chainValidationError: 'Chain-Validierungsfehler',
-    L18nKeys.pleaseValidateCertificateFirst:
-        'Bitte zuerst Zertifikat validieren',
-    L18nKeys.pleaseValidatePrivateKeyFirst:
-        'Bitte zuerst Privatschlüssel validieren',
-    L18nKeys.pleaseValidateChainFirst: 'Bitte zuerst Chain validieren',
-    L18nKeys.sslCertificateImportedSuccessfully:
-        'SSL-Zertifikat erfolgreich importiert',
-    L18nKeys.importError: 'Import-Fehler',
-    L18nKeys.importSslCertificateDescription:
-        'Vorhandenes SSL-Zertifikat mit Privatschlüssel und Zertifikatskette importieren. Unterstützt PEM-Format.',
-    L18nKeys.sslCertificateFileRequired: 'SSL-Zertifikatsdatei (Erforderlich)',
-    L18nKeys.selectPemCrtCerFile: '.pem, .crt oder .cer Datei auswählen',
-    L18nKeys.required: 'Erforderlich',
-    L18nKeys.validateCertificate: 'Zertifikat validieren',
-    L18nKeys.sslCertificate: 'SSL-Zertifikat',
-    L18nKeys.issuer: 'Aussteller',
-    L18nKeys.expiry: 'Ablauf',
-    L18nKeys.certificateNameRequired: 'Zertifikatsname (Erforderlich)',
-    L18nKeys.enterFriendlyName: 'Einen benutzerfreundlichen Namen eingeben',
-    L18nKeys.includePrivateKey: 'Privatschlüssel einschließen',
-    L18nKeys.privateKeyFileRequired: 'Privatschlüsseldatei (Erforderlich)',
-    L18nKeys.selectPemKeyFile: '.pem oder .key Datei auswählen',
-    L18nKeys.privateKeyIsEncrypted: 'Privatschlüssel ist verschlüsselt',
-    L18nKeys.privateKeyPasswordRequired:
-        'Privatschlüssel-Passwort (Erforderlich)',
-    L18nKeys.validatePrivateKey: 'Privatschlüssel validieren',
-    L18nKeys.includeCertificateChain: 'Zertifikatskette einschließen',
-    L18nKeys.intermediateRootCaCertificates:
-        'Zwischen- und Root-CA-Zertifikate',
-    L18nKeys.certificateChainFile: 'Zertifikatskettendatei',
-    L18nKeys.selectChainPemFile: '.pem Datei mit Zertifikatskette auswählen',
-    L18nKeys.validateChain: 'Chain validieren',
-    L18nKeys.chainContains: 'Chain enthält',
-    L18nKeys.import: 'Importieren',
-// PFX-Import-Dialog
-    L18nKeys.importFromPfx: 'Von PFX importieren',
-    L18nKeys.selectPfxFile: 'PFX-Datei auswählen',
-    L18nKeys.pfxFileRequired: 'PFX-Datei (Erforderlich)',
-    L18nKeys.selectPfxOrP12File: '.pfx oder .p12 Datei auswählen',
-    L18nKeys.pfxPasswordRequired: 'PFX-Passwort (Erforderlich)',
-    L18nKeys.pfxImportedSuccessfullyTo: 'PFX erfolgreich importiert nach',
-    L18nKeys.folder: 'Ordner',
-
-// Zertifikat-Import-Dialog
-    L18nKeys.importCertificate: 'Zertifikat importieren',
-    L18nKeys.selectCertificateFile: 'Zertifikatsdatei auswählen',
-    L18nKeys.certificateFileRequired: 'Zertifikatsdatei (Erforderlich)',
-    L18nKeys.importedCertificate: 'Importiertes Zertifikat',
-    L18nKeys.certificateValidated: 'Zertifikat validiert',
-    L18nKeys.expired: 'Abgelaufen',
-    L18nKeys.expiresIn: 'Läuft ab in',
-    L18nKeys.days: 'Tage',
-    L18nKeys.certificateImportedSuccessfullyTo:
-        'Zertifikat erfolgreich importiert nach',
-    L18nKeys.type: 'Typ',
-    L18nKeys.certificate: 'Zertifikat',
-    L18nKeys.commonName: 'Common Name',
-    L18nKeys.organization: 'Organisation',
-    L18nKeys.issueDate: 'Ausstellungsdatum',
-    L18nKeys.expiryDate: 'Ablaufdatum',
-    L18nKeys.daysUntilExpiry: 'Tage bis Ablauf',
-    L18nKeys.thisCertificateHasExpired: 'Dieses Zertifikat ist abgelaufen!',
-    L18nKeys.thisCertificateWillExpireIn: 'Dieses Zertifikat läuft ab in',
-    L18nKeys.daysAgo: 'Tage her',
-
-// Zertifikatsverwaltungsbildschirm
-    L18nKeys.certTabAll: 'Alle',
-    L18nKeys.certTabCA: 'CA-Zertifikate',
-    L18nKeys.certTabSSL: 'SSL-Zertifikate',
-
-// Zertifikatsdetails
-    L18nKeys.certDetailType: 'Typ',
-    L18nKeys.certDetailCommonName: 'Common Name',
-    L18nKeys.certDetailOrganization: 'Organisation',
-    L18nKeys.certDetailCountry: 'Land',
-    L18nKeys.certDetailState: 'Bundesland',
-    L18nKeys.certDetailCity: 'Stadt',
-    L18nKeys.certDetailIssuerCN: 'Aussteller-CN',
-    L18nKeys.certDetailIssuerOrg: 'Aussteller-Organisation',
-    L18nKeys.certDetailIssueDate: 'Ausstellungsdatum',
-    L18nKeys.certDetailExpiryDate: 'Ablaufdatum',
-    L18nKeys.certDetailDaysUntilExpiry: 'Tage bis Ablauf',
-    L18nKeys.certDetailEncrypted: 'Verschlüsselt',
-    L18nKeys.certDetailSerial: 'Seriennummer',
-    L18nKeys.certDetailFilePath: 'Dateipfad',
-    L18nKeys.certDetailKeyPath: 'Schlüsselpfad',
-    L18nKeys.certDetailChainPath: 'Chain-Pfad',
-    L18nKeys.certDetailFullChainPath: 'Vollständiger Chain-Pfad',
-    L18nKeys.certDetailChainLength: 'Chain-Länge',
-    L18nKeys.certDetailImportedFrom: 'Importiert von',
-    L18nKeys.certDetailPurpose: 'Zweck',
-    L18nKeys.certDetailPurposeName: 'Zweckname',
-    L18nKeys.certYes: 'Ja',
-    L18nKeys.certNo: 'Nein',
-    L18nKeys.certNA: 'K.A.',
-    L18nKeys.certExternal: 'Extern',
-    L18nKeys.certCertificates: 'Zertifikate',
-
-// Zertifikat-generieren-Dialog
-    L18nKeys.certGenTitle: 'Zertifikat generieren',
-    L18nKeys.certGenSubtitle:
-        'Füllen Sie das folgende Formular aus, um Ihr Zertifikat zu erstellen',
-    L18nKeys.certGenClose: 'Schließen',
-    L18nKeys.certGenConfigTitle: 'OpenSSL-Konfiguration',
-    L18nKeys.certGenUseCustomConfig:
-        'Benutzerdefinierte OpenSSL-Konfiguration verwenden',
-    L18nKeys.certGenUsingConfig: 'Verwendet: ',
-    L18nKeys.certGenUsingDefault: 'OpenSSL-Standardkonfiguration verwenden',
-    L18nKeys.certGenConfigApplied: 'Konfigurationsstandardwerte angewendet',
-
-    L18nKeys.certGenPurposeTitle: 'Zertifikatszweck',
-    L18nKeys.certGenSelectPurpose: 'Zweck auswählen *',
-    L18nKeys.certGenPurposeHelper:
-        'Definiert die Zertifikatsschlüsselverwendung',
-    L18nKeys.certGenRequired: 'Erforderlich',
-    L18nKeys.certGenKeyUsage: 'Schlüsselverwendung:',
-    L18nKeys.certGenExtendedUsage: 'Erweiterte Verwendung:',
-    L18nKeys.certGenCustomKeyUsage: 'Benutzerdefinierte Schlüsselverwendung',
-    L18nKeys.certGenCustomKeyUsageHint:
-        'critical, digitalSignature, keyEncipherment',
-    L18nKeys.certGenCustomExtKeyUsage:
-        'Benutzerdefinierte erweiterte Schlüsselverwendung',
-    L18nKeys.certGenCustomExtKeyUsageHint:
-        'serverAuth, clientAuth, codeSigning',
-    L18nKeys.certGenCommaSeparated: 'Durch Kommas getrennte Werte',
-    L18nKeys.certGenCommonKeyUsage: 'Häufige Schlüsselverwendungswerte:',
-    L18nKeys.certGenCommonExtKeyUsage:
-        'Häufige erweiterte Schlüsselverwendungswerte:',
-
-    L18nKeys.certGenCATitle: 'CA-Zertifikatsauswahl',
-    L18nKeys.certGenSelectCA: 'CA-Zertifikat auswählen *',
-    L18nKeys.certGenSelectCAHelper:
-        'Wählen Sie aus, welche CA dieses Zertifikat signiert',
-    L18nKeys.certGenCAPassword: 'CA-Passwort *',
-    L18nKeys.certGenPleaseSelectCA: 'Bitte CA-Zertifikat auswählen',
-
-    L18nKeys.certGenInfoTitle: 'Zertifikatsinformationen',
-    L18nKeys.certGenSecurityTitle: 'Sicherheitsoptionen',
-    L18nKeys.certGenEncryptKey: 'Privatschlüssel verschlüsseln',
-    L18nKeys.certGenEncryptKeyDesc:
-        'Privatschlüssel mit einem Passwort schützen',
-    L18nKeys.certGenPassword: 'Passwort *',
-    L18nKeys.certGenPasswordHelper: 'Starkes Passwort eingeben',
-
-    L18nKeys.certGenGenerating: 'Zertifikat wird generiert...',
-    L18nKeys.certGenCancel: 'Abbrechen',
-    L18nKeys.certGenGenerate: 'Zertifikat generieren',
-
-// Formularfelder
-    L18nKeys.certFieldName: 'Zertifikatsname *',
-    L18nKeys.certFieldNameHintCA: 'MeineRootCA',
-    L18nKeys.certFieldNameHintSSL: 'beispiel.de',
-    L18nKeys.certFieldCountry: 'Ländercode *',
-    L18nKeys.certFieldState: 'Bundesland *',
-    L18nKeys.certFieldCity: 'Stadt *',
-    L18nKeys.certFieldOrganization: 'Organisation *',
-    L18nKeys.certFieldOrgUnit: 'Organisationseinheit *',
-    L18nKeys.certFieldCommonName: 'Common Name *',
-    L18nKeys.certFieldCommonNameHintCA: 'Meine Root CA',
-    L18nKeys.certFieldCommonNameHintSSL: 'beispiel.de',
-    L18nKeys.certFieldEmail: 'E-Mail',
-    L18nKeys.certFieldEmailHint: 'admin@beispiel.de',
-    L18nKeys.certFieldSAN: 'Alternative Antragstellernamen',
-    L18nKeys.certFieldSANHint: 'www.beispiel.de,mail.beispiel.de',
-    L18nKeys.certFieldValidity: 'Gültigkeit (Tage) *',
-    L18nKeys.certFieldFromConfig: 'Aus Konfiguration',
-    L18nKeys.certFieldInvalidNumber: 'Ungültige Nummer',
-
-// Erfolgsmeldungen
-    L18nKeys.certGenSuccessCA: 'CA-Zertifikat erfolgreich generiert',
-    L18nKeys.certGenSuccessSSL: 'SSL-Zertifikat erfolgreich generiert',
-    L18nKeys.certGenSuccessCustomConfig:
-        ' mit benutzerdefinierter Konfiguration',
-    L18nKeys.certGenSuccessPurpose: 'Zweck: ',
-    L18nKeys.certGenError: 'Fehler: ',
-
-// PFX-Export-Dialog
-    L18nKeys.certExportTitle: 'Als PFX exportieren',
-    L18nKeys.certExportCertPassword: 'Zertifikatspasswort *',
-    L18nKeys.certExportPFXPassword: 'PFX-Passwort *',
-    L18nKeys.certExportIncludeCA: 'CA-Zertifikat einschließen',
-    L18nKeys.certExportSelectCA: 'CA-Zertifikat auswählen',
-    L18nKeys.certExportButton: 'Exportieren',
-    L18nKeys.certExportSaveTitle: 'PFX-Datei speichern',
-    L18nKeys.certExportSuccess: 'PFX erfolgreich exportiert',
-    L18nKeys.certExportError: 'Export-Fehler: ',
-
-// Zertifikatskarten-Status
-    L18nKeys.certStatusActive: 'Aktiv',
-    L18nKeys.certStatusExpired: 'Abgelaufen',
-    L18nKeys.certStatusExpiringSoon: 'Läuft bald ab',
-
-// Zertifikatskarten-Infobeschriftungen
-    L18nKeys.certCardIssueDate: 'Ausstellungsdatum',
-    L18nKeys.certCardExpiryDate: 'Ablaufdatum',
-    L18nKeys.certCardDaysUntilExpiry: 'Tage bis Ablauf',
-    L18nKeys.certCardDays: 'Tage',
-    L18nKeys.certCardEncrypted: 'Verschlüsselt',
-    L18nKeys.certCardChain: 'Chain',
-    L18nKeys.certCardCerts: 'Zertifikat(e)',
-    L18nKeys.certCardImported: 'Importiert',
-
-// Zertifikatskarten-Aktionen
-    L18nKeys.certActionExport: 'Exportieren',
-    L18nKeys.certActionDelete: 'Löschen',
   };
 }
