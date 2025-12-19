@@ -16,16 +16,58 @@ class ZhCN {
 
     // ========== 主题设置 ==========
     L18nKeys.themeSettings: '主题设置',
+    L18nKeys.resetToDefault: '重置为默认',
+    L18nKeys.resetToDefaultMessage: '已重置为默认主题',
+    L18nKeys.currentTheme: '当前主题',
+    L18nKeys.themeColorSchemes: '主题配色',
+    L18nKeys.customTheme: '自定义主题',
+    L18nKeys.designConstants: '设计常量',
+    L18nKeys.quickSwitchTheme: '快速切换主题',
+    L18nKeys.switchedToTheme: '已切换到 {theme}',
+    L18nKeys.switchMode: '切换模式',
+    L18nKeys.switchToLight: '切换到浅色',
+    L18nKeys.switchToDark: '切换到深色',
+    L18nKeys.selectFavoriteTheme: '选择你喜欢的颜色主题',
+    L18nKeys.createYourOwnTheme: '创建你的专属配色方案',
+    L18nKeys.currentCustomTheme: '当前自定义主题',
+    L18nKeys.createCustomTheme: '创建自定义主题',
+    L18nKeys.customThemeColor: '自定义主题色',
+    L18nKeys.themeName: '主题名称',
+    L18nKeys.selectThemeColor: '选择主题色',
+    L18nKeys.selectColorShade: '选择色调',
+    L18nKeys.apply: '应用',
+    L18nKeys.customThemeApplied: '自定义主题已应用',
+    L18nKeys.spacingSmall: '间距 - Small',
+    L18nKeys.spacingMedium: '间距 - Medium',
+    L18nKeys.spacingLarge: '间距 - Large',
+    L18nKeys.borderRadiusSmall: '圆角 - Small',
+    L18nKeys.borderRadiusMedium: '圆角 - Medium',
+    L18nKeys.borderRadiusLarge: '圆角 - Large',
+    L18nKeys.themeDefaultPurple: '默认紫',
+    L18nKeys.themeChristmasRed: '圣诞红',
+    L18nKeys.themeOceanBlue: '海洋蓝',
+    L18nKeys.themeNatureGreen: '自然绿',
+    L18nKeys.themeWarmOrange: '温暖橙',
+    L18nKeys.themeElegantPurple: '优雅紫',
 
     // ========== 语言设置 ==========
     L18nKeys.languageSettings: '语言设置',
     L18nKeys.selectLanguage: '选择语言',
     L18nKeys.changingLanguage: '切换语言中',
+    L18nKeys.themeModeSystem: '跟随系统',
+    L18nKeys.themeModeLight: '亮色模式',
+    L18nKeys.themeModeDark: '暗色模式',
 
     // ========== 设置主页面 ==========
     L18nKeys.adjustTheme: '调整主题模式和配色方案',
     L18nKeys.selectAppLanguage: '选择应用显示语言',
     L18nKeys.configureHostMonitor: '配置主机监测相关选项',
+    L18nKeys.navMonitor: '监控',
+    L18nKeys.navAbout: '关于',
+    L18nKeys.navSettings: '设置',
+    L18nKeys.exitConfirmTitle: '确认退出程序吗?',
+    L18nKeys.exitConfirmMessage: '',
+    L18nKeys.confirm: '确认',
 
     // ========== 主机监控设置 ==========
     L18nKeys.hostMonitorSettings: '主机监控设置',
@@ -232,5 +274,11 @@ class ZhCN {
     L18nKeys.download: '下载',
     L18nKeys.bytesSent: '发送字节数',
     L18nKeys.bytesReceived: '接收字节数',
+
+    // ========== Sidebar ==========
+    L18nKeys.expandSidebar: '展开侧边栏',
+    L18nKeys.collapseSidebar: '折叠侧边栏',
+    L18nKeys.hello: '你好!',
+    L18nKeys.themeSettingsTooltip: '主题设置',
   };
 }

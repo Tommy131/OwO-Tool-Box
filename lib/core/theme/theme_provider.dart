@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'app_theme_data.dart';
+import '../i18n/localization_keys.dart';
 
 /// 主题管理器（整合版）
 /// 管理应用的主题配色和主题模式（跟随系统、亮色、暗色）
@@ -91,11 +92,11 @@ class ThemeProvider extends ChangeNotifier {
   String getThemeModeName(ThemeMode mode) {
     switch (mode) {
       case ThemeMode.system:
-        return '跟随系统';
+        return L18nKeys.themeModeSystem;
       case ThemeMode.light:
-        return '亮色模式';
+        return L18nKeys.themeModeLight;
       case ThemeMode.dark:
-        return '暗色模式';
+        return L18nKeys.themeModeDark;
     }
   }
 

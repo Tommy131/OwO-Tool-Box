@@ -30,16 +30,58 @@ class L18nKeys {
 
   // ========== 主题设置 ==========
   static const String themeSettings = 'theme_settings';
+  static const String resetToDefault = 'reset_to_default';
+  static const String resetToDefaultMessage = 'reset_to_default_message';
+  static const String currentTheme = 'current_theme';
+  static const String themeColorSchemes = 'theme_color_schemes';
+  static const String customTheme = 'custom_theme';
+  static const String designConstants = 'design_constants';
+  static const String quickSwitchTheme = 'quick_switch_theme';
+  static const String switchedToTheme = 'switched_to_theme';
+  static const String switchMode = 'switch_mode';
+  static const String switchToLight = 'switch_to_light';
+  static const String switchToDark = 'switch_to_dark';
+  static const String selectFavoriteTheme = 'select_favorite_theme';
+  static const String createYourOwnTheme = 'create_your_own_theme';
+  static const String currentCustomTheme = 'current_custom_theme';
+  static const String createCustomTheme = 'create_custom_theme';
+  static const String customThemeColor = 'custom_theme_color';
+  static const String themeName = 'theme_name';
+  static const String selectThemeColor = 'select_theme_color';
+  static const String selectColorShade = 'select_color_shade';
+  static const String apply = 'apply';
+  static const String customThemeApplied = 'custom_theme_applied';
+  static const String spacingSmall = 'spacing_small';
+  static const String spacingMedium = 'spacing_medium';
+  static const String spacingLarge = 'spacing_large';
+  static const String borderRadiusSmall = 'border_radius_small';
+  static const String borderRadiusMedium = 'border_radius_medium';
+  static const String borderRadiusLarge = 'border_radius_large';
+  static const String themeDefaultPurple = 'theme_default_purple';
+  static const String themeChristmasRed = 'theme_christmas_red';
+  static const String themeOceanBlue = 'theme_ocean_blue';
+  static const String themeNatureGreen = 'theme_nature_green';
+  static const String themeWarmOrange = 'theme_warm_orange';
+  static const String themeElegantPurple = 'theme_elegant_purple';
 
   // ========== 语言设置 ==========
   static const String languageSettings = 'language_settings';
   static const String selectLanguage = 'select_language';
   static const String changingLanguage = 'changing_language';
+  static const String themeModeSystem = 'theme_mode_system';
+  static const String themeModeLight = 'theme_mode_light';
+  static const String themeModeDark = 'theme_mode_dark';
 
   // ========== 设置主页面 ==========
   static const String adjustTheme = 'adjust_theme';
   static const String selectAppLanguage = 'select_app_language';
   static const String configureHostMonitor = 'configure_host_monitor';
+  static const String navMonitor = 'nav_monitor';
+  static const String navAbout = 'nav_about';
+  static const String navSettings = 'nav_settings';
+  static const String exitConfirmTitle = 'exit_confirm_title';
+  static const String exitConfirmMessage = 'exit_confirm_message';
+  static const String confirm = 'confirm';
 
   // ========== 主机监控设置 ==========
   static const String hostMonitorSettings = 'host_monitor_settings';
@@ -246,4 +288,10 @@ class L18nKeys {
   static const String download = 'download';
   static const String bytesSent = 'bytes_sent';
   static const String bytesReceived = 'bytes_received';
+
+  // ========== Sidebar ==========
+  static const String expandSidebar = 'expand_sidebar';
+  static const String collapseSidebar = 'collapse_sidebar';
+  static const String hello = 'hello';
+  static const String themeSettingsTooltip = 'theme_settings_tooltip';
 }

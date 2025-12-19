@@ -13,6 +13,7 @@ import 'core/i18n/language_config.dart';
 import 'core/providers/locale_provider.dart';
 import 'core/theme/theme_provider.dart';
 import 'core/constants/app_constants.dart';
+import 'core/i18n/localization_keys.dart';
 import 'core/layouts/desktop_layout.dart';
 import 'core/layouts/mobile_layout.dart';
 import 'core/layouts/responsive.dart';
@@ -86,21 +87,21 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
   final List<NavigationItem> _navigationItems = const [
     NavigationItem(
       id: 'host_monitor',
-      title: '监控',
+      title: L18nKeys.navMonitor,
       icon: Icons.monitor_outlined,
       activeIcon: Icons.monitor,
       page: HostMonitorPage(),
     ),
     NavigationItem(
       id: 'about',
-      title: '关于',
+      title: L18nKeys.navAbout,
       icon: Icons.info_outlined,
       activeIcon: Icons.info,
       page: AboutPage(),
     ),
     NavigationItem(
       id: 'settings',
-      title: '设置',
+      title: L18nKeys.navSettings,
       icon: Icons.settings_outlined,
       activeIcon: Icons.settings,
       page: SettingsPage(),
@@ -177,15 +178,16 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
   void onWindowClose() async {
     bool isPreventClose = await windowManager.isPreventClose();
     if (isPreventClose && mounted) {
+      final l10n = AppLocalization.of(context);
       final result = await showAdvancedConfirmDialog(
         context: context,
         // style: ConfirmDialogStyle.glass,
-        title: '确认退出程序吗?',
-        content: '',
+        title: l10n.translate(L18nKeys.exitConfirmTitle),
+        content: l10n.translate(L18nKeys.exitConfirmMessage),
         icon: Icons.warning_amber_rounded,
         confirmColor: Colors.redAccent,
-        confirmText: '确认',
-        cancelText: '取消',
+        confirmText: l10n.translate(L18nKeys.confirm),
+        cancelText: l10n.translate(L18nKeys.cancel),
       );
 
       if (result == true && mounted) {

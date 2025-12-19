@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/navigation_item.dart';
 import '../../theme/app_theme_data.dart';
+import '../../i18n/app_localization.dart';
 
 /// 移动端底部导航栏组件
 /// 参考Instagram、WeChat、Telegram的设计风格
@@ -47,7 +48,7 @@ class MobileBottomNavbar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(
               items.length,
-              (index) => _buildNavItem(items[index], index, theme),
+              (index) => _buildNavItem(context, items[index], index, theme),
             ),
           ),
         ),
@@ -55,7 +56,12 @@ class MobileBottomNavbar extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(NavigationItem item, int index, ThemeData theme) {
+  Widget _buildNavItem(
+    BuildContext context,
+    NavigationItem item,
+    int index,
+    ThemeData theme,
+  ) {
     final isSelected = selectedIndex == index;
 
     return Expanded(
@@ -134,7 +140,7 @@ class MobileBottomNavbar extends StatelessWidget {
 
                 // 标题
                 Text(
-                  item.title,
+                  AppLocalization.of(context).translate(item.title),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(

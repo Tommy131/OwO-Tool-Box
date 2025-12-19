@@ -1,12 +1,12 @@
 // ============================================================================
-// Deutsch (Deutschland) Übersetzung
+// Deutsch (German) Translation
 // ============================================================================
 
 import '../localization_keys.dart';
 
 class DeDE {
   static const Map<String, String> translations = {
-    // ========== Fenstersteuerung ==========
+    // ========== Window Controls ==========
     L18nKeys.ok: 'OK',
     L18nKeys.cancel: 'Abbrechen',
     L18nKeys.minimize: 'Minimieren',
@@ -14,21 +14,63 @@ class DeDE {
     L18nKeys.restore: 'Wiederherstellen',
     L18nKeys.close: 'Schließen',
 
-    // ========== Themeneinstellungen ==========
-    L18nKeys.themeSettings: 'Themeneinstellungen',
+    // ========== Theme Settings ==========
+    L18nKeys.themeSettings: 'Design-Einstellungen',
+    L18nKeys.resetToDefault: 'Auf Standard zurücksetzen',
+    L18nKeys.resetToDefaultMessage: 'Auf Standard-Design zurückgesetzt',
+    L18nKeys.currentTheme: 'Aktuelles Design',
+    L18nKeys.themeColorSchemes: 'Farbschemata',
+    L18nKeys.customTheme: 'Benutzerdefiniertes Design',
+    L18nKeys.designConstants: 'Design-Konstanten',
+    L18nKeys.quickSwitchTheme: 'Design schnell wechseln',
+    L18nKeys.switchedToTheme: 'Zu {theme} gewechselt',
+    L18nKeys.switchMode: 'Modus wechseln',
+    L18nKeys.switchToLight: 'Zu hellem Modus wechseln',
+    L18nKeys.switchToDark: 'Zu dunklem Modus wechseln',
+    L18nKeys.selectFavoriteTheme: 'Wählen Sie Ihr bevorzugtes Farbschema',
+    L18nKeys.createYourOwnTheme: 'Erstellen Sie Ihr eigenes Farbschema',
+    L18nKeys.currentCustomTheme: 'Aktuelles benutzerdefiniertes Design',
+    L18nKeys.createCustomTheme: 'Benutzerdefiniertes Design erstellen',
+    L18nKeys.customThemeColor: 'Benutzerdefinierte Designfarbe',
+    L18nKeys.themeName: 'Design-Name',
+    L18nKeys.selectThemeColor: 'Designfarbe wählen',
+    L18nKeys.selectColorShade: 'Farbton wählen',
+    L18nKeys.apply: 'Anwenden',
+    L18nKeys.customThemeApplied: 'Benutzerdefiniertes Design angewendet',
+    L18nKeys.spacingSmall: 'Abstand - Klein',
+    L18nKeys.spacingMedium: 'Abstand - Mittel',
+    L18nKeys.spacingLarge: 'Abstand - Groß',
+    L18nKeys.borderRadiusSmall: 'Eckenradius - Klein',
+    L18nKeys.borderRadiusMedium: 'Eckenradius - Mittel',
+    L18nKeys.borderRadiusLarge: 'Eckenradius - Groß',
+    L18nKeys.themeDefaultPurple: 'Standard Lila',
+    L18nKeys.themeChristmasRed: 'Weihnachtsrot',
+    L18nKeys.themeOceanBlue: 'Ozeanblau',
+    L18nKeys.themeNatureGreen: 'Natürliches Grün',
+    L18nKeys.themeWarmOrange: 'Warmes Orange',
+    L18nKeys.themeElegantPurple: 'Elegantes Lila',
 
-    // ========== Spracheinstellungen ==========
-    L18nKeys.languageSettings: 'Spracheninstellungen',
-    L18nKeys.selectLanguage: 'Sprache auswählen',
+    // ========== Language Settings ==========
+    L18nKeys.languageSettings: 'Spracheinstellungen',
+    L18nKeys.selectLanguage: 'Sprache wählen',
     L18nKeys.changingLanguage: 'Sprache wird geändert',
+    L18nKeys.themeModeSystem: 'System',
+    L18nKeys.themeModeLight: 'Hell',
+    L18nKeys.themeModeDark: 'Dunkel',
 
-    // ========== Einstellungshauptseite ==========
-    L18nKeys.adjustTheme: 'Theme-Modus und Farbschema anpassen',
-    L18nKeys.selectAppLanguage: 'Anzeigesprache der Anwendung auswählen',
+    // ========== Settings Main Page ==========
+    L18nKeys.adjustTheme: 'Designmodus und Farbschema anpassen',
+    L18nKeys.selectAppLanguage: 'Anzeigesprache der Anwendung wählen',
     L18nKeys.configureHostMonitor: 'Host-Überwachungsoptionen konfigurieren',
+    L18nKeys.navMonitor: 'Überwachung',
+    L18nKeys.navAbout: 'Über',
+    L18nKeys.navSettings: 'Einstellungen',
+    L18nKeys.exitConfirmTitle: 'Beenden bestätigen',
+    L18nKeys.exitConfirmMessage: 'Möchten Sie die Anwendung wirklich beenden?',
+    L18nKeys.confirm: 'Bestätigen',
 
-    // ========== Host-Monitor-Einstellungen ==========
-    L18nKeys.hostMonitorSettings: 'Host-Monitor-Einstellungen',
+    // ========== Host Monitor Settings ==========
+    L18nKeys.hostMonitorSettings: 'Host-Überwachungseinstellungen',
     L18nKeys.refreshSettings: 'Aktualisierungseinstellungen',
     L18nKeys.hostPollingInterval: 'Host-Abfrageintervall',
     L18nKeys.enterRefreshInterval:
@@ -36,52 +78,51 @@ class DeDE {
     L18nKeys.seconds: 'Sekunden',
     L18nKeys.recommendedInterval:
         'Empfohlener Bereich: 1-10 Sekunden. Zu kurz kann die Leistung beeinträchtigen',
-    L18nKeys.hostCheckSettings: 'Host-Überprüfungseinstellungen',
-    L18nKeys.checkTimeout: 'Überprüfungs-Timeout',
-    L18nKeys.enterTimeout: 'Timeout eingeben (Sekunden)',
+    L18nKeys.hostCheckSettings: 'Host-Prüfungseinstellungen',
+    L18nKeys.checkTimeout: 'Prüfungs-Zeitüberschreitung',
+    L18nKeys.enterTimeout: 'Zeitüberschreitung eingeben (Sekunden)',
     L18nKeys.timeoutDescription:
-        'Timeout für die Überprüfung des Host-Online-Status, empfohlen 3-10 Sekunden',
-    L18nKeys.backgroundCheckInterval: 'Hintergrundüberprüfungsintervall',
-    L18nKeys.enterCheckInterval: 'Überprüfungsintervall eingeben (Minuten)',
+        'Zeitüberschreitung für die Prüfung des Host-Online-Status, empfohlen 3-10 Sekunden',
+    L18nKeys.backgroundCheckInterval: 'Hintergrund-Prüfungsintervall',
+    L18nKeys.enterCheckInterval: 'Prüfungsintervall eingeben (Minuten)',
     L18nKeys.minutes: 'Minuten',
     L18nKeys.checkIntervalDescription:
-        'Intervall für die stille Hintergrundüberprüfung der Host-Liste, empfohlen 5-30 Minuten',
-    L18nKeys.alertSettings: 'Warnungseinstellungen',
-    L18nKeys.enableAlert: 'Warnungen aktivieren',
+        'Intervall für die stille Hintergrundprüfung des Hostlistenstatus, empfohlen 5-30 Minuten',
+    L18nKeys.alertSettings: 'Alarmeinstellungen',
+    L18nKeys.enableAlert: 'Alarme aktivieren',
     L18nKeys.enableAlertDescription:
-        'Benachrichtigungen senden, wenn Ressourcennutzung Schwellenwerte überschreitet',
-    L18nKeys.alertThreshold: 'Warnschwellenwert',
+        'Benachrichtigungen senden, wenn die Ressourcennutzung Schwellenwerte überschreitet',
+    L18nKeys.alertThreshold: 'Alarmschwelle',
     L18nKeys.cpuUsage: 'CPU-Auslastung',
     L18nKeys.memoryUsage: 'Speicherauslastung',
     L18nKeys.diskUsage: 'Festplattenauslastung',
     L18nKeys.uploadSpeed: 'Upload-Geschwindigkeit',
     L18nKeys.downloadSpeed: 'Download-Geschwindigkeit',
     L18nKeys.notificationSettings: 'Benachrichtigungseinstellungen',
-    L18nKeys.disconnectNotification:
-        'Verbindungsunterbrechungsbenachrichtigung',
-    L18nKeys.soundAlert: 'Ton-Warnung',
-    L18nKeys.vibrationAlert: 'Vibrations-Warnung',
-    L18nKeys.vibrationAlertDescription: 'Nur auf mobilen Geräten wirksam',
+    L18nKeys.disconnectNotification: 'Verbindungsabbruch-Benachrichtigung',
+    L18nKeys.soundAlert: 'Tonalarm',
+    L18nKeys.vibrationAlert: 'Vibrationsalarm',
+    L18nKeys.vibrationAlertDescription: 'Nur auf Mobilgeräten wirksam',
     L18nKeys.save: 'Speichern',
     L18nKeys.settingsSaved: 'Einstellungen gespeichert',
     L18nKeys.longRefreshInterval: 'Langes Aktualisierungsintervall',
     L18nKeys.longRefreshIntervalWarning:
-        'Sie haben das Aktualisierungsintervall auf {interval} Sekunden gesetzt, was zu verzögerten Datenaktualisierungen führen kann. Fortfahren?',
+        'Sie haben das Aktualisierungsintervall auf {interval} Sekunden eingestellt. Dies kann zu verzögerten Datenaktualisierungen führen. Fortfahren?',
     L18nKeys.invalidRefreshInterval:
         'Bitte geben Sie ein gültiges Aktualisierungsintervall ein (mindestens 1 Sekunde)',
     L18nKeys.invalidTimeout:
-        'Bitte geben Sie einen gültigen Überprüfungs-Timeout ein (1-60 Sekunden)',
+        'Bitte geben Sie eine gültige Prüfungs-Zeitüberschreitung ein (1-60 Sekunden)',
     L18nKeys.invalidCheckInterval:
-        'Bitte geben Sie ein gültiges Überprüfungsintervall ein (1-1440 Minuten)',
+        'Bitte geben Sie ein gültiges Prüfungsintervall ein (1-1440 Minuten)',
 
-    // ========== App-Informationen ==========
-    L18nKeys.appInfo: 'App-Informationen',
-    L18nKeys.appName: 'App Name',
-    L18nKeys.appDescription: 'App Beschreibung',
+    // ========== App Info ==========
+    L18nKeys.appInfo: 'App-Info',
+    L18nKeys.appName: 'App-Name',
+    L18nKeys.appDescription: 'App-Beschreibung',
     L18nKeys.descriptionMessage:
-        'Eine leistungsstarke plattformübergreifende Systemwerkzeug-Suite mit Host-Überwachung, Leistungsanalyse und mehr',
+        'Eine leistungsstarke plattformübergreifende System-Tool-Suite, die Host-Überwachung, Leistungsanalyse und mehr unterstützt',
     L18nKeys.appVersion: 'Version',
-    L18nKeys.developerInfo: 'Entwicklerinformationen',
+    L18nKeys.developerInfo: 'Entwickler-Info',
     L18nKeys.developerName: 'Entwickler',
     L18nKeys.contactEmail: 'Kontakt-E-Mail',
     L18nKeys.flutterVersion: 'Flutter-Version',
@@ -93,47 +134,47 @@ class DeDE {
     L18nKeys.license: 'Lizenz',
     L18nKeys.supportDevelopment: 'Entwicklung unterstützen',
     L18nKeys.donationDescription:
-        'Wenn Sie dieses Projekt hilfreich finden, unterstützen Sie bitte die Entwicklung',
+        'Wenn Sie dieses Projekt hilfreich finden, ziehen Sie bitte in Betracht, die Entwicklung zu unterstützen',
     L18nKeys.donateNow: 'Jetzt spenden',
     L18nKeys.topDonors: 'Top-Spender',
     L18nKeys.cannotOpenUrl: 'URL kann nicht geöffnet werden',
     L18nKeys.loadFailed: 'Laden fehlgeschlagen',
-    L18nKeys.retry: 'Erneut versuchen',
-    L18nKeys.noDonorsYet: 'Noch keine Spenderdatensätze',
+    L18nKeys.retry: 'Wiederholen',
+    L18nKeys.noDonorsYet: 'Noch keine Spendenaufzeichnungen',
 
-    // ========== Tech-Stack-Karten ==========
-    L18nKeys.techStack: 'Technologie-Stack',
+    // ========== Tech Stack Cards ==========
+    L18nKeys.techStack: 'Tech Stack',
     L18nKeys.flutter: 'Flutter',
     L18nKeys.flutterDescription: 'Plattformübergreifendes UI-Framework',
-    L18nKeys.goLang: 'Go-Sprache',
+    L18nKeys.goLang: 'Go Sprache',
     L18nKeys.goLangDescription: 'Hochleistungs-Backend-Service',
     L18nKeys.tcpIp: 'TCP/IP',
     L18nKeys.tcpIpDescription: 'Netzwerkkommunikationsprotokoll',
     L18nKeys.materialDesign: 'Material Design',
     L18nKeys.materialDesignDescription: 'Moderne Designsprache',
 
-    // ========== Benutzervereinbarung ==========
-    L18nKeys.userAgreement: 'Benutzervereinbarung',
+    // ========== User Agreement ==========
+    L18nKeys.userAgreement: 'Nutzungsvereinbarung',
     L18nKeys.agreementContent:
-        '1. Dieses Anwendungs-Framework ist nur für Lern- und Entwicklungszwecke\n2. Bitte befolgen Sie relevante Gesetze und Vorschriften\n3. Unterstützt mobile, Tablet- und PC-Plattformen\n4. Entwickler behält sich alle Rechte vor\n5. Dieses Projekt folgt der MIT Open-Source-Lizenz\n6. Bitte lesen Sie die Dokumentation sorgfältig vor der Verwendung\n7. Entwickler behält sich das endgültige Auslegungsrecht vor',
+        '1. Dieses Anwendungsframework dient nur zu Lern- und Entwicklungszwecken\n2. Bitte beachten Sie die geltenden Gesetze und Vorschriften\n3. Unterstützt Mobil-, Tablet- und PC-Plattformen\n4. Der Entwickler behält sich alle Rechte vor\n5. Dieses Projekt folgt der MIT Open Source Lizenz\n6. Bitte lesen Sie die Dokumentation vor der Verwendung sorgfältig durch\n7. Der Entwickler behält sich das Recht der endgültigen Auslegung vor',
     L18nKeys.github: 'GitHub',
 
-    // ========== Geräteinformationen ==========
-    L18nKeys.deviceInfo: 'Geräteinformationen',
+    // ========== Device Info ==========
+    L18nKeys.deviceInfo: 'Geräteinfo',
     L18nKeys.screenSize: 'Bildschirmgröße',
     L18nKeys.deviceType: 'Gerätetyp',
-    L18nKeys.mobileDevice: 'Mobilgerät',
+    L18nKeys.mobileDevice: 'Mobil',
     L18nKeys.tabletDevice: 'Tablet',
     L18nKeys.desktopDevice: 'Desktop',
     L18nKeys.layoutMode: 'Layout-Modus',
     L18nKeys.adaptiveLayout: 'Adaptives Layout',
 
-    // ========== Host-Bearbeitungsseite ==========
+    // ========== Host Edit Page ==========
     L18nKeys.editHost: 'Host bearbeiten',
     L18nKeys.addHost: 'Host hinzufügen',
     L18nKeys.hostName: 'Hostname',
     L18nKeys.hostNameHint: 'Hostname eingeben',
-    L18nKeys.pleaseEnterHostName: 'Bitte Hostname eingeben',
+    L18nKeys.pleaseEnterHostName: 'Bitte Hostnamen eingeben',
     L18nKeys.hostNameMinLength: 'Hostname muss mindestens 2 Zeichen lang sein',
     L18nKeys.hostAddress: 'Host-Adresse',
     L18nKeys.hostAddressHint: 'z.B. 192.168.1.100',
@@ -159,34 +200,34 @@ class DeDE {
     L18nKeys.connectionSuccessMessage:
         'Host-Verbindung ist normal, Konfiguration ist gültig',
     L18nKeys.connectionFailedMessage:
-        'Kann nicht mit Host verbinden, bitte Konfiguration überprüfen',
-    L18nKeys.connectionTestError: 'Verbindungstest-Fehler',
+        'Kann nicht zum Host verbinden, bitte Konfiguration prüfen',
+    L18nKeys.connectionTestError: 'Verbindungstestfehler',
 
-    // ========== Warnungsverlauf ==========
-    L18nKeys.alertHistory: 'Warnungsverlauf',
+    // ========== Alert History Page ==========
+    L18nKeys.alertHistory: 'Alarmverlauf',
     L18nKeys.clearHistory: 'Verlauf löschen',
-    L18nKeys.noAlertRecords: 'Keine Warnungsdatensätze',
+    L18nKeys.noAlertRecords: 'Keine Alarmaufzeichnungen',
     L18nKeys.acknowledge: 'Bestätigen',
-    L18nKeys.alertAcknowledged: 'Warnung bestätigt',
+    L18nKeys.alertAcknowledged: 'Alarm bestätigt',
     L18nKeys.confirmClearAlertHistory:
-        'Sind Sie sicher, dass Sie den gesamten Warnungsverlauf löschen möchten?',
+        'Sind Sie sicher, dass Sie den gesamten Alarmverlauf löschen möchten?',
     L18nKeys.clear: 'Löschen',
     L18nKeys.historyCleared: 'Verlauf gelöscht',
 
-    // ========== Host-Monitor ==========
-    L18nKeys.hostMonitor: 'Host-Monitor',
-    L18nKeys.loadHostListFailed: 'Laden der Host-Liste fehlgeschlagen',
+    // ========== Host Monitor Page ==========
+    L18nKeys.hostMonitor: 'Host-Überwachung',
+    L18nKeys.loadHostListFailed: 'Laden der Hostliste fehlgeschlagen',
     L18nKeys.loadGeoInfoFailed:
         'Laden der geografischen Standortinformationen fehlgeschlagen',
     L18nKeys.hostStatusRefreshed: 'Host-Status aktualisiert',
     L18nKeys.refreshFailed: 'Aktualisierung fehlgeschlagen',
     L18nKeys.refreshHostStatus: 'Host-Status aktualisieren',
-    L18nKeys.forceDisconnectMessage: 'Host-Überwachung erzwungen getrennt!',
+    L18nKeys.forceDisconnectMessage: 'Host-Überwachung zwangsweise getrennt!',
     L18nKeys.safeDisconnectMessage: 'Host-Überwachung sicher getrennt.',
     L18nKeys.disconnect: 'Trennen',
-    L18nKeys.loadingGeoInfo: 'IP-Standortinformationen werden geladen...',
-    L18nKeys.loadingHostList: 'Host-Liste wird geladen...',
-    L18nKeys.connecting: 'Verbindung wird hergestellt...',
+    L18nKeys.loadingGeoInfo: 'Lade IP-Standortinformationen...',
+    L18nKeys.loadingHostList: 'Lade Hostliste...',
+    L18nKeys.connecting: 'Verbinde...',
     L18nKeys.pleaseWait: 'Bitte warten',
     L18nKeys.noSavedHosts: 'Noch keine gespeicherten Hosts',
     L18nKeys.clickToAddFirstHost:
@@ -197,39 +238,38 @@ class DeDE {
     L18nKeys.offline: 'Offline',
     L18nKeys.error: 'Fehler',
     L18nKeys.confirmDelete: 'Löschen bestätigen',
-    L18nKeys.confirmDeleteHostPart1:
-        'Sind Sie sicher, dass Sie den Host löschen möchten',
+    L18nKeys.confirmDeleteHostPart1: 'Sind Sie sicher, dass Sie den Host',
     L18nKeys.confirmDeleteHostPart2:
-        '?\n\nDiese Aktion löscht auch alle Warnungsdatensätze für diesen Host.',
+        'löschen möchten?\n\nDiese Aktion löscht auch alle Alarmaufzeichnungen für diesen Host.',
     L18nKeys.delete: 'Löschen',
     L18nKeys.hostDeleted: 'Host gelöscht',
     L18nKeys.deleteFailed: 'Löschen fehlgeschlagen',
     L18nKeys.timeout: 'Zeitüberschreitung',
 
-    // ========== Dialoge ==========
-    L18nKeys.connectionTimeout: 'Verbindungszeitüberschreitung',
+    // ========== Dialogs ==========
+    L18nKeys.connectionTimeout: 'Verbindungs-Zeitüberschreitung',
     L18nKeys.connectionTimeoutMessage:
-        'Kann nicht mit Host "{hostName}" verbinden\n\nBitte überprüfen:\n• Server läuft\n• Netzwerkverbindung ist normal\n• Firewall-Einstellungen',
+        'Kann nicht zum Host "{hostName}" verbinden\n\nBitte prüfen Sie:\n• Server läuft\n• Netzwerkverbindung ist normal\n• Firewall-Einstellungen',
     L18nKeys.tokenValidationFailed: 'Token-Validierung fehlgeschlagen',
     L18nKeys.tokenValidationFailedMessage:
         'Zugriffstoken für Host "{hostName}" ist falsch',
 
-    // ========== Host-Details ==========
+    // ========== Host Details Page ==========
     L18nKeys.waitingSystemData: 'Warte auf Systemdaten',
     L18nKeys.connectedGettingSystemInfo:
-        'Verbunden, Systeminformationen werden abgerufen...',
+        'Verbunden, rufe Systeminformationen ab...',
     L18nKeys.unnamedHost: 'Unbenannter Host',
     L18nKeys.connected: 'Verbunden',
-    L18nKeys.cpuUsageTrend: 'CPU-Auslastungsverlauf',
-    L18nKeys.memoryUsageTrend: 'Speicherauslastungsverlauf',
-    L18nKeys.diskUsageTrend: 'Festplattenauslastungsverlauf',
+    L18nKeys.cpuUsageTrend: 'CPU-Nutzungstrend',
+    L18nKeys.memoryUsageTrend: 'Speichernutzungstrend',
+    L18nKeys.diskUsageTrend: 'Festplattennutzungstrend',
     L18nKeys.uploadSpeedLabel: 'Upload-Geschwindigkeit',
     L18nKeys.downloadSpeedLabel: 'Download-Geschwindigkeit',
-    L18nKeys.load1min: '1 Min. Last',
-    L18nKeys.load5min: '5 Min. Last',
-    L18nKeys.load15min: '15 Min. Last',
-    L18nKeys.cpuCoreUsage: 'CPU-Kern-Auslastung',
-    L18nKeys.systemInfo: 'Systeminformationen',
+    L18nKeys.load1min: '1 Min Last',
+    L18nKeys.load5min: '5 Min Last',
+    L18nKeys.load15min: '15 Min Last',
+    L18nKeys.cpuCoreUsage: 'CPU-Kern-Nutzung',
+    L18nKeys.systemInfo: 'System-Info',
     L18nKeys.processor: 'Prozessor',
     L18nKeys.processorCores: 'Prozessorkerne',
     L18nKeys.coresUnit: 'Kerne',
@@ -243,7 +283,7 @@ class DeDE {
     L18nKeys.hostname: 'Hostname',
     L18nKeys.uptime: 'Betriebszeit',
     L18nKeys.memoryDetails: 'Speicherdetails',
-    L18nKeys.usageRate: 'Auslastungsrate',
+    L18nKeys.usageRate: 'Nutzungsrate',
     L18nKeys.totalMemory: 'Gesamtspeicher',
     L18nKeys.usedMemory: 'Verwendeter Speicher',
     L18nKeys.availableMemory: 'Verfügbarer Speicher',
@@ -254,5 +294,11 @@ class DeDE {
     L18nKeys.download: 'Download',
     L18nKeys.bytesSent: 'Gesendete Bytes',
     L18nKeys.bytesReceived: 'Empfangene Bytes',
+
+    // ========== Sidebar ==========
+    L18nKeys.expandSidebar: 'Seitenleiste erweitern',
+    L18nKeys.collapseSidebar: 'Seitenleiste einklappen',
+    L18nKeys.hello: 'Hallo!',
+    L18nKeys.themeSettingsTooltip: 'Design-Einstellungen',
   };
 }

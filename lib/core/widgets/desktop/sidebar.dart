@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme_data.dart';
 import '../../models/navigation_item.dart';
 import '../../theme/theme_provider.dart';
+import '../../i18n/app_localization.dart';
+import '../../i18n/localization_keys.dart';
 
 /// 桌面端侧边栏组件（紧凑型）
 /// 支持展开/折叠，带有流畅的动画过渡
@@ -133,7 +135,7 @@ class _DesktopSidebarState extends State<DesktopSidebar>
     return Center(
       child: _buildIconButton(
         icon: Icons.menu,
-        tooltip: '展开侧边栏',
+        tooltip: AppLocalization.of(context).translate(L18nKeys.expandSidebar),
         onPressed: _toggleSidebar,
         theme: theme,
       ),
@@ -148,7 +150,9 @@ class _DesktopSidebarState extends State<DesktopSidebar>
         _buildLogoText(theme),
         _buildIconButton(
           icon: Icons.menu_open,
-          tooltip: '折叠侧边栏',
+          tooltip: AppLocalization.of(
+            context,
+          ).translate(L18nKeys.collapseSidebar),
           onPressed: _toggleSidebar,
           theme: theme,
         ),
@@ -176,7 +180,7 @@ class _DesktopSidebarState extends State<DesktopSidebar>
     return Expanded(
       child: _buildFadeTransition(
         child: Text(
-          '你好!',
+          AppLocalization.of(context).translate(L18nKeys.hello),
           style: theme.textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.bold,
             fontSize: 15,
@@ -303,7 +307,7 @@ class _NavigationItemWidget extends StatelessWidget {
       children: [
         _buildIcon(theme),
         const SizedBox(width: AppThemeData.spacingSmall),
-        _buildTitle(theme),
+        _buildTitle(context, theme),
         if (item.badge != null) _buildBadge(context, theme),
       ],
     );
@@ -317,12 +321,12 @@ class _NavigationItemWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle(ThemeData theme) {
+  Widget _buildTitle(BuildContext context, ThemeData theme) {
     return Expanded(
       child: Opacity(
         opacity: fadeAnimation.value,
         child: Text(
-          item.title,
+          AppLocalization.of(context).translate(item.title),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: _getItemColor(theme),
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,

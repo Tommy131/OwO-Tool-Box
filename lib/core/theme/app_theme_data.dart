@@ -1,5 +1,6 @@
 // theme_model.dart
 import 'package:flutter/material.dart';
+import '../i18n/localization_keys.dart';
 
 /// 主题配置模型
 class AppThemeData {
@@ -57,37 +58,37 @@ class AppThemeData {
   static final List<AppThemeData> presetThemes = [
     // 默认主题（保留你原有的设计）
     const AppThemeData(
-      name: '默认紫',
+      name: L18nKeys.themeDefaultPurple,
       primaryColor: Color(0xFF6C5CE7),
       secondaryColor: Color(0xFFA29BFE),
       accentColor: Color(0xFF00B894),
     ),
     const AppThemeData(
-      name: '圣诞红',
+      name: L18nKeys.themeChristmasRed,
       primaryColor: Color(0xFFD32F2F),
       secondaryColor: Color(0xFFEF5350),
       accentColor: Color(0xFFFF9800),
     ),
     const AppThemeData(
-      name: '海洋蓝',
+      name: L18nKeys.themeOceanBlue,
       primaryColor: Color(0xFF0277BD),
       secondaryColor: Color(0xFF4FC3F7),
       accentColor: Color(0xFF00BCD4),
     ),
     const AppThemeData(
-      name: '自然绿',
+      name: L18nKeys.themeNatureGreen,
       primaryColor: Color(0xFF388E3C),
       secondaryColor: Color(0xFF66BB6A),
       accentColor: Color(0xFF8BC34A),
     ),
     const AppThemeData(
-      name: '温暖橙',
+      name: L18nKeys.themeWarmOrange,
       primaryColor: Color(0xFFE64A19),
       secondaryColor: Color(0xFFFF7043),
       accentColor: Color(0xFFFFB74D),
     ),
     const AppThemeData(
-      name: '优雅紫',
+      name: L18nKeys.themeElegantPurple,
       primaryColor: Color(0xFF7B1FA2),
       secondaryColor: Color(0xFFAB47BC),
       accentColor: Color(0xFFBA68C8),

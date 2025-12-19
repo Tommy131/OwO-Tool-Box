@@ -16,16 +16,59 @@ class EnUS {
 
     // ========== Theme Settings ==========
     L18nKeys.themeSettings: 'Theme Settings',
+    L18nKeys.resetToDefault: 'Reset to Default',
+    L18nKeys.resetToDefaultMessage: 'Reset to default theme',
+    L18nKeys.currentTheme: 'Current Theme',
+    L18nKeys.themeColorSchemes: 'Theme Color Schemes',
+    L18nKeys.customTheme: 'Custom Theme',
+    L18nKeys.designConstants: 'Design Constants',
+    L18nKeys.quickSwitchTheme: 'Quick Switch Theme',
+    L18nKeys.switchedToTheme: 'Switched to {theme}',
+    L18nKeys.switchMode: 'Switch Mode',
+    L18nKeys.switchToLight: 'Switch to Light',
+    L18nKeys.switchToDark: 'Switch to Dark',
+    L18nKeys.selectFavoriteTheme: 'Select your favorite color theme',
+    L18nKeys.createYourOwnTheme: 'Create your own color scheme',
+    L18nKeys.currentCustomTheme: 'Current Custom Theme',
+    L18nKeys.createCustomTheme: 'Create Custom Theme',
+    L18nKeys.customThemeColor: 'Custom Theme Color',
+    L18nKeys.themeName: 'Theme Name',
+    L18nKeys.selectThemeColor: 'Select Theme Color',
+    L18nKeys.selectColorShade: 'Select Color Shade',
+    L18nKeys.apply: 'Apply',
+    L18nKeys.customThemeApplied: 'Custom theme applied',
+    L18nKeys.spacingSmall: 'Spacing - Small',
+    L18nKeys.spacingMedium: 'Spacing - Medium',
+    L18nKeys.spacingLarge: 'Spacing - Large',
+    L18nKeys.borderRadiusSmall: 'Border Radius - Small',
+    L18nKeys.borderRadiusMedium: 'Border Radius - Medium',
+    L18nKeys.borderRadiusLarge: 'Border Radius - Large',
+    L18nKeys.themeDefaultPurple: 'Default Purple',
+    L18nKeys.themeChristmasRed: 'Christmas Red',
+    L18nKeys.themeOceanBlue: 'Ocean Blue',
+    L18nKeys.themeNatureGreen: 'Nature Green',
+    L18nKeys.themeWarmOrange: 'Warm Orange',
+    L18nKeys.themeElegantPurple: 'Elegant Purple',
 
     // ========== Language Settings ==========
     L18nKeys.languageSettings: 'Language Settings',
     L18nKeys.selectLanguage: 'Select Language',
     L18nKeys.changingLanguage: 'Changing Language',
+    L18nKeys.themeModeSystem: 'System',
+    L18nKeys.themeModeLight: 'Light',
+    L18nKeys.themeModeDark: 'Dark',
 
     // ========== Settings Main Page ==========
     L18nKeys.adjustTheme: 'Adjust theme mode and color scheme',
     L18nKeys.selectAppLanguage: 'Select application display language',
     L18nKeys.configureHostMonitor: 'Configure host monitoring options',
+    L18nKeys.navMonitor: 'Monitor',
+    L18nKeys.navAbout: 'About',
+    L18nKeys.navSettings: 'Settings',
+    L18nKeys.exitConfirmTitle: 'Confirm Exit',
+    L18nKeys.exitConfirmMessage:
+        'Are you sure you want to exit the application?',
+    L18nKeys.confirm: 'Confirm',
 
     // ========== Host Monitor Settings ==========
     L18nKeys.hostMonitorSettings: 'Host Monitor Settings',
@@ -250,5 +293,11 @@ class EnUS {
     L18nKeys.download: 'Download',
     L18nKeys.bytesSent: 'Bytes Sent',
     L18nKeys.bytesReceived: 'Bytes Received',
+
+    // ========== Sidebar ==========
+    L18nKeys.expandSidebar: 'Expand Sidebar',
+    L18nKeys.collapseSidebar: 'Collapse Sidebar',
+    L18nKeys.hello: 'Hello!',
+    L18nKeys.themeSettingsTooltip: 'Theme Settings',
   };
 }

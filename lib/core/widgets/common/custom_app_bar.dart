@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../models/navigation_item.dart';
 import '../../theme/app_theme_data.dart';
 import '../../theme/theme_provider.dart';
+import '../../i18n/app_localization.dart';
+import '../../i18n/localization_keys.dart';
 
 class CustomAppBar {
   static PreferredSizeWidget build(
@@ -24,7 +26,7 @@ class CustomAppBar {
             ),
           ),
           const SizedBox(width: AppThemeData.spacingSmall),
-          Text(currentItem.title),
+          Text(AppLocalization.of(context).translate(currentItem.title)),
         ],
       ),
       // 右侧操作按钮
@@ -36,7 +38,9 @@ class CustomAppBar {
               icon: Icon(
                 themeProvider.getThemeModeIcon(themeProvider.themeMode),
               ),
-              tooltip: '主题设置',
+              tooltip: AppLocalization.of(
+                context,
+              ).translate(L18nKeys.themeSettingsTooltip),
               onSelected: (ThemeMode mode) {
                 themeProvider.setThemeMode(mode);
               },
@@ -54,7 +58,9 @@ class CustomAppBar {
                       ),
                       const SizedBox(width: AppThemeData.spacingMedium),
                       Text(
-                        themeProvider.getThemeModeName(mode),
+                        AppLocalization.of(
+                          context,
+                        ).translate(themeProvider.getThemeModeName(mode)),
                         style: TextStyle(
                           color: themeProvider.themeMode == mode
                               ? theme.colorScheme.primary
