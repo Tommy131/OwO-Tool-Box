@@ -305,7 +305,7 @@ class _HostMonitorPageState extends State<HostMonitorPage> {
         ] else ...[
           _buildExitButton(),
         ],
-        const SizedBox(width: 12),
+        const SizedBox(width: 6),
       ],
     );
   }
