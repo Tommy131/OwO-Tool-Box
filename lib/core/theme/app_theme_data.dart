@@ -56,37 +56,37 @@ class AppThemeData {
   /// 预设主题列表（你原有的主题作为第一个）
   static final List<AppThemeData> presetThemes = [
     // 默认主题（保留你原有的设计）
-    AppThemeData(
+    const AppThemeData(
       name: '默认紫',
       primaryColor: Color(0xFF6C5CE7),
       secondaryColor: Color(0xFFA29BFE),
       accentColor: Color(0xFF00B894),
     ),
-    AppThemeData(
+    const AppThemeData(
       name: '圣诞红',
       primaryColor: Color(0xFFD32F2F),
       secondaryColor: Color(0xFFEF5350),
       accentColor: Color(0xFFFF9800),
     ),
-    AppThemeData(
+    const AppThemeData(
       name: '海洋蓝',
       primaryColor: Color(0xFF0277BD),
       secondaryColor: Color(0xFF4FC3F7),
       accentColor: Color(0xFF00BCD4),
     ),
-    AppThemeData(
+    const AppThemeData(
       name: '自然绿',
       primaryColor: Color(0xFF388E3C),
       secondaryColor: Color(0xFF66BB6A),
       accentColor: Color(0xFF8BC34A),
     ),
-    AppThemeData(
+    const AppThemeData(
       name: '温暖橙',
       primaryColor: Color(0xFFE64A19),
       secondaryColor: Color(0xFFFF7043),
       accentColor: Color(0xFFFFB74D),
     ),
-    AppThemeData(
+    const AppThemeData(
       name: '优雅紫',
       primaryColor: Color(0xFF7B1FA2),
       secondaryColor: Color(0xFFAB47BC),
@@ -105,13 +105,20 @@ class AppThemeData {
         primary: primaryColor,
         secondary: secondaryColor,
         surface: _surfaceColor,
+        error: Colors.red,
+        onPrimary: getContrastColor(primaryColor),
+        onSecondary: getContrastColor(secondaryColor),
+        onSurface: Colors.black87,
+        onError: Colors.white,
+        surfaceContainerHighest: Colors.grey.shade100,
+        outline: primaryColor.withValues(alpha: 0.3),
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         elevation: 0,
         backgroundColor: _surfaceColor,
         foregroundColor: _textPrimaryColor,
         centerTitle: false,
-        titleTextStyle: const TextStyle(
+        titleTextStyle: TextStyle(
           color: _textPrimaryColor,
           fontSize: 20,
           fontWeight: FontWeight.w600,
@@ -190,13 +197,20 @@ class AppThemeData {
         primary: primaryColor,
         secondary: secondaryColor,
         surface: _darkSurfaceColor,
+        error: Colors.redAccent,
+        onPrimary: getContrastColor(primaryColor), // 智能对比色
+        onSecondary: getContrastColor(secondaryColor),
+        onSurface: Colors.white,
+        onError: Colors.white,
+        surfaceContainerHighest: const Color(0xFF2C2C2C),
+        outline: primaryColor.withValues(alpha: 0.4),
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         elevation: 0,
         backgroundColor: _darkSurfaceColor,
         foregroundColor: _textDarkPrimaryColor,
         centerTitle: false,
-        titleTextStyle: const TextStyle(
+        titleTextStyle: TextStyle(
           color: _textDarkPrimaryColor,
           fontSize: 20,
           fontWeight: FontWeight.w600,
