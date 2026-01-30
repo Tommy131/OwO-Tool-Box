@@ -62,7 +62,7 @@ class DeDE {
     L18nKeys.adjustTheme: 'Designmodus und Farbschema anpassen',
     L18nKeys.selectAppLanguage: 'Anzeigesprache der Anwendung wählen',
     L18nKeys.configureHostMonitor: 'Host-Überwachungsoptionen konfigurieren',
-    L18nKeys.navMonitor: 'Überwachung',
+    L18nKeys.navMonitor: 'Geräte-Monitor',
     L18nKeys.navAbout: 'Über',
     L18nKeys.navSettings: 'Einstellungen',
     L18nKeys.exitConfirmTitle: 'Beenden bestätigen',
@@ -368,7 +368,7 @@ class DeDE {
     L18nKeys.powerSaverDesc: 'Reduzierte Leistung, geringerer Energieverbrauch',
 
     // ========== Cloudflare DNS ==========
-    L18nKeys.navCloudflareDNS: 'CF DNS',
+    L18nKeys.navCloudflareDNS: 'Cloudflare',
     L18nKeys.cloudflareDNS: 'Cloudflare DNS',
     L18nKeys.cloudflareApiSettings: 'Cloudflare API Einstellungen',
     L18nKeys.apiToken: 'API Token',
@@ -449,7 +449,7 @@ class DeDE {
     L18nKeys.processorModel: 'Prozessormodell',
 
     // ========== Developer Pocket ==========
-    L18nKeys.navDevTools: 'Entwickler-Tasche',
+    L18nKeys.navDevTools: 'String-Werkzeuge',
     L18nKeys.devTools: 'Entwickler-Tools',
     L18nKeys.devToolsBase64: 'Base64-Tool',
     L18nKeys.devToolsUrl: 'URL-Tool',

@@ -62,7 +62,7 @@ class ZhCN {
     L18nKeys.adjustTheme: '调整主题模式和配色方案',
     L18nKeys.selectAppLanguage: '选择应用显示语言',
     L18nKeys.configureHostMonitor: '配置主机监测相关选项',
-    L18nKeys.navMonitor: '监控',
+    L18nKeys.navMonitor: '设备监控',
     L18nKeys.navAbout: '关于',
     L18nKeys.navSettings: '设置',
     L18nKeys.exitConfirmTitle: '确认退出程序吗?',
@@ -344,7 +344,7 @@ class ZhCN {
     L18nKeys.powerSaverDesc: '降低性能，减少能耗',
 
     // ========== Cloudflare DNS ==========
-    L18nKeys.navCloudflareDNS: 'CF DNS',
+    L18nKeys.navCloudflareDNS: 'Cloudflare',
     L18nKeys.cloudflareDNS: 'Cloudflare DNS',
     L18nKeys.cloudflareApiSettings: 'Cloudflare API 设置',
     L18nKeys.apiToken: 'API 令牌',
@@ -425,7 +425,7 @@ class ZhCN {
     L18nKeys.processorModel: '处理器型号',
 
     // ========== 开发者口袋 ==========
-    L18nKeys.navDevTools: '开发者口袋',
+    L18nKeys.navDevTools: '字符串工具',
     L18nKeys.devTools: '开发工具',
     L18nKeys.devToolsBase64: 'Base64 转换',
     L18nKeys.devToolsUrl: 'URL 编解码',

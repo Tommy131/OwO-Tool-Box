@@ -62,7 +62,7 @@ class EnUS {
     L18nKeys.adjustTheme: 'Adjust theme mode and color scheme',
     L18nKeys.selectAppLanguage: 'Select application display language',
     L18nKeys.configureHostMonitor: 'Configure host monitoring options',
-    L18nKeys.navMonitor: 'Monitor',
+    L18nKeys.navMonitor: 'Device Monitor',
     L18nKeys.navAbout: 'About',
     L18nKeys.navSettings: 'Settings',
     L18nKeys.exitConfirmTitle: 'Confirm Exit',
@@ -367,7 +367,7 @@ class EnUS {
     L18nKeys.powerSaverDesc: 'Reduced performance, lower energy consumption',
 
     // ========== Cloudflare DNS ==========
-    L18nKeys.navCloudflareDNS: 'CF DNS',
+    L18nKeys.navCloudflareDNS: 'Cloudflare',
     L18nKeys.cloudflareDNS: 'Cloudflare DNS',
     L18nKeys.cloudflareApiSettings: 'Cloudflare API Settings',
     L18nKeys.apiToken: 'API Token',
@@ -447,7 +447,7 @@ class EnUS {
     L18nKeys.processorModel: 'Processor Model',
 
     // ========== Developer Pocket ==========
-    L18nKeys.navDevTools: 'Dev Pocket',
+    L18nKeys.navDevTools: 'String Tools',
     L18nKeys.devTools: 'Developer Tools',
     L18nKeys.devToolsBase64: 'Base64 Tool',
     L18nKeys.devToolsUrl: 'URL Tool',

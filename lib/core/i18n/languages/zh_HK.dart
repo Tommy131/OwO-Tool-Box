@@ -62,7 +62,7 @@ class ZhHK {
     L18nKeys.adjustTheme: '調整主題模式和配色方案',
     L18nKeys.selectAppLanguage: '選擇應用程式顯示語言',
     L18nKeys.configureHostMonitor: '配置主機監控相關選項',
-    L18nKeys.navMonitor: '監控',
+    L18nKeys.navMonitor: '設備監控',
     L18nKeys.navAbout: '關於',
     L18nKeys.navSettings: '設定',
     L18nKeys.exitConfirmTitle: '確認退出程式嗎?',
@@ -344,7 +344,7 @@ class ZhHK {
     L18nKeys.powerSaverDesc: '降低效能，減少能耗',
 
     // ========== Cloudflare DNS ==========
-    L18nKeys.navCloudflareDNS: 'CF DNS',
+    L18nKeys.navCloudflareDNS: 'Cloudflare',
     L18nKeys.cloudflareDNS: 'Cloudflare DNS',
     L18nKeys.cloudflareApiSettings: 'Cloudflare API 設定',
     L18nKeys.apiToken: 'API 令牌',
@@ -425,7 +425,7 @@ class ZhHK {
     L18nKeys.processorModel: '處理器型號',
 
     // ========== 開發者口袋 ==========
-    L18nKeys.navDevTools: '開發者口袋',
+    L18nKeys.navDevTools: '字串工具',
     L18nKeys.devTools: '開發工具',
     L18nKeys.devToolsBase64: 'Base64 轉換',
     L18nKeys.devToolsUrl: 'URL 編解碼',

@@ -52,8 +52,6 @@ class _DevToolsPageState extends State<DevToolsPage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final themeProvider = context.watch<ThemeProvider>();
-    final primaryColor = themeProvider.currentTheme.primaryColor;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -73,16 +71,7 @@ class _DevToolsPageState extends State<DevToolsPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Text(
-                    _tr(L18nKeys.devTools),
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: primaryColor,
-                    ),
-                  ),
-                ),
+                const SizedBox(height: 8),
                 Expanded(
                   child: ListView(
                     children: [
