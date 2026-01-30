@@ -449,19 +449,19 @@ class _ShutdownTabState extends State<ShutdownTab> {
                 _buildQuickActionChip(
                   theme,
                   label: _tr(L18nKeys.tenMinutes),
-                  icon: Icons.timer_10,
+                  icon: Icons.schedule,
                   onPressed: () => _quickSchedule(provider, 600),
                 ),
                 _buildQuickActionChip(
                   theme,
                   label: _tr(L18nKeys.thirtyMinutes),
-                  icon: Icons.timer,
+                  icon: Icons.schedule,
                   onPressed: () => _quickSchedule(provider, 1800),
                 ),
                 _buildQuickActionChip(
                   theme,
                   label: _tr(L18nKeys.oneHour),
-                  icon: Icons.access_time,
+                  icon: Icons.schedule,
                   onPressed: () => _quickSchedule(provider, 3600),
                 ),
                 _buildQuickActionChip(

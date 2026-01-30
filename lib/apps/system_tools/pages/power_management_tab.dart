@@ -114,7 +114,7 @@ class _PowerManagementTabState extends State<PowerManagementTab> {
             Icon(
               _getPowerModeIcon(currentPlan?.mode),
               size: 48,
-              color: theme.colorScheme.primary,
+              color: Colors.white.withValues(alpha: 0.8),
             ),
             const SizedBox(height: 12),
             Text(
