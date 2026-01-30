@@ -447,5 +447,24 @@ class DeDE {
     L18nKeys.distributionId: 'Distributions-ID',
     L18nKeys.machineId: 'Maschinen-ID',
     L18nKeys.processorModel: 'Prozessormodell',
+
+    // ========== Developer Pocket ==========
+    L18nKeys.navDevTools: 'Entwickler-Tasche',
+    L18nKeys.devTools: 'Entwickler-Tools',
+    L18nKeys.devToolsBase64: 'Base64-Tool',
+    L18nKeys.devToolsUrl: 'URL-Tool',
+    L18nKeys.devToolsHex: 'Hex-Tool',
+    L18nKeys.devToolsJson: 'JSON-Formatierer',
+    L18nKeys.devToolsUuid: 'UUID-Generator',
+    L18nKeys.devToolsPassword: 'Passwort-Generator',
+    L18nKeys.encode: 'Kodieren',
+    L18nKeys.decode: 'Dekodieren',
+    L18nKeys.inputHint: 'Rohinhalt hier eingeben...',
+    L18nKeys.outputHint: 'Ergebnisse werden hier angezeigt...',
+    L18nKeys.copySuccess: 'In die Zwischenablage kopiert',
+    L18nKeys.format: 'Formatieren',
+    L18nKeys.generate: 'Generieren',
+    L18nKeys.passwordLength: 'Passwortlänge',
+    L18nKeys.hashTool: 'Hash-Tool',
   };
 }

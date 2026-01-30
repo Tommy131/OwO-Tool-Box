@@ -445,5 +445,24 @@ class EnUS {
     L18nKeys.distributionId: 'Distribution ID',
     L18nKeys.machineId: 'Machine ID',
     L18nKeys.processorModel: 'Processor Model',
+
+    // ========== Developer Pocket ==========
+    L18nKeys.navDevTools: 'Dev Pocket',
+    L18nKeys.devTools: 'Developer Tools',
+    L18nKeys.devToolsBase64: 'Base64 Tool',
+    L18nKeys.devToolsUrl: 'URL Tool',
+    L18nKeys.devToolsHex: 'Hex Tool',
+    L18nKeys.devToolsJson: 'JSON Formatter',
+    L18nKeys.devToolsUuid: 'UUID Generator',
+    L18nKeys.devToolsPassword: 'Password Generator',
+    L18nKeys.encode: 'Encode',
+    L18nKeys.decode: 'Decode',
+    L18nKeys.inputHint: 'Input raw content here...',
+    L18nKeys.outputHint: 'Results will be shown here...',
+    L18nKeys.copySuccess: 'Copied to clipboard',
+    L18nKeys.format: 'Format',
+    L18nKeys.generate: 'Generate',
+    L18nKeys.passwordLength: 'Password Length',
+    L18nKeys.hashTool: 'Hash Tool',
   };
 }

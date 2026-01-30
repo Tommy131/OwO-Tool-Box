@@ -423,5 +423,24 @@ class ZhHK {
     L18nKeys.distributionId: '發行版 ID',
     L18nKeys.machineId: '機器 ID',
     L18nKeys.processorModel: '處理器型號',
+
+    // ========== 開發者口袋 ==========
+    L18nKeys.navDevTools: '開發者口袋',
+    L18nKeys.devTools: '開發工具',
+    L18nKeys.devToolsBase64: 'Base64 轉換',
+    L18nKeys.devToolsUrl: 'URL 編解碼',
+    L18nKeys.devToolsHex: 'Hex 十六進位',
+    L18nKeys.devToolsJson: 'JSON 格式化',
+    L18nKeys.devToolsUuid: 'UUID 生成器',
+    L18nKeys.devToolsPassword: '密碼生成器',
+    L18nKeys.encode: '編碼',
+    L18nKeys.decode: '解碼',
+    L18nKeys.inputHint: '在此輸入原始內容...',
+    L18nKeys.outputHint: '結果將在這裡顯示...',
+    L18nKeys.copySuccess: '已成功複製到剪贴板',
+    L18nKeys.format: '格式化',
+    L18nKeys.generate: '生成',
+    L18nKeys.passwordLength: '密碼長度',
+    L18nKeys.hashTool: '哈希摘要',
   };
 }

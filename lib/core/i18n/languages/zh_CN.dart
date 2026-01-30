@@ -423,5 +423,24 @@ class ZhCN {
     L18nKeys.distributionId: '发行版 ID',
     L18nKeys.machineId: '机器 ID',
     L18nKeys.processorModel: '处理器型号',
+
+    // ========== 开发者口袋 ==========
+    L18nKeys.navDevTools: '开发者口袋',
+    L18nKeys.devTools: '开发工具',
+    L18nKeys.devToolsBase64: 'Base64 转换',
+    L18nKeys.devToolsUrl: 'URL 编解码',
+    L18nKeys.devToolsHex: 'Hex 十六进制',
+    L18nKeys.devToolsJson: 'JSON 格式化',
+    L18nKeys.devToolsUuid: 'UUID 生成器',
+    L18nKeys.devToolsPassword: '密码生成器',
+    L18nKeys.encode: '编码',
+    L18nKeys.decode: '解码',
+    L18nKeys.inputHint: '在此输入原始内容...',
+    L18nKeys.outputHint: '结果将在这里显示...',
+    L18nKeys.copySuccess: '已成功复制到剪贴板',
+    L18nKeys.format: '格式化',
+    L18nKeys.generate: '生成',
+    L18nKeys.passwordLength: '密码长度',
+    L18nKeys.hashTool: '哈希摘要',
   };
 }
