@@ -358,4 +358,41 @@ class L18nKeys {
   static const String highPerformanceDesc = 'high_performance_desc';
   static const String balancedDesc = 'balanced_desc';
   static const String powerSaverDesc = 'power_saver_desc';
+
+  // ========== Cloudflare DNS ==========
+  static const String navCloudflareDNS = 'nav_cloudflare_dns';
+  static const String cloudflareDNS = 'cloudflare_dns';
+  static const String cloudflareApiSettings = 'cloudflare_api_settings';
+  static const String apiToken = 'api_token';
+  static const String apiTokenHint = 'api_token_hint';
+  static const String verifyToken = 'verify_token';
+  static const String tokenVerified = 'token_verified';
+  static const String tokenInvalid = 'token_invalid';
+  static const String tokenStatus = 'token_status';
+  static const String tokenValid = 'token_valid';
+  static const String tokenPermanent = 'token_permanent';
+  static const String tokenExpiry = 'token_expiry';
+  static const String domains = 'domains_list';
+  static const String dnsRecords = 'dns_records';
+  static const String ddnsSettings = 'ddns_settings';
+  static const String enableDDNS = 'enable_ddns';
+  static const String publicIP = 'public_ip';
+  static const String lastUpdated = 'last_updated';
+  static const String syncNow = 'sync_now';
+  static const String domainName = 'domain_name';
+  static const String recordType = 'record_type';
+  static const String recordContent = 'record_content';
+  static const String ttl = 'ttl';
+  static const String proxied = 'proxied';
+  static const String addRecord = 'add_record';
+  static const String editRecord = 'edit_record';
+  static const String deleteRecord = 'delete_record';
+  static const String noDomainsFound = 'no_domains_found';
+  static const String selectDomainToManage = 'select_domain_to_manage';
+  static const String ddnsActive = 'ddns_active';
+  static const String ddnsInactive = 'ddns_inactive';
+  static const String ipUnchanged = 'ip_unchanged';
+  static const String ipChangedUpdating = 'ip_changed_updating';
+  static const String updateSuccess = 'update_success';
+  static const String updateFailed = 'update_failed';
 }

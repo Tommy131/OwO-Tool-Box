@@ -262,7 +262,7 @@ class _PowerManagementTabState extends State<PowerManagementTab> {
                 ),
                 child: Text(
                   _tr(L18nKeys.active),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
@@ -344,7 +344,7 @@ class _PowerManagementTabState extends State<PowerManagementTab> {
                 ),
                 child: Text(
                   _tr(L18nKeys.active),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,

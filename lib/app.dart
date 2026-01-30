@@ -11,6 +11,9 @@ import 'apps/host_monitor/providers/host_monitor_provider.dart';
 import 'apps/system_tools/pages/system_tools_page.dart';
 import 'apps/system_tools/providers/system_tools_provider.dart';
 
+import 'apps/cloudflare_dns/pages/cloudflare_dns_page.dart';
+import 'apps/cloudflare_dns/providers/cloudflare_provider.dart';
+
 import 'core/i18n/app_localization.dart';
 import 'core/i18n/language_config.dart';
 import 'core/providers/locale_provider.dart';
@@ -39,6 +42,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => HostMonitorProvider()),
         // System Tools
         ChangeNotifierProvider(create: (_) => SystemToolsProvider()),
+        // Cloudflare DNS
+        ChangeNotifierProvider(create: (_) => CloudflareProvider()),
       ],
       child: Consumer2<ThemeProvider, LocaleProvider>(
         builder: (context, themeProvider, localeProvider, child) {
@@ -103,6 +108,13 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
       icon: Icons.build_circle_outlined,
       activeIcon: Icons.build_circle,
       page: SystemToolsPage(),
+    ),
+    NavigationItem(
+      id: 'cloudflare_dns',
+      title: L18nKeys.navCloudflareDNS,
+      icon: Icons.dns_outlined,
+      activeIcon: Icons.dns,
+      page: CloudflareDnsPage(),
     ),
     NavigationItem(
       id: 'about',
