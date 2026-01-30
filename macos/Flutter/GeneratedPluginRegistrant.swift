@@ -6,6 +6,7 @@ import FlutterMacOS
 import Foundation
 
 import country_codes
+import device_info_plus
 import file_picker
 import flutter_local_notifications
 import flutter_secure_storage_macos
@@ -17,6 +18,7 @@ import window_manager
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   CountryCodesPlugin.register(with: registry.registrar(forPlugin: "CountryCodesPlugin"))
+  DeviceInfoPlusMacosPlugin.register(with: registry.registrar(forPlugin: "DeviceInfoPlusMacosPlugin"))
   FilePickerPlugin.register(with: registry.registrar(forPlugin: "FilePickerPlugin"))
   FlutterLocalNotificationsPlugin.register(with: registry.registrar(forPlugin: "FlutterLocalNotificationsPlugin"))
   FlutterSecureStoragePlugin.register(with: registry.registrar(forPlugin: "FlutterSecureStoragePlugin"))

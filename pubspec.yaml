@@ -54,6 +54,8 @@ dependencies:
   process_run: ^1.2.4  # 运行外部进程
   url_launcher: ^6.2.2  # 启动URL或应用
   flex_color_picker: ^3.7.2
+  device_info_plus: ^12.3.0
+  system_info2: ^4.1.0
 
 # 🛠️ **开发依赖（Dev Dependencies）**：仅用于开发和测试的包。
 dev_dependencies:

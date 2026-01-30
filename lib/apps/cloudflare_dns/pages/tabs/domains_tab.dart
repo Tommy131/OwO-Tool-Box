@@ -8,7 +8,12 @@
  *
  *  Copyright (c) 2023 by OwOTeam-DGMT (OwOBlog).
  * @Date         : 2026-01-30
- * @Author       : Antigravity
+ * @Author       : HanskiJay
+ * @LastEditors  : HanskiJay
+ * @LastEditTime : 2025-10-22
+ * @E-Mail       : support@owoblog.com
+ * @Telegram     : https://t.me/HanskiJay
+ * @GitHub       : https://github.com/Tommy131
  */
 
 import 'package:flutter/material.dart';

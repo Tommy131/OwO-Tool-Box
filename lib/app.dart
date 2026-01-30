@@ -27,6 +27,7 @@ import 'core/models/navigation_item.dart';
 import 'core/widgets/common/dialog.dart';
 import 'core/widgets/desktop/custom_title_bar.dart';
 import 'pages/about/about_page.dart';
+import 'pages/dashboard/dashboard_page.dart';
 import 'pages/settings/settings_page.dart';
 
 class MyApp extends StatelessWidget {
@@ -95,6 +96,13 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
 
   // 定义导航项
   final List<NavigationItem> _navigationItems = const [
+    NavigationItem(
+      id: 'dashboard',
+      title: L18nKeys.deviceInfo,
+      icon: Icons.dashboard_outlined,
+      activeIcon: Icons.dashboard,
+      page: DashboardPage(),
+    ),
     NavigationItem(
       id: 'host_monitor',
       title: L18nKeys.navMonitor,
