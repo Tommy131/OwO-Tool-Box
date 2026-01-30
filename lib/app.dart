@@ -8,6 +8,9 @@ import 'package:window_manager/window_manager.dart';
 import 'apps/host_monitor/pages/host_monitor_page.dart';
 import 'apps/host_monitor/providers/host_monitor_provider.dart';
 
+import 'apps/system_tools/pages/system_tools_page.dart';
+import 'apps/system_tools/providers/system_tools_provider.dart';
+
 import 'core/i18n/app_localization.dart';
 import 'core/i18n/language_config.dart';
 import 'core/providers/locale_provider.dart';
@@ -34,6 +37,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
         // Host Monitor
         ChangeNotifierProvider(create: (_) => HostMonitorProvider()),
+        // System Tools
+        ChangeNotifierProvider(create: (_) => SystemToolsProvider()),
       ],
       child: Consumer2<ThemeProvider, LocaleProvider>(
         builder: (context, themeProvider, localeProvider, child) {
@@ -91,6 +96,13 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
       icon: Icons.monitor_outlined,
       activeIcon: Icons.monitor,
       page: HostMonitorPage(),
+    ),
+    NavigationItem(
+      id: 'system_tools',
+      title: L18nKeys.navSystemTools,
+      icon: Icons.build_circle_outlined,
+      activeIcon: Icons.build_circle,
+      page: SystemToolsPage(),
     ),
     NavigationItem(
       id: 'about',

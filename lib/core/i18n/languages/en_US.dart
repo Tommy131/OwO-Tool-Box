@@ -299,5 +299,71 @@ class EnUS {
     L18nKeys.collapseSidebar: 'Collapse Sidebar',
     L18nKeys.hello: 'Hello!',
     L18nKeys.themeSettingsTooltip: 'Theme Settings',
+
+    // ========== System Tools ==========
+    L18nKeys.navSystemTools: 'System Tools',
+    L18nKeys.systemTools: 'System Tools',
+    L18nKeys.platformNotSupported: 'Platform Not Supported',
+    L18nKeys.platformNotSupportedMessage:
+        'This feature is only available on Windows',
+
+    // Shutdown Timer
+    L18nKeys.shutdownTimer: 'Shutdown Timer',
+    L18nKeys.shutdownScheduled: 'Shutdown Scheduled',
+    L18nKeys.scheduleShutdown: 'Schedule Shutdown',
+    L18nKeys.cancelShutdown: 'Cancel Shutdown',
+    L18nKeys.shutdownCancelled: 'Shutdown cancelled successfully',
+    L18nKeys.shutdownScheduledSuccess: 'Shutdown scheduled successfully',
+    L18nKeys.scheduling: 'Scheduling...',
+    L18nKeys.duration: 'Duration',
+    L18nKeys.specificTime: 'Specific Time',
+    L18nKeys.setDuration: 'Set Duration',
+    L18nKeys.setSpecificTime: 'Set Specific Time',
+    L18nKeys.setDelayTime: 'Set delay time',
+    L18nKeys.setExactTime: 'Set exact time',
+    L18nKeys.hours: 'Hours',
+    L18nKeys.minute: 'Minutes',
+    L18nKeys.second: 'Seconds',
+    L18nKeys.selectDateTime: 'Select Date & Time',
+    L18nKeys.pleaseSelectDateTime: 'Please select a date and time',
+    L18nKeys.pleaseSetValidDuration: 'Please set a valid duration',
+    L18nKeys.quickActions: 'Quick Actions',
+    L18nKeys.tenMinutes: '10 Minutes',
+    L18nKeys.thirtyMinutes: '30 Minutes',
+    L18nKeys.oneHour: '1 Hour',
+    L18nKeys.twoHours: '2 Hours',
+    L18nKeys.confirmCancelShutdown: 'Cancel Shutdown',
+    L18nKeys.confirmCancelShutdownMessage:
+        'Are you sure you want to cancel the scheduled shutdown?',
+    L18nKeys.keepSchedule: 'Keep Schedule',
+
+    // Power Management
+    L18nKeys.powerManagement: 'Power Management',
+    L18nKeys.currentPowerPlan: 'Current Power Plan',
+    L18nKeys.quickModeSwitch: 'Quick Mode Switch',
+    L18nKeys.allPowerPlans: 'All Power Plans',
+    L18nKeys.powerActions: 'Power Actions',
+    L18nKeys.highPerformance: 'High Performance',
+    L18nKeys.balanced: 'Balanced',
+    L18nKeys.powerSaver: 'Power Saver',
+    L18nKeys.active: 'Active',
+    L18nKeys.sleep: 'Sleep',
+    L18nKeys.hibernate: 'Hibernate',
+    L18nKeys.changePowerMode: 'Change Power Mode',
+    L18nKeys.switchToPowerMode: 'Switch to {mode} mode?',
+    L18nKeys.powerModeChanged: 'Power mode changed to {mode}',
+    L18nKeys.powerPlanChanged: 'Power plan changed to {plan}',
+    L18nKeys.confirmSleep: 'Sleep',
+    L18nKeys.confirmHibernate: 'Hibernate',
+    L18nKeys.confirmSleepMessage: 'Are you sure you want to Sleep the system?',
+    L18nKeys.confirmHibernateMessage:
+        'Are you sure you want to Hibernate the system?',
+    L18nKeys.failedToAction: 'Failed to {action}',
+
+    // Power Mode Descriptions
+    L18nKeys.highPerformanceDesc:
+        'Maximum performance, higher energy consumption',
+    L18nKeys.balancedDesc: 'Balanced performance and energy efficiency',
+    L18nKeys.powerSaverDesc: 'Reduced performance, lower energy consumption',
   };
 }

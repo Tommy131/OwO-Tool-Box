@@ -16,15 +16,31 @@ A comprehensive tool for monitoring remote servers and hosts.
 - **Alert History**: Keep track of alerts and status changes.
 - **GeoIP Integration**: Visualize host locations.
 
+### 🔧 System Tools
+A suite of essential Windows system utilities with a modern, intuitive interface.
+- **Shutdown Timer**: Schedule system shutdown with flexible timing options
+  - Set shutdown by duration (hours, minutes, seconds)
+  - Set shutdown at a specific date and time
+  - Quick action buttons (10 min, 30 min, 1 hour, 2 hours)
+  - Real-time countdown display
+  - Cancel scheduled shutdown anytime
+- **Power Management**: Manage Windows power plans with ease
+  - View current active power plan
+  - Quick switch between power modes (High Performance, Balanced, Power Saver)
+  - Browse and activate all available power plans
+  - System sleep and hibernate functions
+  - Beautiful visual indicators for active modes
+
 ### 🚀 Core Features
 - **Cross-Platform**: Optimized for Windows, macOS, Linux, Android, and iOS.
 - **Responsive Design**: Adaptive layouts that work seamlessly on both desktop and mobile screens.
 - **Theme System**: Built-in support for Light and Dark modes, with system theme synchronization.
-- **Internationalization**: Full multi-language support (English & Chinese).
+- **Internationalization**: Full multi-language support (English, Chinese Simplified, Chinese Traditional, German).
 - **Custom UI**: Polished desktop experience with custom title bars and window management.
 
 ## 📸 Screenshots
 
+### Host Monitor
 | Host Monitor | Host Monitor Settings |
 |:---:|:---:|
 | <img src="assets/images/host_monitor_page.png" width="400"/> | <img src="assets/images/host_monitor_settings_page.png" width="400"/> |
@@ -37,6 +53,12 @@ A comprehensive tool for monitoring remote servers and hosts.
 |:---:|:---:|
 | <img src="assets/images/host_details_page-3.png" width="400"/> | <img src="assets/images/host_details_page-4.png" width="400"/> |
 
+### System Tools
+| Shutdown Timer | Power Management |
+|:---:|:---:|
+| <img src="assets/images/shutdown-page.png" width="400"/> | <img src="assets/images/power-management-page.png" width="400"/> |
+
+### Settings & Preferences
 | Settings | Theme Settings |
 |:---:|:---:|
 | <img src="assets/images/settings_page.png" width="400"/> | <img src="assets/images/theme_settings_page.png" width="400"/> |
@@ -59,7 +81,8 @@ A comprehensive tool for monitoring remote servers and hosts.
 ```
 lib/
 ├── apps/               # Independent functional modules
-│   └── host_monitor/   # Host Monitor module
+│   ├── host_monitor/   # Host Monitor module
+│   └── system_tools/   # System Tools module (Windows only)
 ├── core/               # Core utilities and shared components
 │   ├── constants/      # App constants
 │   ├── i18n/           # Internationalization files

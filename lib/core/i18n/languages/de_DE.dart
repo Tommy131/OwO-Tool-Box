@@ -300,5 +300,71 @@ class DeDE {
     L18nKeys.collapseSidebar: 'Seitenleiste einklappen',
     L18nKeys.hello: 'Hallo!',
     L18nKeys.themeSettingsTooltip: 'Design-Einstellungen',
+
+    // ========== System Tools ==========
+    L18nKeys.navSystemTools: 'System-Tools',
+    L18nKeys.systemTools: 'System-Tools',
+    L18nKeys.platformNotSupported: 'Plattform nicht unterstützt',
+    L18nKeys.platformNotSupportedMessage:
+        'Diese Funktion ist nur unter Windows verfügbar',
+
+    // Shutdown Timer
+    L18nKeys.shutdownTimer: 'Herunterfahren-Timer',
+    L18nKeys.shutdownScheduled: 'Herunterfahren geplant',
+    L18nKeys.scheduleShutdown: 'Herunterfahren planen',
+    L18nKeys.cancelShutdown: 'Herunterfahren abbrechen',
+    L18nKeys.shutdownCancelled: 'Herunterfahren erfolgreich abgebrochen',
+    L18nKeys.shutdownScheduledSuccess: 'Herunterfahren erfolgreich geplant',
+    L18nKeys.scheduling: 'Wird geplant...',
+    L18nKeys.duration: 'Dauer',
+    L18nKeys.specificTime: 'Bestimmte Zeit',
+    L18nKeys.setDuration: 'Dauer festlegen',
+    L18nKeys.setSpecificTime: 'Bestimmte Zeit festlegen',
+    L18nKeys.setDelayTime: 'Verzögerungszeit festlegen',
+    L18nKeys.setExactTime: 'Genaue Zeit festlegen',
+    L18nKeys.hours: 'Stunden',
+    L18nKeys.minute: 'Minuten',
+    L18nKeys.second: 'Sekunden',
+    L18nKeys.selectDateTime: 'Datum \u0026 Uhrzeit wählen',
+    L18nKeys.pleaseSelectDateTime: 'Bitte wählen Sie Datum und Uhrzeit',
+    L18nKeys.pleaseSetValidDuration: 'Bitte eine gültige Dauer festlegen',
+    L18nKeys.quickActions: 'Schnellaktionen',
+    L18nKeys.tenMinutes: '10 Minuten',
+    L18nKeys.thirtyMinutes: '30 Minuten',
+    L18nKeys.oneHour: '1 Stunde',
+    L18nKeys.twoHours: '2 Stunden',
+    L18nKeys.confirmCancelShutdown: 'Herunterfahren abbrechen',
+    L18nKeys.confirmCancelShutdownMessage:
+        'Möchten Sie das geplante Herunterfahren wirklich abbrechen?',
+    L18nKeys.keepSchedule: 'Plan beibehalten',
+
+    // Power Management
+    L18nKeys.powerManagement: 'Energieverwaltung',
+    L18nKeys.currentPowerPlan: 'Aktueller Energieplan',
+    L18nKeys.quickModeSwitch: 'Schneller Moduswechsel',
+    L18nKeys.allPowerPlans: 'Alle Energiepläne',
+    L18nKeys.powerActions: 'Energieaktionen',
+    L18nKeys.highPerformance: 'Höchstleistung',
+    L18nKeys.balanced: 'Ausgeglichen',
+    L18nKeys.powerSaver: 'Energiesparmodus',
+    L18nKeys.active: 'Aktiv',
+    L18nKeys.sleep: 'Ruhezustand',
+    L18nKeys.hibernate: 'Winterschlaf',
+    L18nKeys.changePowerMode: 'Energiemodus ändern',
+    L18nKeys.switchToPowerMode: 'Zu {mode}-Modus wechseln?',
+    L18nKeys.powerModeChanged: 'Energiemodus zu {mode} geändert',
+    L18nKeys.powerPlanChanged: 'Energieplan zu {plan} geändert',
+    L18nKeys.confirmSleep: 'Ruhezustand',
+    L18nKeys.confirmHibernate: 'Winterschlaf',
+    L18nKeys.confirmSleepMessage:
+        'Möchten Sie das System wirklich in den Ruhezustand versetzen?',
+    L18nKeys.confirmHibernateMessage:
+        'Möchten Sie das System wirklich in den Winterschlaf versetzen?',
+    L18nKeys.failedToAction: '{action} fehlgeschlagen',
+
+    // Power Mode Descriptions
+    L18nKeys.highPerformanceDesc: 'Maximale Leistung, höherer Energieverbrauch',
+    L18nKeys.balancedDesc: 'Ausgeglichene Leistung und Energieeffizienz',
+    L18nKeys.powerSaverDesc: 'Reduzierte Leistung, geringerer Energieverbrauch',
   };
 }

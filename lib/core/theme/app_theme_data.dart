@@ -160,6 +160,31 @@ class AppThemeData {
         backgroundColor: primaryColor,
         foregroundColor: getContrastColor(primaryColor),
       ),
+      chipTheme: ChipThemeData(
+        backgroundColor: Colors.grey.shade100,
+        selectedColor: primaryColor.withValues(alpha: 0.15),
+        secondarySelectedColor: secondaryColor.withValues(alpha: 0.15),
+        disabledColor: Colors.grey.shade200,
+        side: BorderSide.none, // 强制无边框
+        labelStyle: const TextStyle(
+          color: _textPrimaryColor,
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+        ),
+        secondaryLabelStyle: TextStyle(
+          color: primaryColor,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadiusSmall),
+          side: BorderSide.none, // 移除边框
+        ),
+        elevation: 0,
+        pressElevation: 1,
+        iconTheme: IconThemeData(color: primaryColor, size: 18),
+      ),
       textTheme: const TextTheme(
         displayLarge: TextStyle(
           fontSize: 32,
@@ -251,6 +276,31 @@ class AppThemeData {
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: primaryColor,
         foregroundColor: getContrastColor(primaryColor),
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: const Color(0xFF2C2C2C),
+        selectedColor: primaryColor.withValues(alpha: 0.25),
+        secondarySelectedColor: secondaryColor.withValues(alpha: 0.25),
+        disabledColor: const Color(0xFF1F1F1F),
+        side: BorderSide.none, // 强制无边框
+        labelStyle: const TextStyle(
+          color: _textDarkPrimaryColor,
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+        ),
+        secondaryLabelStyle: TextStyle(
+          color: primaryColor,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadiusSmall),
+          side: BorderSide.none, // 移除边框
+        ),
+        elevation: 0,
+        pressElevation: 1,
+        iconTheme: IconThemeData(color: primaryColor, size: 18),
       ),
       textTheme: const TextTheme(
         displayLarge: TextStyle(

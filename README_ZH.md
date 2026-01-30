@@ -16,15 +16,31 @@
 - **警报历史**：记录警报和状态变更历史。
 - **GeoIP 集成**：可视化主机地理位置信息。
 
+### 🔧 系统工具 (System Tools)
+一套现代化、直观的 Windows 系统实用工具集。
+- **定时关机**：灵活的系统关机计划设置
+  - 按时长设置关机（小时、分钟、秒）
+  - 按具体日期时间设置关机
+  - 快捷操作按钮（10分钟、30分钟、1小时、2小时）
+  - 实时倒计时显示
+  - 随时取消已设置的关机计划
+- **电源管理**：轻松管理 Windows 电源计划
+  - 查看当前活动的电源计划
+  - 快速切换电源模式（高性能、平衡、节能）
+  - 浏览并激活所有可用的电源计划
+  - 系统睡眠和休眠功能
+  - 精美的激活状态视觉指示器
+
 ### 🚀 核心特性
 - **跨平台支持**：针对 Windows, macOS, Linux, Android 和 iOS 进行了优化。
 - **响应式设计**：自适应布局，在桌面端和移动端都能提供流畅体验。
 - **主题系统**：内置亮色和暗色模式支持，可跟随系统主题自动切换。
-- **国际化**：完整的通过多语言支持（中文 & 英文）。
+- **国际化**：完整的多语言支持（英文、简体中文、繁体中文、德语）。
 - **定制 UI**：为桌面端提供定制的标题栏和窗口管理体验。
 
 ## 📸 应用截图
 
+### 主机监控
 | 主机监控 | 监控设置 |
 |:---:|:---:|
 | <img src="assets/images/host_monitor_page.png" width="400"/> | <img src="assets/images/host_monitor_settings_page.png" width="400"/> |
@@ -37,6 +53,12 @@
 |:---:|:---:|
 | <img src="assets/images/host_details_page-3.png" width="400"/> | <img src="assets/images/host_details_page-4.png" width="400"/> |
 
+### 系统工具
+| 定时关机 | 电源管理 |
+|:---:|:---:|
+| <img src="assets/images/shutdown-page.png" width="400"/> | <img src="assets/images/power-management-page.png" width="400"/> |
+
+### 设置与偏好
 | 设置 | 主题设置 |
 |:---:|:---:|
 | <img src="assets/images/settings_page.png" width="400"/> | <img src="assets/images/theme_settings_page.png" width="400"/> |
@@ -59,7 +81,8 @@
 ```
 lib/
 ├── apps/               # 独立的功能模块
-│   └── host_monitor/   # 主机监控模块
+│   ├── host_monitor/   # 主机监控模块
+│   └── system_tools/   # 系统工具模块 (仅限 Windows)
 ├── core/               # 核心工具和共享组件
 │   ├── constants/      # 应用常量
 │   ├── i18n/           # 国际化文件
