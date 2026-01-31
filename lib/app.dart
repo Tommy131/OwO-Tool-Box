@@ -207,7 +207,9 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
     return Column(
       children: [
         if (!Platform.isAndroid && !Platform.isIOS) ...[
-          const CustomTitleBar(title: Text(AppConstants.appName)),
+          const CustomTitleBar(
+            title: Text("${AppConstants.appName} v${AppConstants.appVersion}"),
+          ),
           Divider(height: 1, color: Color(isDark ? 0xFF313131 : 0xFFD6D6D6)),
         ],
         Expanded(

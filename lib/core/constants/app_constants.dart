@@ -22,7 +22,7 @@ class AppConstants {
   // ========== 应用信息 ==========
   static const String appName = 'OwO! Tool Box';
   static const String appPackageName = 'com.owoblog.owo_tool_box';
-  static const String appVersion = '0.0.1';
+  static const String appVersion = '0.0.2';
 
   // ========== 开发者信息 ==========
   static const String developerName = 'HanskiJay';
@@ -42,6 +42,6 @@ class AppConstants {
   static const String donationApiEndpoint = '/check-donation/';
 
   // ========== License ==========
-  static const String copyright = '© 2025 $developerName. All rights reserved.';
+  static const String copyright = '© 2026 $developerName. All rights reserved.';
   static const String license = 'MIT License';
 }
