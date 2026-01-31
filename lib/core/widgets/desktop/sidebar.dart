@@ -164,15 +164,9 @@ class _DesktopSidebarState extends State<DesktopSidebar>
     return Container(
       width: _logoSize,
       height: _logoSize,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [theme.colorScheme.primary, theme.colorScheme.secondary],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: const Icon(Icons.face, color: Colors.white, size: _iconSize),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(6)),
+      clipBehavior: Clip.antiAlias,
+      child: Image.asset('assets/icons/app_icon.png', fit: BoxFit.contain),
     );
   }
 
