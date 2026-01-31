@@ -16,20 +16,31 @@
 - **警报历史**：记录警报和状态变更历史。
 - **GeoIP 集成**：可视化主机地理位置信息。
 
-### 🔧 系统工具 (System Tools)
-一套现代化、直观的 Windows 系统实用工具集。
-- **定时关机**：灵活的系统关机计划设置
-  - 按时长设置关机（小时、分钟、秒）
-  - 按具体日期时间设置关机
-  - 快捷操作按钮（10分钟、30分钟、1小时、2小时）
-  - 实时倒计时显示
-  - 随时取消已设置的关机计划
 - **电源管理**：轻松管理 Windows 电源计划
   - 查看当前活动的电源计划
   - 快速切换电源模式（高性能、平衡、节能）
   - 浏览并激活所有可用的电源计划
   - 系统睡眠和休眠功能
   - 精美的激活状态视觉指示器
+
+### 🌐 Cloudflare DNS
+便捷地管理您的 Cloudflare DNS 记录。
+- **记录管理**：查看并更新您的区域 DNS 记录。
+- **DDNS 配置**：易于使用的动态 DNS (DDNS) 设置界面。
+
+### ⚡ 网络工具 (Network Tools)
+专业的网络诊断和压力测试工具。
+- **Ping 服务**：标准 ICMP Ping，支持历史记录追踪。
+- **性能测试 (TCP/UDP)**：高性能打流测试，实时显示吞吐量指标和图表。
+- **隔离执行**：基于 Isolate 的后台执行机制，确保 UI 在高并发测试下依然流畅响应。
+- **端口扫描**：快速扫描目标主机的多个端口。
+- **站点安全**：分析 HTTP 响应头和状态码，快速检查站点配置。
+
+### 🧰 开发口袋 (Developer Pocket)
+为开发者设计的字符串和数据实用工具。
+- **编码/解码**：Base64, URL, Hex 转换工具。
+- **格式化**：JSON 格式化和校验。
+- **生成器**：支持自定义参数的 UUID 和安全随机密码生成。
 
 ### 🚀 核心特性
 - **跨平台支持**：针对 Windows, macOS, Linux, Android 和 iOS 进行了优化。
@@ -57,6 +68,20 @@
 | 定时关机 | 电源管理 |
 |:---:|:---:|
 | <img src="assets/images/shutdown-page.png" width="400"/> | <img src="assets/images/power-management-page.png" width="400"/> |
+
+### 网络与 DNS
+| 性能打流测试 | 端口扫描 |
+|:---:|:---:|
+| <img src="assets/images/TCP-UDP-Test1.png" width="400"/> | <img src="assets/images/TCP-UDP-Test2.png" width="400"/> |
+
+| Cloudflare DDNS (列表) | Cloudflare DDNS (编辑) |
+|:---:|:---:|
+| <img src="assets/images/Cloudflare_DDNS1.png" width="400"/> | <img src="assets/images/Cloudflare_DDNS2.png" width="400"/> |
+
+### 开发者工具
+| 开发口袋 (字符串工具) |
+|:---:|
+| <img src="assets/images/String-Tools.png" width="400"/> |
 
 ### 设置与偏好
 | 设置 | 主题设置 |

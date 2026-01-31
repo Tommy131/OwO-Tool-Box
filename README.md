@@ -16,20 +16,31 @@ A comprehensive tool for monitoring remote servers and hosts.
 - **Alert History**: Keep track of alerts and status changes.
 - **GeoIP Integration**: Visualize host locations.
 
-### 🔧 System Tools
-A suite of essential Windows system utilities with a modern, intuitive interface.
-- **Shutdown Timer**: Schedule system shutdown with flexible timing options
-  - Set shutdown by duration (hours, minutes, seconds)
-  - Set shutdown at a specific date and time
-  - Quick action buttons (10 min, 30 min, 1 hour, 2 hours)
-  - Real-time countdown display
-  - Cancel scheduled shutdown anytime
 - **Power Management**: Manage Windows power plans with ease
   - View current active power plan
   - Quick switch between power modes (High Performance, Balanced, Power Saver)
   - Browse and activate all available power plans
   - System sleep and hibernate functions
   - Beautiful visual indicators for active modes
+
+### 🌐 Cloudflare DNS
+Conveniently manage your Cloudflare DNS records.
+- **Record Management**: View and update DNS records for your zones.
+- **DDNS Configuration**: Easy-to-use interface for setting up Dynamic DNS.
+
+### ⚡ Network Tools
+Professional network diagnostic and stress testing tools.
+- **Ping Service**: Standard ICMP ping with history tracking.
+- **Performance Test (TCP/UDP)**: High-performance stress testing with Real-time metrics and charts.
+- **Isolate-powered Execution**: Background isolates ensure UI stays responsive during heavy loads.
+- **Port Scanner**: Fast scanning of multiple target ports.
+- **Site Security**: Analyze HTTP response headers and status codes.
+
+### 🧰 Developer Pocket
+Essential string and data utilities for developers.
+- **Encoding/Decoding**: Base64, URL, and Hex conversion.
+- **Formatting**: JSON pretty-print and validation.
+- **Generators**: UUID and secure password generation with custom parameters.
 
 ### 🚀 Core Features
 - **Cross-Platform**: Optimized for Windows, macOS, Linux, Android, and iOS.
@@ -57,6 +68,20 @@ A suite of essential Windows system utilities with a modern, intuitive interface
 | Shutdown Timer | Power Management |
 |:---:|:---:|
 | <img src="assets/images/shutdown-page.png" width="400"/> | <img src="assets/images/power-management-page.png" width="400"/> |
+
+### Network & DNS
+| Network Performance Test | Network Port Scan |
+|:---:|:---:|
+| <img src="assets/images/TCP-UDP-Test1.png" width="400"/> | <img src="assets/images/TCP-UDP-Test2.png" width="400"/> |
+
+| Cloudflare DDNS (List) | Cloudflare DDNS (Edit) |
+|:---:|:---:|
+| <img src="assets/images/Cloudflare_DDNS1.png" width="400"/> | <img src="assets/images/Cloudflare_DDNS2.png" width="400"/> |
+
+### String Tools
+| Developer Pocket |
+|:---:|
+| <img src="assets/images/String-Tools.png" width="400"/> |
 
 ### Settings & Preferences
 | Settings | Theme Settings |
