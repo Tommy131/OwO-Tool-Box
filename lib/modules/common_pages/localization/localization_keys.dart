@@ -1,0 +1,113 @@
+class LocalizationKeys {
+  static const String configureHostMonitor = 'configure_host_monitor';
+  static const String navMonitor = 'nav_monitor';
+  static const String navAbout = 'nav_about';
+
+  // ========== 应用信息 ==========
+  static const String appInfo = 'app_info';
+  static const String appName = 'app_name';
+  static const String appDescription = 'app_description';
+  static const String descriptionMessage = 'description_message';
+  static const String appVersion = 'app_version';
+  static const String developerInfo = 'developer_info';
+  static const String developerName = 'developer_name';
+  static const String contactEmail = 'contact_email';
+  static const String flutterVersion = 'flutter_version';
+  static const String serviceHomepage = 'service_homepage';
+  static const String openSource = 'open_source';
+  static const String openSourceDescription = 'open_source_description';
+  static const String viewSourceCode = 'view_source_code';
+  static const String license = 'license';
+  static const String supportDevelopment = 'support_development';
+  static const String donationDescription = 'donation_description';
+  static const String donateNow = 'donate_now';
+  static const String topDonors = 'top_donors';
+  static const String cannotOpenUrl = 'cannot_open_url';
+  static const String loadFailed = 'load_failed';
+  static const String retry = 'retry';
+  static const String noDonorsYet = 'no_donors_yet';
+  static const String dataFromApi = 'data_from_api';
+  static const String dataFromMock = 'data_from_mock';
+  static const String showingMockData = 'showing_mock_data';
+
+  // ========== 技术栈卡片 ==========
+  static const String techStack = 'tech_stack';
+  static const String flutter = 'flutter';
+  static const String flutterDescription = 'flutter_description';
+  static const String goLang = 'go_lang';
+  static const String goLangDescription = 'go_lang_description';
+  static const String tcpIp = 'tcp_ip';
+  static const String tcpIpDescription = 'tcp_ip_description';
+  static const String materialDesign = 'material_design';
+  static const String materialDesignDescription = 'material_design_description';
+
+  // ========== 用户协议 ==========
+  static const String userAgreement = 'user_agreement';
+  static const String agreementContent = 'agreement_content';
+  static const String github = 'github';
+
+  // ========== 设备信息 ==========
+  static const String deviceInfo = 'device_info';
+  static const String screenSize = 'screen_size';
+  static const String deviceType = 'device_type';
+  static const String mobileDevice = 'mobile_device';
+  static const String tabletDevice = 'tablet_device';
+  static const String desktopDevice = 'desktop_device';
+  static const String layoutMode = 'layout_mode';
+  static const String adaptiveLayout = 'adaptive_layout';
+  static const String loadingDeviceInfo = 'loading_device_info';
+  static const String refreshDeviceInfo = 'refresh_device_info';
+  static const String processor = 'processor';
+  static const String coresUnit = 'cores_unit';
+  static const String memoryUsage = 'memory_usage';
+  static const String totalMemory = 'total_memory';
+  static const String systemArchitecture = 'system_architecture';
+  static const String platform = 'platform';
+  static const String operatingSystem = 'operating_system';
+  static const String version = 'version';
+  static const String build = 'build';
+  static const String hostname = 'hostname';
+  static const String user = 'user';
+  static const String codename = 'codename';
+  static const String distributionId = 'distribution_id';
+  static const String machineId = 'machine_id';
+  static const String model = 'model';
+  static const String device = 'device';
+  static const String androidVersion = 'android_version';
+  static const String sdkLevel = 'sdk_level';
+  static const String brand = 'brand';
+  static const String deviceName = 'device_name';
+  static const String iosVersion = 'ios_version';
+  static const String localizedModel = 'localized_model';
+  static const String kernelVersion = 'kernel_version';
+  static const String systemInfo = 'system_info';
+  static const String hardware = 'hardware';
+  static const String board = 'board';
+  static const String bootloader = 'bootloader';
+  static const String display = 'display';
+  static const String fingerprint = 'fingerprint';
+  static const String host = 'host';
+  static const String product = 'product';
+  static const String tags = 'tags';
+  static const String type = 'type';
+  static const String androidId = 'android_id';
+  static const String identifier = 'identifier';
+  static const String physicalDevice = 'physical_device';
+  static const String systemName = 'system_name';
+  static const String machine = 'machine';
+  static const String idLike = 'id_like';
+  static const String variant = 'variant';
+  static const String buildId = 'build_id';
+  static const String deviceDetails = 'device_details';
+  static const String motherboard = 'motherboard';
+  static const String processorModel = 'processor_model';
+  static const String memoryTotal = 'memory_total';
+  static const String memoryUsed = 'memory_used';
+  static const String memoryFree = 'memory_free';
+  static const String osName = 'os_name';
+  static const String osVersion = 'os_version';
+  static const String kernelArchitecture = 'kernel_architecture';
+  static const String hardwareDetails = 'hardware_details';
+  static const String unknownPlatform = 'unknown_platform';
+  static const String unknownValue = 'unknown_value';
+}

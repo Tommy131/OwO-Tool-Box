@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../constants/app_constants.dart';
 import '../../theme/app_theme_data.dart';
-import '../../models/navigation_item.dart';
+import '../../module_registry/navigation/navigation_item.dart';
 import '../../theme/theme_provider.dart';
-import '../../i18n/app_localization.dart';
-import '../../i18n/localization_keys.dart';
+import '../../localization/localization_keys.dart';
+import '../../services/localization_service.dart';
+import '../../module_registry/module_registry.dart';
 
 /// 桌面端侧边栏组件（紧凑型）
 /// 支持展开/折叠，带有流畅的动画过渡
@@ -103,6 +105,11 @@ class _DesktopSidebarState extends State<DesktopSidebar>
               _buildHeader(theme),
               const SizedBox(height: AppThemeData.spacingSmall),
               _buildNavigationList(),
+              ...ModuleRegistry().sidebarFooters.getAllFooters().map(
+                (footer) => _isCollapsed
+                    ? footer.buildCollapsed(context)
+                    : footer.buildExpanded(context),
+              ),
             ],
           ),
         );
@@ -133,11 +140,17 @@ class _DesktopSidebarState extends State<DesktopSidebar>
 
   Widget _buildCollapsedHeader(ThemeData theme) {
     return Center(
-      child: _buildIconButton(
-        icon: Icons.menu,
-        tooltip: AppLocalization.of(context).translate(L18nKeys.expandSidebar),
-        onPressed: _toggleSidebar,
-        theme: theme,
+      child: Semantics(
+        button: true,
+        label: LocalizationKeys.expandSidebar.tr(context),
+        child: Tooltip(
+          message: LocalizationKeys.expandSidebar.tr(context),
+          child: InkWell(
+            onTap: _toggleSidebar,
+            borderRadius: BorderRadius.circular(8),
+            child: ExcludeSemantics(child: _buildLogo(theme)),
+          ),
+        ),
       ),
     );
   }
@@ -150,9 +163,7 @@ class _DesktopSidebarState extends State<DesktopSidebar>
         _buildLogoText(theme),
         _buildIconButton(
           icon: Icons.menu_open,
-          tooltip: AppLocalization.of(
-            context,
-          ).translate(L18nKeys.collapseSidebar),
+          tooltip: LocalizationKeys.collapseSidebar.tr(context),
           onPressed: _toggleSidebar,
           theme: theme,
         ),
@@ -164,9 +175,27 @@ class _DesktopSidebarState extends State<DesktopSidebar>
     return Container(
       width: _logoSize,
       height: _logoSize,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(6)),
-      clipBehavior: Clip.antiAlias,
-      child: Image.asset('assets/icons/app_icon.png', fit: BoxFit.contain),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Semantics(
+          image: true,
+          label: LocalizationKeys.appLogo.tr(context),
+          child: ExcludeSemantics(
+            child: Image.asset(AppConstants.assetIconPath, fit: BoxFit.contain),
+          ),
+        ),
+      ),
     );
   }
 
@@ -174,10 +203,10 @@ class _DesktopSidebarState extends State<DesktopSidebar>
     return Expanded(
       child: _buildFadeTransition(
         child: Text(
-          AppLocalization.of(context).translate(L18nKeys.hello),
+          LocalizationKeys.userGreeting.tr(context),
           style: theme.textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            fontSize: 15,
+            fontSize: 14,
           ),
           overflow: TextOverflow.ellipsis,
         ),
@@ -191,14 +220,21 @@ class _DesktopSidebarState extends State<DesktopSidebar>
     required VoidCallback onPressed,
     required ThemeData theme,
   }) {
-    return IconButton(
-      icon: Icon(icon, color: theme.colorScheme.primary, size: _iconSize),
-      onPressed: onPressed,
-      tooltip: tooltip,
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(
-        minWidth: _logoSize,
-        minHeight: _logoSize,
+    return Semantics(
+      button: true,
+      label: tooltip,
+      onTap: onPressed,
+      child: ExcludeSemantics(
+        child: IconButton(
+          icon: Icon(icon, color: theme.colorScheme.primary, size: _iconSize),
+          onPressed: onPressed,
+          tooltip: tooltip,
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(
+            minWidth: _logoSize,
+            minHeight: _logoSize,
+          ),
+        ),
       ),
     );
   }
@@ -257,20 +293,33 @@ class _NavigationItemWidget extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 4),
       child: Material(
         color: Colors.transparent,
-        child: InkWell(
+        child: Semantics(
+          container: true,
+          button: true,
+          selected: isSelected,
+          label: _buildSemanticsLabel(context),
           onTap: onTap,
-          borderRadius: BorderRadius.circular(AppThemeData.borderRadiusSmall),
-          child: AnimatedContainer(
-            duration: AppThemeData.animationDuration,
-            curve: Curves.easeInOut,
-            padding: EdgeInsets.symmetric(
-              horizontal: isCollapsed ? 6 : AppThemeData.spacingSmall,
-              vertical: 10,
+          enabled: true,
+          focusable: true,
+          child: ExcludeSemantics(
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(
+                AppThemeData.borderRadiusSmall,
+              ),
+              child: AnimatedContainer(
+                duration: AppThemeData.animationDuration,
+                curve: Curves.easeInOut,
+                padding: EdgeInsets.symmetric(
+                  horizontal: isCollapsed ? 6 : AppThemeData.spacingSmall,
+                  vertical: 10,
+                ),
+                decoration: _buildItemDecoration(theme),
+                child: isCollapsed
+                    ? _buildCollapsedItem(theme)
+                    : _buildExpandedItem(context, theme),
+              ),
             ),
-            decoration: _buildItemDecoration(theme),
-            child: isCollapsed
-                ? _buildCollapsedItem(theme)
-                : _buildExpandedItem(context, theme),
           ),
         ),
       ),
@@ -301,7 +350,7 @@ class _NavigationItemWidget extends StatelessWidget {
       children: [
         _buildIcon(theme),
         const SizedBox(width: AppThemeData.spacingSmall),
-        _buildTitle(context, theme),
+        _buildTitle(theme),
         if (item.badge != null) _buildBadge(context, theme),
       ],
     );
@@ -315,12 +364,12 @@ class _NavigationItemWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle(BuildContext context, ThemeData theme) {
+  Widget _buildTitle(ThemeData theme) {
     return Expanded(
       child: Opacity(
         opacity: fadeAnimation.value,
         child: Text(
-          AppLocalization.of(context).translate(item.title),
+          item.title,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: _getItemColor(theme),
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
@@ -362,5 +411,12 @@ class _NavigationItemWidget extends StatelessWidget {
     return isSelected
         ? theme.colorScheme.primary
         : AppThemeData.getTextColor(theme, isPrimary: false);
+  }
+
+  String _buildSemanticsLabel(BuildContext context) {
+    if (item.badge == null || item.badge!.isEmpty) {
+      return item.title;
+    }
+    return '${item.title}, ${LocalizationKeys.badgeLabel.tr(context)} ${item.badge}';
   }
 }

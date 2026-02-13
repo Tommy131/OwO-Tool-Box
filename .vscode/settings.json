@@ -5,15 +5,19 @@
         "certfile",
         "clcerts",
         "crlnumber",
+        "Ddns",
         "EMAILADDRESS",
         "enddate",
         "extfile",
         "gencrl",
+        "geoip",
         "inkey",
         "keyid",
+        "machdep",
         "nameopt",
         "newcerts",
         "nocerts",
+        "nodename",
         "nokeys",
         "noout",
         "OCSP",
@@ -23,6 +27,8 @@
         "prefs",
         "recv",
         "startdate",
-        "unack"
+        "sysname",
+        "unack",
+        "utsname"
     ]
 }

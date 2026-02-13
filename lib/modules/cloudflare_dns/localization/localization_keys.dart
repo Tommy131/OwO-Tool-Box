@@ -1,0 +1,409 @@
+class LocalizationKeys {
+  static const String configureHostMonitor = 'configure_host_monitor';
+  static const String navMonitor = 'nav_monitor';
+  static const String navAbout = 'nav_about';
+
+  // ========== 主机监控设置 ==========
+  static const String hostMonitorSettings = 'host_monitor_settings';
+  static const String refreshSettings = 'refresh_settings';
+  static const String hostPollingInterval = 'host_polling_interval';
+  static const String enterRefreshInterval = 'enter_refresh_interval';
+  static const String seconds = 'seconds';
+  static const String recommendedInterval = 'recommended_interval';
+  static const String hostCheckSettings = 'host_check_settings';
+  static const String checkTimeout = 'check_timeout';
+  static const String enterTimeout = 'enter_timeout';
+  static const String timeoutDescription = 'timeout_description';
+  static const String backgroundCheckInterval = 'background_check_interval';
+  static const String enterCheckInterval = 'enter_check_interval';
+  static const String minutes = 'minutes';
+  static const String checkIntervalDescription = 'check_interval_description';
+  static const String alertSettings = 'alert_settings';
+  static const String enableAlert = 'enable_alert';
+  static const String enableAlertDescription = 'enable_alert_description';
+  static const String alertThreshold = 'alert_threshold';
+  static const String cpuUsage = 'cpu_usage';
+  static const String memoryUsage = 'memory_usage';
+  static const String diskUsage = 'disk_usage';
+  static const String uploadSpeed = 'upload_speed';
+  static const String downloadSpeed = 'download_speed';
+  static const String notificationSettings = 'notification_settings';
+  static const String disconnectNotification = 'disconnect_notification';
+  static const String soundAlert = 'sound_alert';
+  static const String vibrationAlert = 'vibration_alert';
+  static const String vibrationAlertDescription = 'vibration_alert_description';
+  static const String save = 'save';
+  static const String settingsSaved = 'settings_saved';
+  static const String longRefreshInterval = 'long_refresh_interval';
+  static const String longRefreshIntervalWarning =
+      'long_refresh_interval_warning';
+  static const String invalidRefreshInterval = 'invalid_refresh_interval';
+  static const String invalidTimeout = 'invalid_timeout';
+  static const String invalidCheckInterval = 'invalid_check_interval';
+
+  // ========== 应用信息 ==========
+  static const String appInfo = 'app_info';
+  static const String appName = 'app_name';
+  static const String appDescription = 'app_description';
+  static const String descriptionMessage = 'description_message';
+  static const String appVersion = 'app_version';
+  static const String developerInfo = 'developer_info';
+  static const String developerName = 'developer_name';
+  static const String contactEmail = 'contact_email';
+  static const String flutterVersion = 'flutter_version';
+  static const String serviceHomepage = 'service_homepage';
+  static const String openSource = 'open_source';
+  static const String openSourceDescription = 'open_source_description';
+  static const String viewSourceCode = 'view_source_code';
+  static const String license = 'license';
+  static const String supportDevelopment = 'support_development';
+  static const String donationDescription = 'donation_description';
+  static const String donateNow = 'donate_now';
+  static const String topDonors = 'top_donors';
+  static const String cannotOpenUrl = 'cannot_open_url';
+  static const String loadFailed = 'load_failed';
+  static const String retry = 'retry';
+  static const String noDonorsYet = 'no_donors_yet';
+
+  // ========== 技术栈卡片 ==========
+  static const String techStack = 'tech_stack';
+  static const String flutter = 'flutter';
+  static const String flutterDescription = 'flutter_description';
+  static const String goLang = 'go_lang';
+  static const String goLangDescription = 'go_lang_description';
+  static const String tcpIp = 'tcp_ip';
+  static const String tcpIpDescription = 'tcp_ip_description';
+  static const String materialDesign = 'material_design';
+  static const String materialDesignDescription = 'material_design_description';
+
+  // ========== 用户协议 ==========
+  static const String userAgreement = 'user_agreement';
+  static const String agreementContent = 'agreement_content';
+  static const String github = 'github';
+
+  // ========== 设备信息 ==========
+  static const String deviceInfo = 'device_info';
+  static const String screenSize = 'screen_size';
+  static const String deviceType = 'device_type';
+  static const String mobileDevice = 'mobile_device';
+  static const String tabletDevice = 'tablet_device';
+  static const String desktopDevice = 'desktop_device';
+  static const String layoutMode = 'layout_mode';
+  static const String adaptiveLayout = 'adaptive_layout';
+
+  // ========== 主机编辑页面 ==========
+  static const String editHost = 'edit_host';
+  static const String addHost = 'add_host';
+  static const String hostName = 'host_name';
+  static const String hostNameHint = 'host_name_hint';
+  static const String pleaseEnterHostName = 'please_enter_host_name';
+  static const String hostNameMinLength = 'host_name_min_length';
+  static const String hostAddress = 'host_address';
+  static const String hostAddressHint = 'host_address_hint';
+  static const String pleaseEnterHostAddress = 'please_enter_host_address';
+  static const String hostAddressNoSpaces = 'host_address_no_spaces';
+  static const String port = 'port';
+  static const String portHint = 'port_hint';
+  static const String pleaseEnterPort = 'please_enter_port';
+  static const String portRangeError = 'port_range_error';
+  static const String password = 'password';
+  static const String pleaseEnterPassword = 'please_enter_password';
+  static const String passwordMinLength = 'password_min_length';
+  static const String testConnection = 'test_connection';
+  static const String saveChanges = 'save_changes';
+  static const String requiredFieldNote = 'required_field_note';
+  static const String hostUpdated = 'host_updated';
+  static const String hostAdded = 'host_added';
+  static const String saveFailed = 'save_failed';
+  static const String testingConnection = 'testing_connection';
+  static const String connectionSuccess = 'connection_success';
+  static const String connectionFailed = 'connection_failed';
+  static const String connectionSuccessMessage = 'connection_success_message';
+  static const String connectionFailedMessage = 'connection_failed_message';
+  static const String connectionTestError = 'connection_test_error';
+
+  // ========== 对话框 ==========
+  static const String connectionTimeout = 'connection_timeout';
+  static const String connectionTimeoutMessage = 'connection_timeout_message';
+  static const String tokenValidationFailed = 'token_validation_failed';
+  static const String tokenValidationFailedMessage =
+      'token_validation_failed_message';
+
+  // ========== 告警历史页面 ==========
+  static const String alertHistory = 'alert_history';
+  static const String clearHistory = 'clear_history';
+  static const String noAlertRecords = 'no_alert_records';
+  static const String acknowledge = 'acknowledge';
+  static const String alertAcknowledged = 'alert_acknowledged';
+  static const String confirmClearAlertHistory = 'confirm_clear_alert_history';
+  static const String clear = 'clear';
+  static const String historyCleared = 'history_cleared';
+
+  // ========== 主机监控页面 ==========
+  static const String hostMonitor = 'host_monitor';
+  static const String loadHostListFailed = 'load_host_list_failed';
+  static const String loadGeoInfoFailed = 'load_geo_info_failed';
+  static const String hostStatusRefreshed = 'host_status_refreshed';
+  static const String refreshFailed = 'refresh_failed';
+  static const String refreshHostStatus = 'refresh_host_status';
+  static const String forceDisconnectMessage = 'force_disconnect_message';
+  static const String safeDisconnectMessage = 'safe_disconnect_message';
+  static const String disconnect = 'disconnect';
+  static const String loadingGeoInfo = 'loading_geo_info';
+  static const String loadingHostList = 'loading_host_list';
+  static const String connecting = 'connecting';
+  static const String pleaseWait = 'please_wait';
+  static const String noSavedHosts = 'no_saved_hosts';
+  static const String clickToAddFirstHost = 'click_to_add_first_host';
+  static const String addNow = 'add_now';
+  static const String total = 'total';
+  static const String online = 'online';
+  static const String offline = 'offline';
+  static const String error = 'error';
+  static const String confirmDelete = 'confirm_delete';
+  static const String confirmDeleteHostPart1 = 'confirm_delete_host_part1';
+  static const String confirmDeleteHostPart2 = 'confirm_delete_host_part2';
+  static const String delete = 'delete';
+  static const String hostDeleted = 'host_deleted';
+  static const String deleteFailed = 'delete_failed';
+  static const String timeout = 'timeout';
+
+  // ========== 主机详情页面 ==========
+  static const String waitingSystemData = 'waiting_system_data';
+  static const String connectedGettingSystemInfo =
+      'connected_getting_system_info';
+  static const String unnamedHost = 'unnamed_host';
+  static const String connected = 'connected';
+  static const String cpuUsageTrend = 'cpu_usage_trend';
+  static const String memoryUsageTrend = 'memory_usage_trend';
+  static const String diskUsageTrend = 'disk_usage_trend';
+  static const String uploadSpeedLabel = 'upload_speed_label';
+  static const String downloadSpeedLabel = 'download_speed_label';
+  static const String load1min = 'load_1min';
+  static const String load5min = 'load_5min';
+  static const String load15min = 'load_15min';
+  static const String cpuCoreUsage = 'cpu_core_usage';
+  static const String systemInfo = 'system_info';
+  static const String processor = 'processor';
+  static const String processorCores = 'processor_cores';
+  static const String coresUnit = 'cores_unit';
+  static const String processorFrequency = 'processor_frequency';
+  static const String processCount = 'process_count';
+  static const String countUnit = 'count_unit';
+  static const String systemLoad = 'system_load';
+  static const String systemArchitecture = 'system_architecture';
+  static const String operatingSystem = 'operating_system';
+  static const String kernelVersion = 'kernel_version';
+  static const String hostname = 'hostname';
+  static const String uptime = 'uptime';
+  static const String memoryDetails = 'memory_details';
+  static const String usageRate = 'usage_rate';
+  static const String totalMemory = 'total_memory';
+  static const String usedMemory = 'used_memory';
+  static const String availableMemory = 'available_memory';
+  static const String diskDetails = 'disk_details';
+  static const String used = 'used';
+  static const String networkDetails = 'network_details';
+  static const String upload = 'upload';
+  static const String download = 'download';
+  static const String bytesSent = 'bytes_sent';
+  static const String bytesReceived = 'bytes_received';
+
+  // ========== Sidebar ==========
+  static const String expandSidebar = 'expand_sidebar';
+  static const String collapseSidebar = 'collapse_sidebar';
+  static const String hello = 'hello';
+  static const String themeSettingsTooltip = 'theme_settings_tooltip';
+
+  // ========== System Tools ==========
+  static const String navSystemTools = 'nav_system_tools';
+  static const String systemTools = 'system_tools';
+  static const String platformNotSupported = 'platform_not_supported';
+  static const String platformNotSupportedMessage =
+      'platform_not_supported_message';
+
+  // Shutdown Timer
+  static const String shutdownTimer = 'shutdown_timer';
+  static const String shutdownScheduled = 'shutdown_scheduled';
+  static const String scheduleShutdown = 'schedule_shutdown';
+  static const String cancelShutdown = 'cancel_shutdown';
+  static const String shutdownCancelled = 'shutdown_cancelled';
+  static const String shutdownScheduledSuccess = 'shutdown_scheduled_success';
+  static const String scheduling = 'scheduling';
+  static const String duration = 'duration';
+  static const String specificTime = 'specific_time';
+  static const String setDuration = 'set_duration';
+  static const String setSpecificTime = 'set_specific_time';
+  static const String setDelayTime = 'set_delay_time';
+  static const String setExactTime = 'set_exact_time';
+  static const String hours = 'hours';
+  static const String minute = 'minute';
+  static const String second = 'second';
+  static const String selectDateTime = 'select_date_time';
+  static const String pleaseSelectDateTime = 'please_select_date_time';
+  static const String pleaseSetValidDuration = 'please_set_valid_duration';
+  static const String quickActions = 'quick_actions';
+  static const String tenMinutes = 'ten_minutes';
+  static const String thirtyMinutes = 'thirty_minutes';
+  static const String oneHour = 'one_hour';
+  static const String twoHours = 'two_hours';
+  static const String confirmCancelShutdown = 'confirm_cancel_shutdown';
+  static const String confirmCancelShutdownMessage =
+      'confirm_cancel_shutdown_message';
+  static const String keepSchedule = 'keep_schedule';
+
+  // Power Management
+  static const String powerManagement = 'power_management';
+  static const String currentPowerPlan = 'current_power_plan';
+  static const String quickModeSwitch = 'quick_mode_switch';
+  static const String allPowerPlans = 'all_power_plans';
+  static const String powerActions = 'power_actions';
+  static const String highPerformance = 'high_performance';
+  static const String balanced = 'balanced';
+  static const String powerSaver = 'power_saver';
+  static const String active = 'active';
+  static const String sleep = 'sleep';
+  static const String hibernate = 'hibernate';
+  static const String changePowerMode = 'change_power_mode';
+  static const String switchToPowerMode = 'switch_to_power_mode';
+  static const String powerModeChanged = 'power_mode_changed';
+  static const String powerPlanChanged = 'power_plan_changed';
+  static const String confirmSleep = 'confirm_sleep';
+  static const String confirmHibernate = 'confirm_hibernate';
+  static const String confirmSleepMessage = 'confirm_sleep_message';
+  static const String confirmHibernateMessage = 'confirm_hibernate_message';
+  static const String failedToAction = 'failed_to_action';
+
+  // Power Mode Descriptions
+  static const String highPerformanceDesc = 'high_performance_desc';
+  static const String balancedDesc = 'balanced_desc';
+  static const String powerSaverDesc = 'power_saver_desc';
+
+  // ========== Cloudflare DNS ==========
+  static const String navCloudflareDNS = 'nav_cloudflare_dns';
+  static const String cloudflareDNS = 'cloudflare_dns';
+  static const String cloudflareApiSettings = 'cloudflare_api_settings';
+  static const String apiToken = 'api_token';
+  static const String apiTokenHint = 'api_token_hint';
+  static const String verifyToken = 'verify_token';
+  static const String tokenVerified = 'token_verified';
+  static const String tokenInvalid = 'token_invalid';
+  static const String tokenStatus = 'token_status';
+  static const String tokenValid = 'token_valid';
+  static const String tokenPermanent = 'token_permanent';
+  static const String tokenExpiry = 'token_expiry';
+  static const String domains = 'domains_list';
+  static const String dnsRecords = 'dns_records';
+  static const String ddnsSettings = 'ddns_settings';
+  static const String enableDDNS = 'enable_ddns';
+  static const String publicIP = 'public_ip';
+  static const String lastUpdated = 'last_updated';
+  static const String syncNow = 'sync_now';
+  static const String domainName = 'domain_name';
+  static const String recordType = 'record_type';
+  static const String recordContent = 'record_content';
+  static const String ttl = 'ttl';
+  static const String proxied = 'proxied';
+  static const String addRecord = 'add_record';
+  static const String editRecord = 'edit_record';
+  static const String deleteRecord = 'delete_record';
+  static const String noDomainsFound = 'no_domains_found';
+  static const String selectDomainToManage = 'select_domain_to_manage';
+  static const String ddnsActive = 'ddns_active';
+  static const String ddnsInactive = 'ddns_inactive';
+  static const String ipUnchanged = 'ip_unchanged';
+  static const String ipChangedUpdating = 'ip_changed_updating';
+  static const String updateSuccess = 'update_success';
+  static const String updateFailed = 'update_failed';
+  static const String motherboard = 'motherboard';
+  static const String memoryRealTimeUsage = 'memory_real_time_usage';
+  static const String memoryTotal = 'memory_total';
+  static const String memoryFree = 'memory_free';
+  static const String memoryUsed = 'memory_used';
+  static const String hardwareDetails = 'hardware_details';
+  static const String osName = 'os_name';
+  static const String osVersion = 'os_version';
+  static const String kernelArchitecture = 'kernel_architecture';
+  static const String kernelName = 'kernel_name';
+  static const String deviceDetails = 'device_details';
+  static const String hardware = 'hardware';
+  static const String board = 'board';
+  static const String bootloader = 'bootloader';
+  static const String display = 'display';
+  static const String fingerprint = 'fingerprint';
+  static const String host = 'host';
+  static const String product = 'product';
+  static const String tags = 'tags';
+  static const String type = 'type';
+  static const String androidId = 'android_id';
+  static const String identifier = 'identifier';
+  static const String physicalDevice = 'physical_device';
+  static const String systemName = 'system_name';
+  static const String machine = 'machine';
+  static const String idLike = 'id_like';
+  static const String variant = 'variant';
+  static const String buildId = 'build_id';
+  static const String brand = 'brand';
+  static const String deviceName = 'device_name';
+  static const String androidVersion = 'android_version';
+  static const String iosVersion = 'ios_version';
+  static const String sdkLevel = 'sdk_level';
+  static const String model = 'model';
+  static const String localizedModel = 'localized_model';
+  static const String device = 'device';
+  static const String platform = 'platform';
+  static const String version = 'version';
+  static const String build = 'build';
+  static const String user = 'user';
+  static const String codename = 'codename';
+  static const String distributionId = 'distribution_id';
+  static const String machineId = 'machine_id';
+  static const String processorModel = 'processor_model';
+
+  // ========== Developer Pocket ==========
+  static const String navDevTools = 'nav_dev_tools';
+  static const String devTools = 'dev_tools';
+  static const String devToolsBase64 = 'dev_tools_base64';
+  static const String devToolsUrl = 'dev_tools_url';
+  static const String devToolsHex = 'dev_tools_hex';
+  static const String devToolsJson = 'dev_tools_json';
+  static const String devToolsUuid = 'dev_tools_uuid';
+  static const String devToolsPassword = 'dev_tools_password';
+  static const String encode = 'encode';
+  static const String decode = 'decode';
+  static const String inputHint = 'input_hint';
+  static const String outputHint = 'output_hint';
+  static const String copySuccess = 'copy_success';
+  static const String format = 'format';
+  static const String generate = 'generate';
+  static const String passwordLength = 'password_length';
+  static const String hashTool = 'hash_tool';
+
+  // ========== Network Tools ==========
+  static const String navNetworkTools = 'nav_network_tools';
+  static const String networkTools = 'network_tools';
+  static const String networkPing = 'network_ping';
+  static const String networkPerformanceTest = 'network_performance_test';
+  static const String networkSiteTest = 'network_site_test';
+  static const String networkPortScan = 'network_port_scan';
+  static const String pingCount = 'ping_count';
+  static const String pingInterval = 'ping_interval';
+  static const String targetHost = 'target_host';
+  static const String startTest = 'start_test';
+  static const String startMonitor = 'start_monitor';
+  static const String startSend = 'start_send';
+  static const String stopTest = 'stop_test';
+  static const String scanPorts = 'scan_ports';
+  static const String portRange = 'port_range';
+  static const String protocol = 'protocol';
+  static const String connections = 'connections';
+  static const String testMode = 'test_mode';
+  static const String modeClient = 'mode_client';
+  static const String modeServer = 'mode_server';
+  static const String intervalMs = 'interval_ms';
+  static const String dataSize = 'data_size';
+  static const String socketSend = 'socket_send';
+  static const String socketReceive = 'socket_receive';
+  static const String sendSpeed = 'send_speed';
+  static const String receiveSpeed = 'receive_speed';
+}

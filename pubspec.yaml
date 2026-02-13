@@ -6,7 +6,7 @@ publish_to: 'none'  # 私有包，不发布到pub.dev
 version: 1.0.0+1  # 版本号：主版本.次版本.补丁版本+构建号
 
 environment:
-  sdk: '3.9.2'  # 支持的Dart SDK版本，确保兼容性
+  sdk: ^3.9.2  # 支持的Dart SDK版本，确保兼容性
 
 # 📦 **依赖项（Dependencies）**：运行时必需的包，按功能分类组织，便于维护。
 dependencies:
@@ -57,6 +57,10 @@ dependencies:
   device_info_plus: ^12.3.0
   system_info2: ^4.1.0
   crypto: ^3.0.7
+  google_fonts: ^8.0.1
+  path: ^1.9.1
+  path_provider_platform_interface: ^2.1.2
+  confetti: ^0.8.0
 
 # 🛠️ **开发依赖（Dev Dependencies）**：仅用于开发和测试的包。
 dev_dependencies:

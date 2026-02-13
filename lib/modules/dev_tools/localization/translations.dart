@@ -1,0 +1,46 @@
+import 'localization_keys.dart';
+
+final Map<String, Map<String, String>> translations = {
+  'zh_CN': {
+    LocalizationKeys.clear: '清空',
+    // ========== 开发者口袋 ==========
+    LocalizationKeys.navDevTools: '字符串工具',
+    LocalizationKeys.devTools: '开发工具',
+    LocalizationKeys.devToolsBase64: 'Base64 转换',
+    LocalizationKeys.devToolsUrl: 'URL 编解码',
+    LocalizationKeys.devToolsHex: 'Hex 十六进制',
+    LocalizationKeys.devToolsJson: 'JSON 格式化',
+    LocalizationKeys.devToolsUuid: 'UUID 生成器',
+    LocalizationKeys.devToolsPassword: '密码生成器',
+    LocalizationKeys.encode: '编码',
+    LocalizationKeys.decode: '解码',
+    LocalizationKeys.inputHint: '在此输入原始内容...',
+    LocalizationKeys.outputHint: '结果将在这里显示...',
+    LocalizationKeys.copySuccess: '已成功复制到剪贴板',
+    LocalizationKeys.format: '格式化',
+    LocalizationKeys.generate: '生成',
+    LocalizationKeys.passwordLength: '密码长度',
+    LocalizationKeys.hashTool: '哈希摘要',
+  },
+  'en_US': {
+    LocalizationKeys.clear: 'Clear',
+    // ========== Developer Pocket ==========
+    LocalizationKeys.navDevTools: 'String Tools',
+    LocalizationKeys.devTools: 'Developer Tools',
+    LocalizationKeys.devToolsBase64: 'Base64 Tool',
+    LocalizationKeys.devToolsUrl: 'URL Tool',
+    LocalizationKeys.devToolsHex: 'Hex Tool',
+    LocalizationKeys.devToolsJson: 'JSON Formatter',
+    LocalizationKeys.devToolsUuid: 'UUID Generator',
+    LocalizationKeys.devToolsPassword: 'Password Generator',
+    LocalizationKeys.encode: 'Encode',
+    LocalizationKeys.decode: 'Decode',
+    LocalizationKeys.inputHint: 'Input raw content here...',
+    LocalizationKeys.outputHint: 'Results will be shown here...',
+    LocalizationKeys.copySuccess: 'Copied to clipboard',
+    LocalizationKeys.format: 'Format',
+    LocalizationKeys.generate: 'Generate',
+    LocalizationKeys.passwordLength: 'Password Length',
+    LocalizationKeys.hashTool: 'Hash Tool',
+  },
+};
