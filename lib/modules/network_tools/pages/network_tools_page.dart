@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import '../../../core/services/localization_service.dart';
+import '../../../core/theme/theme_provider.dart';
 
 import '../localization/localization_keys.dart';
 import '../providers/network_tools_provider.dart';
@@ -41,7 +42,7 @@ class _NetworkToolsPageState extends State<NetworkToolsPage>
         children: [
           // 左侧导航
           Container(
-            width: 220,
+            width: 200,
             decoration: BoxDecoration(
               color: theme.cardColor.withValues(alpha: 0.5),
               border: Border(
@@ -104,53 +105,48 @@ class _NetworkToolsPageState extends State<NetworkToolsPage>
   Widget _buildNavItem(int index, IconData icon, String label) {
     final theme = Theme.of(context);
     final isSelected = _tabController.index == index;
+    final primaryColor = context
+        .watch<ThemeProvider>()
+        .currentTheme
+        .primaryColor;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            setState(() => _tabController.index = index);
-          },
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? theme.colorScheme.primary.withValues(alpha: 0.1)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  icon,
-                  size: 20,
-                  color: isSelected
-                      ? theme.colorScheme.primary
-                      : theme.iconTheme.color?.withValues(alpha: 0.7),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                      color: isSelected
-                          ? theme.colorScheme.primary
-                          : theme.textTheme.bodyMedium?.color?.withValues(
-                              alpha: 0.8,
-                            ),
-                    ),
-                  ),
-                ),
-              ],
+    return InkWell(
+      onTap: () => setState(() => _tabController.index = index),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        decoration: BoxDecoration(
+          border: Border(
+            right: BorderSide(
+              color: isSelected ? primaryColor : Colors.transparent,
+              width: 3,
             ),
           ),
+          color: isSelected
+              ? primaryColor.withValues(alpha: 0.1)
+              : Colors.transparent,
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: isSelected
+                  ? primaryColor
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Text(
+                label,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isSelected
+                      ? primaryColor
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
