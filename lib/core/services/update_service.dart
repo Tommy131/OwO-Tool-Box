@@ -53,7 +53,7 @@ class UpdateService {
   /// 检查更新
   Future<UpdateCheckResult> checkForUpdates() async {
     // 获取当前应用版本
-    final currentVersion = AppConstants.appVersion;
+    const currentVersion = AppConstants.appVersion;
     try {
       // 检查配置是否存在
       if (UpdateConfig.current == null) {

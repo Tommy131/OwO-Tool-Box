@@ -381,10 +381,10 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
         : Column(
             children: [
               if (!Platform.isAndroid && !Platform.isIOS) ...[
-                CustomTitleBar(
+                const CustomTitleBar(
                   title: Text(
                     AppConstants.appName,
-                    style: const TextStyle(fontFamily: 'MicrosoftYaHei'),
+                    style: TextStyle(fontFamily: 'MicrosoftYaHei'),
                   ),
                 ),
                 Divider(
