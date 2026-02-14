@@ -6,46 +6,93 @@ import '../utils/url_launcher_helper.dart';
 import '../localization/localization_keys.dart';
 import '../services/localization_service.dart';
 
+import '../module_registry/module_registry.dart';
+import '../module_registry/about_page/about_page_item.dart';
+
 /// 关于应用页面
 class AboutPage extends StatelessWidget {
   final VoidCallback? onBack;
 
   const AboutPage({super.key, this.onBack});
 
+  /// 注册默认的关于页面卡片
+  static void registerDefaults() {
+    final registry = ModuleRegistry().aboutPages;
+
+    registry.register(
+      AboutPageItem(
+        id: 'app_icon',
+        priority: 10,
+        builder: (_) => const _AppIconCard(),
+      ),
+    );
+
+    registry.register(
+      AboutPageItem(
+        id: 'app_info',
+        priority: 20,
+        builder: (_) => const _AppInfoCard(),
+      ),
+    );
+
+    registry.register(
+      AboutPageItem(
+        id: 'developer',
+        priority: 30,
+        builder: (_) => const _DeveloperCard(),
+      ),
+    );
+
+    registry.register(
+      AboutPageItem(
+        id: 'open_source',
+        priority: 40,
+        builder: (_) => const _OpenSourceCard(),
+      ),
+    );
+
+    registry.register(
+      AboutPageItem(
+        id: 'copyright',
+        priority: 100,
+        builder: (_) => const _CopyrightCard(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     context.watch<LocalizationService>();
     final theme = Theme.of(context);
+    final items = ModuleRegistry().aboutPages.getAllItems();
+
     return Scaffold(
-      body: ListView(
+      body: ListView.separated(
         padding: const EdgeInsets.all(AppThemeData.spacingMedium),
-        children: [
-          Row(
-            children: [
-              if (onBack != null)
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  tooltip: LocalizationKeys.back.tr(context),
-                  onPressed: onBack,
+        itemCount: items.length + 1, // +1 for the header
+        separatorBuilder: (context, index) =>
+            const SizedBox(height: AppThemeData.spacingMedium),
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return Row(
+              children: [
+                if (onBack != null)
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    tooltip: LocalizationKeys.back.tr(context),
+                    onPressed: onBack,
+                  ),
+                const SizedBox(width: AppThemeData.spacingSmall),
+                Text(
+                  LocalizationKeys.aboutApp.tr(context),
+                  style: theme.textTheme.headlineMedium,
                 ),
-              const SizedBox(width: AppThemeData.spacingSmall),
-              Text(
-                LocalizationKeys.aboutApp.tr(context),
-                style: theme.textTheme.headlineMedium,
-              ),
-            ],
-          ),
-          const SizedBox(height: AppThemeData.spacingLarge),
-          const _AppIconCard(),
-          const SizedBox(height: AppThemeData.spacingLarge),
-          const _AppInfoCard(),
-          const SizedBox(height: AppThemeData.spacingMedium),
-          const _DeveloperCard(),
-          const SizedBox(height: AppThemeData.spacingMedium),
-          const _OpenSourceCard(),
-          const SizedBox(height: AppThemeData.spacingMedium),
-          const _CopyrightCard(),
-        ],
+              ],
+            );
+          }
+          final item = items[index - 1];
+          return item.builder(context);
+        },
       ),
     );
   }

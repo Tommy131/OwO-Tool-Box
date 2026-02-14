@@ -27,7 +27,7 @@ import 'package:http/http.dart' as http;
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/logger.dart';
 
-import '../pages/about/widgets/common/donation_model.dart';
+import '../pages/about/widgets/donation_model.dart';
 
 class DonationService {
   DonationService._();
@@ -71,10 +71,38 @@ class DonationService {
     ),
   ];
 
+  static DonationResult? _cachedResult;
+  static DateTime? _cacheTime;
+  static Future<DonationResult>? _inFlightRequest;
+  static const Duration _cacheTTL = Duration(minutes: 10);
+
   /// 获取捐赠排行榜（前5名）
   ///
   /// 返回 [DonationResult] 包含数据和数据源信息
-  static Future<DonationResult> getTopDonors() async {
+  static Future<DonationResult> getTopDonors({
+    bool forceRefresh = false,
+  }) async {
+    if (!forceRefresh) {
+      if (_cachedResult != null &&
+          _cacheTime != null &&
+          DateTime.now().difference(_cacheTime!) < _cacheTTL) {
+        return _cachedResult!;
+      }
+      if (_inFlightRequest != null) {
+        return _inFlightRequest!;
+      }
+    }
+
+    final future = _fetchTopDonors();
+    _inFlightRequest = future;
+    final result = await future;
+    _cachedResult = result;
+    _cacheTime = DateTime.now();
+    _inFlightRequest = null;
+    return result;
+  }
+
+  static Future<DonationResult> _fetchTopDonors() async {
     try {
       const url =
           '${AppConstants.apiBaseUrl}${AppConstants.donationApiEndpoint}';

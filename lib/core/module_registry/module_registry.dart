@@ -3,6 +3,7 @@ import 'app_bar/app_bar_action_registry.dart';
 import 'module_registrar.dart';
 import 'navigation/navigation_registry.dart';
 import 'settings_page/settings_page_registry.dart';
+import 'about_page/about_page_registry.dart';
 import 'sidebar/sidebar_footer_registry.dart';
 import 'provider/provider_registry.dart';
 
@@ -57,6 +58,9 @@ class ModuleRegistry {
   /// 获取设置页面注册表
   SettingsPageRegistry get settingsPages => SettingsPageRegistry();
 
+  /// 获取关于页面注册表
+  AboutPageRegistry get aboutPages => AboutPageRegistry();
+
   /// 获取 App Bar 操作按钮注册表
   AppBarActionRegistry get appBarActions => AppBarActionRegistry();
 
@@ -74,6 +78,7 @@ class ModuleRegistry {
     _modules.clear();
     _initialized = false;
     WizardStepRegistry().clear();
+    AboutPageRegistry().clear();
     SettingsPageRegistry().clear();
     AppBarActionRegistry().clear();
     NavigationRegistry().clear();

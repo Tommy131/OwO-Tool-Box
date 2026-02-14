@@ -17,12 +17,12 @@
  */
 import 'package:flutter/material.dart';
 
-import '../../../../../../core/constants/app_constants.dart';
-import '../../../../../../core/services/localization_service.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/services/localization_service.dart';
 
-import '../../../../localization/localization_keys.dart';
-import '../common/clickable_info_row.dart';
-import '../common/card_header.dart';
+import '../../localization/localization_keys.dart';
+import 'widgets/clickable_info_row.dart';
+import 'widgets/card_header.dart';
 
 class DeveloperCard extends StatelessWidget {
   const DeveloperCard({super.key});

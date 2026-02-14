@@ -17,11 +17,11 @@
  */
 import 'package:flutter/material.dart';
 
-import '../../../../../../core/constants/app_constants.dart';
-import '../../../../../../core/services/localization_service.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/services/localization_service.dart';
 
-import '../../../../localization/localization_keys.dart';
-import '../common/card_header.dart';
+import '../../localization/localization_keys.dart';
+import 'widgets/card_header.dart';
 
 class AgreementCard extends StatelessWidget {
   const AgreementCard({super.key});

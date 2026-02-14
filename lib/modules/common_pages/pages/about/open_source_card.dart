@@ -17,12 +17,12 @@
  */
 import 'package:flutter/material.dart';
 
-import '../../../../../../core/constants/app_constants.dart';
-import '../../../../../../core/services/localization_service.dart';
-import '../../../../../../core/utils/url_launcher_helper.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/services/localization_service.dart';
+import '../../../../core/utils/url_launcher_helper.dart';
 
-import '../../../../localization/localization_keys.dart';
-import '../common/card_header.dart';
+import '../../localization/localization_keys.dart';
+import 'widgets/card_header.dart';
 
 class OpenSourceCard extends StatelessWidget {
   const OpenSourceCard({super.key});

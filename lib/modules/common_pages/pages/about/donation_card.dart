@@ -17,19 +17,23 @@
  */
 // ============================================================================
 // 捐赠排行榜卡片组件
+// 说明：切换到模块化 About 注册表后，卡片通过 builder 动态创建，滚动触发
+// 列表重建时会生成新的 DonationCard 实例，从而触发 initState 再次请求。
+// 以前的 const 子组件序列更稳定，不会因滚动频繁创建实例。
+// 为避免滚动导致重复请求，DonationService 增加了缓存与并发去重，
+// 仅在手动刷新时强制重新拉取。
 // ============================================================================
 
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../../../core/constants/app_constants.dart';
-import '../../../../../../core/localization/localization_keys.dart'
-    as core_l10n;
-import '../../../../../../core/services/localization_service.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/localization/localization_keys.dart' as core_l10n;
+import '../../../../core/services/localization_service.dart';
 
-import '../../../../services/donation_service.dart';
-import '../../../../localization/localization_keys.dart' as common_l10n;
-import '../common/donation_model.dart';
+import '../../services/donation_service.dart';
+import '../../localization/localization_keys.dart' as common_l10n;
+import 'widgets/donation_model.dart';
 
 String _tr(BuildContext context, String key) => key.tr(context);
 
@@ -52,13 +56,15 @@ class _DonationCardState extends State<DonationCard> {
     _loadDonors();
   }
 
-  Future<void> _loadDonors() async {
+  Future<void> _loadDonors({bool forceRefresh = false}) async {
     setState(() {
       _isLoading = true;
       _statusMessage = null;
     });
 
-    final result = await DonationService.getTopDonors();
+    final result = await DonationService.getTopDonors(
+      forceRefresh: forceRefresh,
+    );
 
     if (mounted) {
       setState(() {
@@ -231,7 +237,7 @@ class _DonationCardState extends State<DonationCard> {
                 if (!_isLoading && !_isFromApi)
                   IconButton(
                     icon: const Icon(Icons.refresh_rounded),
-                    onPressed: _loadDonors,
+                    onPressed: () => _loadDonors(forceRefresh: true),
                     tooltip: _tr(context, common_l10n.LocalizationKeys.retry),
                     iconSize: 20,
                   ),

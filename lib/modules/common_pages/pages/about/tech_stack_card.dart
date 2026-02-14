@@ -17,10 +17,10 @@
  */
 import 'package:flutter/material.dart';
 
-import '../../../../../../core/services/localization_service.dart';
+import '../../../../core/services/localization_service.dart';
 
-import '../../../../localization/localization_keys.dart';
-import '../common/card_header.dart';
+import '../../localization/localization_keys.dart';
+import 'widgets/card_header.dart';
 
 class TechStackCard extends StatelessWidget {
   const TechStackCard({super.key});

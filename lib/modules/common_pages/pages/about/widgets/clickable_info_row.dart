@@ -17,7 +17,7 @@
  */
 import 'package:flutter/material.dart';
 
-import '../../../../../../core/utils/url_launcher_helper.dart';
+import '../../../../../core/utils/url_launcher_helper.dart';
 
 class ClickableInfoRow extends StatelessWidget {
   final String label;
