@@ -16,8 +16,11 @@
  * @GitHub       : https://github.com/Tommy131
  */
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
+import 'package:path/path.dart' as p;
 
+import '../../../core/services/bootstrap_service.dart';
+import '../../../core/services/persistence_service.dart';
 import '../../../core/utils/logger.dart';
 import '../models/host_model.dart';
 import '../models/host_monitor_settings_model.dart';
@@ -33,31 +36,30 @@ class StorageService {
   // ==================== 常量定义 ====================
 
   /// 主机列表存储键
-  static const String _hostsKey = 'saved_hosts';
-
-  /// 应用设置存储键
-  static const String _settingsKey = 'host_monitor_settings';
+  static const String _hostsFileName = 'hosts.json';
+  static const String _settingsFileName = 'settings.json';
 
   // ==================== 私有属性 ====================
 
-  /// SharedPreferences 实例
-  final SharedPreferences _prefs;
-
-  /// 设置缓存，避免频繁读取存储
+  final Directory _storageDir;
   HostMonitorSettingsModel? _settingsCache;
 
   // ==================== 构造函数 ====================
 
   /// 私有构造函数
-  StorageService(this._prefs);
+  StorageService(this._storageDir);
 
   /// 工厂方法 - 创建 StorageService 实例
   ///
   /// 返回值: Future<StorageService> - 初始化完成的服务实例
   static Future<StorageService> create() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      return StorageService(prefs);
+      final rootPath = await _resolveRootPath();
+      final dir = Directory(p.join(rootPath, 'host_monitor'));
+      if (!await dir.exists()) {
+        await dir.create(recursive: true);
+      }
+      return StorageService(dir);
     } catch (e) {
       AppLogger.debug('StorageService: 初始化失败 - $e');
       rethrow;
@@ -71,9 +73,12 @@ class StorageService {
   /// 返回值: Future<List<HostModel>> - 主机配置列表，失败返回空列表
   Future<List<HostModel>> getHosts() async {
     try {
-      final jsonString = _prefs.getString(_hostsKey);
+      if (!await _hostsFile.exists()) {
+        return [];
+      }
 
-      if (jsonString == null || jsonString.isEmpty) {
+      final jsonString = await _hostsFile.readAsString();
+      if (jsonString.isEmpty) {
         return [];
       }
 
@@ -81,7 +86,7 @@ class StorageService {
 
       if (jsonData is! List) {
         AppLogger.debug('主机数据格式错误，已清空');
-        await _prefs.remove(_hostsKey);
+        await _hostsFile.delete();
         return [];
       }
 
@@ -101,7 +106,9 @@ class StorageService {
       return hosts;
     } catch (e) {
       AppLogger.debug('读取主机列表失败: $e');
-      await _prefs.remove(_hostsKey);
+      if (await _hostsFile.exists()) {
+        await _hostsFile.delete();
+      }
       return [];
     }
   }
@@ -115,7 +122,8 @@ class StorageService {
   Future<bool> saveHosts(List<HostModel> hosts) async {
     try {
       final jsonString = json.encode(hosts.map((h) => h.toJson()).toList());
-      return await _prefs.setString(_hostsKey, jsonString);
+      await _hostsFile.writeAsString(jsonString);
+      return true;
     } catch (e) {
       AppLogger.debug('保存主机列表失败: $e');
       return false;
@@ -217,7 +225,10 @@ class StorageService {
   /// 返回值: Future<bool> - 操作是否成功
   Future<bool> clearAllHosts() async {
     try {
-      return await _prefs.remove(_hostsKey);
+      if (await _hostsFile.exists()) {
+        await _hostsFile.delete();
+      }
+      return true;
     } catch (e) {
       AppLogger.debug('清空主机列表失败: $e');
       return false;
@@ -237,9 +248,13 @@ class StorageService {
     }
 
     try {
-      final jsonString = _prefs.getString(_settingsKey);
+      if (!await _settingsFile.exists()) {
+        _settingsCache = const HostMonitorSettingsModel();
+        return _settingsCache!;
+      }
 
-      if (jsonString == null || jsonString.isEmpty) {
+      final jsonString = await _settingsFile.readAsString();
+      if (jsonString.isEmpty) {
         _settingsCache = const HostMonitorSettingsModel();
         return _settingsCache!;
       }
@@ -252,7 +267,9 @@ class StorageService {
       return _settingsCache!;
     } catch (e) {
       AppLogger.debug('读取设置失败: $e');
-      await _prefs.remove(_settingsKey);
+      if (await _settingsFile.exists()) {
+        await _settingsFile.delete();
+      }
       _settingsCache = const HostMonitorSettingsModel();
       return _settingsCache!;
     }
@@ -267,13 +284,9 @@ class StorageService {
   Future<bool> saveSettings(HostMonitorSettingsModel settings) async {
     try {
       final jsonString = json.encode(settings.toJson());
-      final result = await _prefs.setString(_settingsKey, jsonString);
-
-      if (result) {
-        _settingsCache = settings;
-      }
-
-      return result;
+      await _settingsFile.writeAsString(jsonString);
+      _settingsCache = settings;
+      return true;
     } catch (e) {
       AppLogger.debug('保存设置失败: $e');
       return false;
@@ -453,7 +466,10 @@ class StorageService {
   Future<bool> clearAllSettings() async {
     try {
       _settingsCache = null;
-      return await _prefs.remove(_settingsKey);
+      if (await _settingsFile.exists()) {
+        await _settingsFile.delete();
+      }
+      return true;
     } catch (e) {
       AppLogger.debug('清空设置失败: $e');
       return false;
@@ -625,7 +641,9 @@ class StorageService {
       final validation = await validateStorageIntegrity();
 
       if (!validation['hostsValid']!) {
-        await _prefs.remove(_hostsKey);
+        if (await _hostsFile.exists()) {
+          await _hostsFile.delete();
+        }
       }
 
       if (!validation['settingsValid']!) {
@@ -637,5 +655,22 @@ class StorageService {
       AppLogger.debug('修复存储数据失败: $e');
       return false;
     }
+  }
+
+  File get _hostsFile => File(p.join(_storageDir.path, _hostsFileName));
+
+  File get _settingsFile => File(p.join(_storageDir.path, _settingsFileName));
+
+  static Future<String> _resolveRootPath() async {
+    final persistence = PersistenceService();
+    if (!persistence.isInitialized || persistence.rootPath == null) {
+      final bootstrap = BootstrapService();
+      if (!bootstrap.isInitialized) {
+        await bootstrap.init();
+      }
+      final customPath = bootstrap.getDataPath();
+      await persistence.init(customPath: customPath);
+    }
+    return persistence.rootPath ?? PersistenceService.getAppCacheRootPath();
   }
 }

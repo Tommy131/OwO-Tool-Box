@@ -84,7 +84,7 @@ class HostMonitorProvider with ChangeNotifier {
   SystemInfoModel? _systemInfo;
 
   /// 监控设置
-  late HostMonitorSettingsModel _settings;
+  HostMonitorSettingsModel _settings = const HostMonitorSettingsModel();
 
   /// 指标历史记录
   final MetricsHistoryModel _metricsHistory = MetricsHistoryModel();

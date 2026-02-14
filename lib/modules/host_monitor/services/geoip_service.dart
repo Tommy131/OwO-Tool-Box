@@ -19,7 +19,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart' show debugPrint;
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path/path.dart' as p;
+
+import '../../../core/services/bootstrap_service.dart';
+import '../../../core/services/persistence_service.dart';
 
 /// IP地理位置信息
 class GeoIPInfo {
@@ -89,101 +92,81 @@ class GeoIPService {
   factory GeoIPService() => _instance;
   GeoIPService._internal();
 
-  static const String _cachePrefix = 'geoip_cache_';
-  static const String _cacheKeysKey = 'geoip_cache_keys';
+  static const String _cacheFileName = 'geoip_cache.json';
 
-  // 内存缓存,避免重复读取SharedPreferences
   final Map<String, GeoIPInfo> _memoryCache = {};
-  SharedPreferences? _prefs;
-  bool _isInitialized = false; // 添加初始化标志
+  bool _isInitialized = false;
 
-  /// 初始化SharedPreferences
   Future<void> initialize() async {
-    // 如果已经初始化,直接返回
-    if (_isInitialized && _prefs != null) {
+    if (_isInitialized) {
       return;
     }
 
-    _prefs = await SharedPreferences.getInstance();
+    await _loadCacheFromFile();
     _isInitialized = true;
-
-    // 只在首次初始化时加载缓存
-    await _loadCacheFromPrefs();
     await clearExpiredCache();
   }
 
-  /// 从SharedPreferences加载缓存到内存
-  Future<void> _loadCacheFromPrefs() async {
-    // 确保 _prefs 已经初始化,但不要再次调用 initialize()
-    if (_prefs == null) {
+  Future<void> _loadCacheFromFile() async {
+    final file = await _getCacheFile();
+    if (!await file.exists()) {
       return;
     }
 
-    final keys = _prefs!.getStringList(_cacheKeysKey) ?? [];
-    debugPrint('从持久化存储加载 ${keys.length} 条地理位置缓存');
+    final content = await file.readAsString();
+    if (content.isEmpty) {
+      return;
+    }
 
-    for (final ip in keys) {
-      final jsonStr = _prefs!.getString('$_cachePrefix$ip');
-      if (jsonStr != null) {
+    final data = jsonDecode(content);
+    if (data is! Map) {
+      await file.delete();
+      return;
+    }
+
+    final entries = data.cast<String, dynamic>();
+    debugPrint('从持久化存储加载 ${entries.length} 条地理位置缓存');
+
+    for (final entry in entries.entries) {
+      final ip = entry.key;
+      final value = entry.value;
+      if (value is Map<String, dynamic>) {
         try {
-          final json = jsonDecode(jsonStr) as Map<String, dynamic>;
-          final geoInfo = GeoIPInfo.fromJson(json);
-
-          // 检查缓存是否过期
+          final geoInfo = GeoIPInfo.fromJson(value);
           if (!geoInfo.isExpired()) {
             _memoryCache[ip] = geoInfo;
-          } else {
-            // 删除过期缓存
-            await _removeFromPrefs(ip);
           }
         } catch (e) {
           debugPrint('加载缓存失败 ($ip): $e');
-          await _removeFromPrefs(ip);
         }
       }
     }
+    await _saveCacheFile();
   }
 
   /// 确保已初始化
   Future<void> _ensureInitialized() async {
-    if (!_isInitialized || _prefs == null) {
+    if (!_isInitialized) {
       await initialize();
     }
   }
 
-  /// 保存到SharedPreferences
-  Future<void> _saveToPrefs(String ip, GeoIPInfo info) async {
+  Future<void> _saveToCache(String ip, GeoIPInfo info) async {
     await _ensureInitialized();
 
     try {
-      // 保存地理位置信息
-      final jsonStr = jsonEncode(info.toJson());
-      await _prefs!.setString('$_cachePrefix$ip', jsonStr);
-
-      // 更新缓存键列表
-      final keys = _prefs!.getStringList(_cacheKeysKey) ?? [];
-      if (!keys.contains(ip)) {
-        keys.add(ip);
-        await _prefs!.setStringList(_cacheKeysKey, keys);
-      }
-
+      _memoryCache[ip] = info;
+      await _saveCacheFile();
       debugPrint('已缓存IP地理位置: $ip -> ${info.fullLocation}');
     } catch (e) {
       debugPrint('保存缓存失败 ($ip): $e');
     }
   }
 
-  /// 从SharedPreferences删除
-  Future<void> _removeFromPrefs(String ip) async {
-    if (_prefs == null) return;
-
+  Future<void> _removeFromCache(String ip) async {
     try {
-      await _prefs!.remove('$_cachePrefix$ip');
-
-      // 更新缓存键列表
-      final keys = _prefs!.getStringList(_cacheKeysKey) ?? [];
-      keys.remove(ip);
-      await _prefs!.setStringList(_cacheKeysKey, keys);
+      _memoryCache.remove(ip);
+      await _saveCacheFile();
     } catch (e) {
       debugPrint('删除缓存失败 ($ip): $e');
     }
@@ -222,8 +205,10 @@ class GeoIPService {
   }
 
   /// Ping 主机检测可达性
-  Future<bool> _pingHost(String ip,
-      {Duration timeout = const Duration(seconds: 3)}) async {
+  Future<bool> _pingHost(
+    String ip, {
+    Duration timeout = const Duration(seconds: 3),
+  }) async {
     try {
       // 使用 Socket 连接测试主机可达性
       final socket = await Socket.connect(
@@ -236,11 +221,7 @@ class GeoIPService {
     } catch (e) {
       // 如果80端口失败,尝试443端口
       try {
-        final socket = await Socket.connect(
-          ip,
-          443,
-          timeout: timeout,
-        );
+        final socket = await Socket.connect(ip, 443, timeout: timeout);
         socket.destroy();
         return true;
       } catch (e) {
@@ -256,10 +237,7 @@ class GeoIPService {
 
     // 检查是否为内网IP
     if (isPrivateIP(ip)) {
-      return GeoIPInfo(
-        countryCode: 'LOCAL',
-        countryName: 'Local Network',
-      );
+      return GeoIPInfo(countryCode: 'LOCAL', countryName: 'Local Network');
     }
 
     // 如果不强制刷新,优先从内存缓存获取
@@ -274,7 +252,7 @@ class GeoIPService {
         // 缓存过期,删除
         debugPrint('缓存已过期: $ip');
         _memoryCache.remove(ip);
-        await _removeFromPrefs(ip);
+        await _removeFromCache(ip);
       }
     }
 
@@ -295,7 +273,7 @@ class GeoIPService {
       if (info != null) {
         // 保存到内存和持久化缓存
         _memoryCache[ip] = info;
-        await _saveToPrefs(ip, info);
+        await _saveToCache(ip, info);
       }
       return info;
     } catch (e) {
@@ -312,7 +290,8 @@ class GeoIPService {
       final response = await http
           .get(
             Uri.parse(
-                'http://ip-api.com/json/$ip?fields=status,message,country,countryCode,regionName,city,lat,lon'),
+              'http://ip-api.com/json/$ip?fields=status,message,country,countryCode,regionName,city,lat,lon',
+            ),
           )
           .timeout(const Duration(seconds: 5));
 
@@ -360,12 +339,10 @@ class GeoIPService {
     await _ensureInitialized();
 
     _memoryCache.clear();
-
-    final keys = _prefs!.getStringList(_cacheKeysKey) ?? [];
-    for (final ip in keys) {
-      await _prefs!.remove('$_cachePrefix$ip');
+    final file = await _getCacheFile();
+    if (await file.exists()) {
+      await file.delete();
     }
-    await _prefs!.remove(_cacheKeysKey);
 
     debugPrint('已清除所有地理位置缓存');
   }
@@ -374,15 +351,13 @@ class GeoIPService {
   Future<void> clearExpiredCache() async {
     await _ensureInitialized();
 
-    final keys = _prefs!.getStringList(_cacheKeysKey) ?? [];
     final expiredKeys = <String>[];
 
-    for (final ip in keys) {
+    for (final ip in _memoryCache.keys.toList()) {
       final cachedInfo = _memoryCache[ip];
       if (cachedInfo != null && cachedInfo.isExpired()) {
         expiredKeys.add(ip);
-        _memoryCache.remove(ip);
-        await _removeFromPrefs(ip);
+        await _removeFromCache(ip);
       }
     }
 
@@ -397,6 +372,42 @@ class GeoIPService {
   /// 获取持久化缓存大小
   Future<int> get persistentCacheSize async {
     await _ensureInitialized();
-    return _prefs!.getStringList(_cacheKeysKey)?.length ?? 0;
+    return _memoryCache.length;
+  }
+
+  Future<void> _saveCacheFile() async {
+    final file = await _getCacheFile();
+    final data = <String, dynamic>{};
+    for (final entry in _memoryCache.entries) {
+      data[entry.key] = entry.value.toJson();
+    }
+    await file.writeAsString(jsonEncode(data));
+  }
+
+  Future<File> _getCacheFile() async {
+    final dir = await _ensureCacheDir();
+    return File(p.join(dir.path, _cacheFileName));
+  }
+
+  Future<Directory> _ensureCacheDir() async {
+    final rootPath = await _resolveRootPath();
+    final dir = Directory(p.join(rootPath, 'cache'));
+    if (!await dir.exists()) {
+      await dir.create(recursive: true);
+    }
+    return dir;
+  }
+
+  Future<String> _resolveRootPath() async {
+    final persistence = PersistenceService();
+    if (!persistence.isInitialized || persistence.rootPath == null) {
+      final bootstrap = BootstrapService();
+      if (!bootstrap.isInitialized) {
+        await bootstrap.init();
+      }
+      final customPath = bootstrap.getDataPath();
+      await persistence.init(customPath: customPath);
+    }
+    return persistence.rootPath ?? PersistenceService.getAppCacheRootPath();
   }
 }

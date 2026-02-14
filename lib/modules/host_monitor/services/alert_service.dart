@@ -17,15 +17,19 @@
  */
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path/path.dart' as p;
 
+import '../../../core/services/bootstrap_service.dart';
+import '../../../core/services/persistence_service.dart';
 import '../../../core/services/notification_service.dart';
 import '../../../core/utils/logger.dart';
 
 import '../models/host_monitor_settings_model.dart';
 import '../models/system_info_model.dart';
+import 'storage_service.dart';
 
 // ==================== 告警类型枚举 ====================
 /// 定义系统监控的各种告警类型
@@ -122,6 +126,7 @@ class AlertService extends ChangeNotifier {
   HostMonitorSettingsModel _settings = const HostMonitorSettingsModel();
   final List<AlertRecord> _alertHistory = [];
   final Map<AlertType, DateTime> _lastAlertTime = {};
+  static const String _historyFileName = 'alert_history.json';
 
   /// 告警冷却时间，防止频繁触发
   static const Duration _alertCooldown = Duration(minutes: 5);
@@ -156,12 +161,8 @@ class AlertService extends ChangeNotifier {
   /// 加载告警配置（从 SharedPreferences）
   Future<void> _loadSettings() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final jsonString = prefs.getString('host_monitor_settings');
-
-      if (jsonString != null) {
-        _settings = HostMonitorSettingsModel.fromJson(json.decode(jsonString));
-      }
+      final storage = await StorageService.create();
+      _settings = await storage.getSettings();
     } catch (e) {
       AppLogger.error('[AlertService] 配置加载失败', e);
     }
@@ -172,13 +173,8 @@ class AlertService extends ChangeNotifier {
   Future<void> updateSettings(HostMonitorSettingsModel settings) async {
     try {
       _settings = settings;
-
-      // 同步保存到 SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        'host_monitor_settings',
-        json.encode(settings.toJson()),
-      );
+      final storage = await StorageService.create();
+      await storage.saveSettings(settings);
 
       notifyListeners();
     } catch (e) {
@@ -190,10 +186,9 @@ class AlertService extends ChangeNotifier {
   /// 加载告警历史记录
   Future<void> _loadHistory() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final jsonString = prefs.getString('alert_history');
-
-      if (jsonString != null) {
+      final file = await _getHistoryFile();
+      if (await file.exists()) {
+        final jsonString = await file.readAsString();
         final List<dynamic> jsonList = json.decode(jsonString);
         _alertHistory.clear();
         _alertHistory.addAll(
@@ -209,14 +204,41 @@ class AlertService extends ChangeNotifier {
   /// 保存告警历史记录
   Future<void> _saveHistory() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
       final jsonString = json.encode(
         _alertHistory.map((a) => a.toJson()).toList(),
       );
-      await prefs.setString('alert_history', jsonString);
+      final file = await _getHistoryFile();
+      await file.writeAsString(jsonString);
     } catch (e) {
       AppLogger.error('[AlertService] 历史记录保存失败', e);
     }
+  }
+
+  Future<File> _getHistoryFile() async {
+    final dir = await _ensureStorageDir();
+    return File(p.join(dir.path, _historyFileName));
+  }
+
+  Future<Directory> _ensureStorageDir() async {
+    final rootPath = await _resolveRootPath();
+    final dir = Directory(p.join(rootPath, 'host_monitor'));
+    if (!await dir.exists()) {
+      await dir.create(recursive: true);
+    }
+    return dir;
+  }
+
+  Future<String> _resolveRootPath() async {
+    final persistence = PersistenceService();
+    if (!persistence.isInitialized || persistence.rootPath == null) {
+      final bootstrap = BootstrapService();
+      if (!bootstrap.isInitialized) {
+        await bootstrap.init();
+      }
+      final customPath = bootstrap.getDataPath();
+      await persistence.init(customPath: customPath);
+    }
+    return persistence.rootPath ?? PersistenceService.getAppCacheRootPath();
   }
 
   /// 清空历史记录
