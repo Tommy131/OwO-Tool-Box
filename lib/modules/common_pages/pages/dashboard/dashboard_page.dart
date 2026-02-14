@@ -86,6 +86,7 @@ class _DashboardPageState extends State<DashboardPage> {
   String _tr(String key) => key.tr(context);
 
   Future<void> _loadDeviceInfo() async {
+    if (!mounted) return;
     setState(() => _isLoading = true);
 
     try {
@@ -268,6 +269,7 @@ class _DashboardPageState extends State<DashboardPage> {
         }
       }
 
+      if (!mounted) return;
       setState(() {
         _deviceData = deviceData;
         _systemData = systemData;
@@ -275,6 +277,7 @@ class _DashboardPageState extends State<DashboardPage> {
       });
     } catch (e) {
       debugPrint('Error loading device info: $e');
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }

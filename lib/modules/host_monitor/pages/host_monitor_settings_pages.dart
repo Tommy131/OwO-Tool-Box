@@ -81,6 +81,7 @@ class _HostMonitorSettingsFormState extends State<HostMonitorSettingsForm> {
 
     _settings = context.read<HostMonitorProvider>().settings;
     _initializeControllers();
+    _loadSettings();
   }
 
   void _initializeControllers() {
@@ -104,6 +105,20 @@ class _HostMonitorSettingsFormState extends State<HostMonitorSettingsForm> {
         setState(() => _hasChanges = true);
       });
     }
+  }
+
+  Future<void> _loadSettings() async {
+    final provider = context.read<HostMonitorProvider>();
+    await provider.loadSettings();
+    if (!mounted) return;
+    setState(() {
+      _settings = provider.settings;
+      _intervalController.text = _settings.refreshInterval.toString();
+      _hostCheckTimeoutController.text = _settings.hostCheckTimeout.toString();
+      _hostCheckIntervalController.text = _settings.hostCheckInterval
+          .toString();
+      _hasChanges = false;
+    });
   }
 
   @override
@@ -142,10 +157,7 @@ class _HostMonitorSettingsFormState extends State<HostMonitorSettingsForm> {
           if (widget.showTitle) ...[
             Text(
               _t(host_l10n.LocalizationKeys.hostMonitorSettings),
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
           ],
@@ -404,7 +416,11 @@ class _HostMonitorSettingsFormState extends State<HostMonitorSettingsForm> {
 
     await provider.updateSettings(newSettings);
 
-    setState(() => _hasChanges = false);
+    if (!mounted) return;
+    setState(() {
+      _settings = newSettings;
+      _hasChanges = false;
+    });
     _showSnackBar(_t(host_l10n.LocalizationKeys.settingsSaved), Colors.green);
   }
 

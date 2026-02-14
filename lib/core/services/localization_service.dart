@@ -35,6 +35,7 @@ class LocalizationService extends ChangeNotifier {
         _currentLocale = Locale(parts[0], parts[parts.length - 1]);
       }
     }
+    notifyListeners();
   }
 
   Future<void> setLocale(Locale locale) async {

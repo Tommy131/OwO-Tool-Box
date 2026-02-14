@@ -67,7 +67,7 @@ class BootstrapService {
     if (_bootstrapFile == null) return;
     try {
       final content = const JsonEncoder.withIndent('  ').convert(_config);
-      await _bootstrapFile!.writeAsString(content);
+      await _bootstrapFile!.writeAsString(content, flush: true);
     } catch (e) {
       AppLogger.error('Error saving bootstrap config: $e');
     }

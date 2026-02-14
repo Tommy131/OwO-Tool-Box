@@ -205,6 +205,7 @@ class HostMonitorProvider with ChangeNotifier {
   /// - settings: 新的设置对象
   Future<void> updateSettings(HostMonitorSettingsModel settings) async {
     try {
+      _storageService ??= await StorageService.create();
       _settings = settings;
       await _storageService?.saveSettings(settings);
       await _alertService.updateSettings(settings);
@@ -219,6 +220,16 @@ class HostMonitorProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       AppLogger.error('[HostMonitorProvider] 更新设置失败', e);
+    }
+  }
+
+  Future<void> loadSettings() async {
+    try {
+      _storageService ??= await StorageService.create();
+      _settings = await _storageService!.getSettings();
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('[HostMonitorProvider] 加载设置失败', e);
     }
   }
 

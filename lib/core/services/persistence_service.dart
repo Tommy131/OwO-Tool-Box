@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as p;
@@ -17,8 +18,24 @@ class PersistenceService {
   Map<String, dynamic> _data = {};
   bool _initialized = false;
 
+  // 初始化状态管理器
+  Completer<void>? _initCompleter;
+
+  // 保存队列，确保文件写入不会冲突
+  Future<void>? _activeSave;
+
   bool get isInitialized => _initialized;
   String? get rootPath => _rootPath;
+
+  /// 等待初始化完成
+  Future<void> ensureReady() async {
+    if (_initialized) return;
+    if (_initCompleter != null) return _initCompleter!.future;
+    // 如果还没开始初始化，记录警告
+    AppLogger.warning(
+      'PersistenceService accessed before initialization started',
+    );
+  }
 
   static String getAppRootDir() {
     final exePath = Platform.resolvedExecutable;
@@ -47,13 +64,19 @@ class PersistenceService {
   }
 
   /// 初始化存储系统
-  /// [customPath] 如果提供，则使用该路径存储数据；否则使用默认的应用文档目录
   Future<void> init({String? customPath}) async {
-    if (customPath != null && customPath.trim().isNotEmpty) {
-      _rootPath = getProcessedRootPath(customPath);
-    } else {
-      _rootPath = getProcessedRootPath(getAppCacheRootPath());
+    // 避免重复初始化
+    final targetPath = getProcessedRootPath(
+      customPath ?? getAppCacheRootPath(),
+    );
+    if (_initialized && _rootPath == targetPath) {
+      return;
     }
+
+    _initCompleter = Completer<void>();
+    _initialized = false;
+
+    _rootPath = targetPath;
 
     final bootstrap = BootstrapService();
 
@@ -63,7 +86,7 @@ class PersistenceService {
         await directory.create(recursive: true);
       }
 
-      // 同步路径到引导文件，确保下次启动能找到
+      // 同步路径到引导文件
       if (bootstrap.isInitialized) {
         await bootstrap.setDataPath(_rootPath!);
       }
@@ -71,9 +94,15 @@ class PersistenceService {
       _settingsFile = File(p.join(_rootPath!, 'settings.json'));
       await _load();
       _initialized = true;
-      AppLogger.info('PersistenceService initialized at: $_rootPath');
+      _initCompleter?.complete();
+      AppLogger.info(
+        'PersistenceService successfully initialized at: $_rootPath',
+      );
     } catch (e) {
       AppLogger.error('PersistenceService initialization failed: $e');
+      _initCompleter?.completeError(e);
+    } finally {
+      _initCompleter = null;
     }
   }
 
@@ -95,14 +124,34 @@ class PersistenceService {
     }
   }
 
-  /// 保存数据
+  /// 保存数据（带队列机制）
   Future<void> _save() async {
     if (_settingsFile == null) return;
+
+    // 等待上一个保存任务完成
+    final currentSave = _activeSave;
+    final completer = Completer<void>();
+    _activeSave = completer.future;
+
+    if (currentSave != null) {
+      try {
+        await currentSave;
+      } catch (_) {
+        // 忽略上一个保存的错误，继续执行当前的
+      }
+    }
+
     try {
       final content = const JsonEncoder.withIndent('  ').convert(_data);
-      await _settingsFile!.writeAsString(content);
+      // 使用 flush: true 确保物理写入
+      await _settingsFile!.writeAsString(content, flush: true);
     } catch (e) {
       AppLogger.warning('Error saving persistence data: $e');
+    } finally {
+      completer.complete();
+      if (_activeSave == completer.future) {
+        _activeSave = null;
+      }
     }
   }
 
@@ -138,6 +187,39 @@ class PersistenceService {
   Future<void> setDouble(String key, double value) => set(key, value);
   Future<void> setBool(String key, bool value) => set(key, value);
   Future<void> setStringList(String key, List<String> value) => set(key, value);
+
+  // ============ 模块化/命名空间支持 ============
+
+  /// 获取模块专属数据
+  T? getModuleData<T>(String moduleName, String key, {T? defaultValue}) {
+    final modules = _data['modules'] as Map<String, dynamic>?;
+    final moduleData = modules?[moduleName] as Map<String, dynamic>?;
+    final value = moduleData?[key];
+
+    if (value == null) return defaultValue;
+    if (T == int && value is num) return value.toInt() as T;
+    if (T == double && value is num) return value.toDouble() as T;
+
+    return value as T?;
+  }
+
+  /// 设置模块专属数据
+  Future<void> setModuleData(
+    String moduleName,
+    String key,
+    dynamic value,
+  ) async {
+    final modules = Map<String, dynamic>.from(_data['modules'] as Map? ?? {});
+    final moduleData = Map<String, dynamic>.from(
+      modules[moduleName] as Map? ?? {},
+    );
+
+    moduleData[key] = value;
+    modules[moduleName] = moduleData;
+    _data['modules'] = modules;
+
+    await _save();
+  }
 
   Future<void> remove(String key) async {
     _data.remove(key);

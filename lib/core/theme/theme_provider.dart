@@ -25,7 +25,7 @@ class ThemeProvider extends ChangeNotifier {
     ThemeMode initialMode = ThemeMode.system,
   }) : _currentTheme = initialTheme ?? AppThemeData.presetThemes.first,
        _themeMode = initialMode {
-    _loadFromPersistence();
+    load();
   }
 
   // ============ Getters ============
@@ -170,7 +170,7 @@ class ThemeProvider extends ChangeNotifier {
   }
 
   /// 从本地存储加载
-  Future<void> _loadFromPersistence() async {
+  Future<void> load() async {
     try {
       final persistence = PersistenceService();
       // 如果服务尚未初始化，延迟加载或等待
@@ -195,11 +195,13 @@ class ThemeProvider extends ChangeNotifier {
       _darkContrastAdjustment = persistence.getDouble(_darkContrastKey) ?? 0.0;
 
       notifyListeners();
+      AppLogger.info('ThemeProvider loaded settings from persistence');
     } catch (e) {
       AppLogger.warning('加载主题设置失败: $e');
       // 使用默认值
       _currentTheme = AppThemeData.presetThemes.first;
       _themeMode = ThemeMode.system;
+      notifyListeners();
     }
   }
 

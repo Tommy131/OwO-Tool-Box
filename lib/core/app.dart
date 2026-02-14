@@ -158,10 +158,13 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
       final configuredPath = bootstrap.getDataPath();
       await persistence.init(customPath: configuredPath);
 
-      await AppLogger.init();
+      // 3. 触发 Provider 重新加载已保存的设置
+      if (mounted) {
+        context.read<ThemeProvider>().load();
+        await LocalizationService().init();
+      }
 
-      // 3. 初始化语言服务
-      await LocalizationService().init();
+      await AppLogger.init();
 
       // 4. 初始化所有业务模块（通过统一入口）
       ModulesRegisterEntry.registerAll();
