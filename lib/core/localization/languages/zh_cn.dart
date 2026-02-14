@@ -147,4 +147,7 @@ final Map<String, String> zhCN = {
   LocalizationKeys.updateContent: '更新内容',
   LocalizationKeys.downloadUpdate: '下载更新',
   LocalizationKeys.alreadyLatestVersion: '您已经在使用最新版本了',
+  LocalizationKeys.dataPathMissingTitle: '存储路径丢失',
+  LocalizationKeys.dataPathMissingContent:
+      '无法找到或访问配置的存储路径。为了确保数据安全，应用初始化已重置。请重新配置您的存储路径。',
 };

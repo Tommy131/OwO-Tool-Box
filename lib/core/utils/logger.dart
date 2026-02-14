@@ -105,7 +105,7 @@ class AppLogger {
         methodCount: 2,
         errorMethodCount: 8,
         lineLength: 120,
-        colors: false, // Colors can mess up file logs
+        colors: true, // Enable console colors, file logs will strip ANSI codes
         printEmojis: true,
         dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
       ),
@@ -116,8 +116,7 @@ class AppLogger {
     LogOutput? fileOutput;
 
     if (_enabled) {
-      _logDirectory =
-          p.join(PersistenceService.getAppCacheRootPath(), 'logs');
+      _logDirectory = p.join(PersistenceService.getAppCacheRootPath(), 'logs');
       try {
         final logDir = Directory(_logDirectory!);
         if (!await logDir.exists()) {

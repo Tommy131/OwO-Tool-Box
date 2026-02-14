@@ -124,9 +124,24 @@ class AppThemeData {
     final surfaceColor =
         Color.lerp(_surfaceColor, Colors.black, adjustment) ?? _surfaceColor;
 
-    final baseTheme = ThemeData.light(
+    final baseTheme = ThemeData(
       useMaterial3: true,
-    ).copyWith(scaffoldBackgroundColor: bgColor);
+      brightness: Brightness.light,
+      primaryColor: primaryColor,
+      scaffoldBackgroundColor: bgColor,
+      colorScheme: ColorScheme.light(
+        primary: primaryColor,
+        secondary: secondaryColor,
+        surface: surfaceColor,
+        error: Colors.red,
+        onPrimary: getContrastColor(primaryColor),
+        onSecondary: getContrastColor(secondaryColor),
+        onSurface: Colors.black87,
+        onError: Colors.white,
+        surfaceContainerHighest: Colors.grey.shade100,
+        outline: primaryColor.withValues(alpha: 0.3),
+      ),
+    );
     return _applyCommonTheme(
       baseTheme,
       Brightness.light,
@@ -145,8 +160,11 @@ class AppThemeData {
         Color.lerp(_darkSurfaceColor, const Color(0xFF0A0A15), adjustment) ??
         _darkSurfaceColor;
 
-    final baseTheme = ThemeData.dark(useMaterial3: true).copyWith(
+    final baseTheme = ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
       scaffoldBackgroundColor: bgColor,
+      primaryColor: primaryColor,
       colorScheme: ColorScheme.dark(
         primary: primaryColor,
         secondary: secondaryColor,
@@ -156,13 +174,7 @@ class AppThemeData {
         onSecondary: getContrastColor(secondaryColor),
         onSurface: Colors.white,
         onError: Colors.white,
-        surfaceContainerHighest:
-            Color.lerp(
-              const Color(0xFF2C2C2C),
-              const Color(0xFF1A1A1A),
-              adjustment,
-            ) ??
-            const Color(0xFF2C2C2C),
+        surfaceContainerHighest: const Color(0xFF2C2C2C),
         outline: primaryColor.withValues(alpha: 0.4),
       ),
     );

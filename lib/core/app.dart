@@ -113,6 +113,46 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
       final bootstrap = BootstrapService();
       await bootstrap.init();
 
+      // 检查配置的数据存储路径是否存在且可访问（仅在非首次启动时检查）
+      if (!bootstrap.isFirstLaunch()) {
+        final configuredPath = bootstrap.getDataPath();
+        if (configuredPath != null) {
+          final dir = Directory(configuredPath);
+          try {
+            if (!await dir.exists()) {
+              AppLogger.warning('存储路径不存在: $configuredPath，准备重置引导流程...');
+              if (mounted) {
+                await showAdvancedConfirmDialog(
+                  context: context,
+                  title: LocalizationKeys.dataPathMissingTitle.tr(context),
+                  content: LocalizationKeys.dataPathMissingContent.tr(context),
+                  confirmText: LocalizationKeys.confirm.tr(context),
+                  cancelText: '', // 隐藏取消按钮，强制点击确认
+                  icon: Icons.error_outline,
+                  confirmColor: Colors.redAccent,
+                );
+              }
+              await bootstrap.reset(); // 删除 bootstrap.json 并重置
+            }
+          } catch (e) {
+            AppLogger.error('检查存储路径访问权限失败: $e');
+            if (mounted) {
+              await showAdvancedConfirmDialog(
+                context: context,
+                title: LocalizationKeys.dataPathMissingTitle.tr(context),
+                content:
+                    '${LocalizationKeys.dataPathMissingContent.tr(context)}\n\nError: $e',
+                confirmText: LocalizationKeys.confirm.tr(context),
+                cancelText: '',
+                icon: Icons.error_outline,
+                confirmColor: Colors.redAccent,
+              );
+            }
+            await bootstrap.reset();
+          }
+        }
+      }
+
       // 2. 初始化持久化服务
       final persistence = PersistenceService();
       final configuredPath = bootstrap.getDataPath();
@@ -144,6 +184,11 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
 
       // Add this line to override the default close handler
       await windowManager.setPreventClose(true);
+
+      // 模拟加载核心资源和数据（仅用于演示高级加载效果）
+      // AppLogger.info('正在模拟加载业务数据 (5s)...');
+      // await Future.delayed(const Duration(seconds: 5));
+      // AppLogger.info('业务数据加载完成');
 
       if (mounted) {
         setState(() {
@@ -218,17 +263,97 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
   @override
   Widget build(BuildContext context) {
     if (!_isInitialized) {
+      final themeProvider = context.watch<ThemeProvider>();
+      final isDark =
+          themeProvider.themeMode == ThemeMode.dark ||
+          (themeProvider.themeMode == ThemeMode.system &&
+              View.of(context).platformDispatcher.platformBrightness ==
+                  Brightness.dark);
+
+      // 如果尚未初始化完成，默认使用深色模式配色以获得更好的视觉体验
+      final theme = isDark
+          ? themeProvider.currentTheme.generateDarkTheme(
+              adjustment: themeProvider.darkContrastAdjustment,
+            )
+          : themeProvider.currentTheme.generateLightTheme(
+              adjustment: themeProvider.lightContrastAdjustment,
+            );
+
       return MaterialApp(
         debugShowCheckedModeBanner: false,
+        theme: theme,
         home: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: isDark
+              ? const Color(0xFF121212)
+              : theme.scaffoldBackgroundColor,
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('Loading...'),
+                // App Logo with subtle glow
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: theme.primaryColor.withValues(alpha: 0.3),
+                        blurRadius: 40,
+                        spreadRadius: 5,
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(24),
+                    child: Image.asset(
+                      AppConstants.assetIconPath,
+                      width: 100,
+                      height: 100,
+                      errorBuilder: (context, error, stackTrace) =>
+                          Icon(Icons.apps, size: 80, color: theme.primaryColor),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                // App Name with professional styling
+                Text(
+                  AppConstants.appName,
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontFamily: 'MicrosoftYaHei',
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.5,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 48),
+                // Premium Progress Indicator
+                SizedBox(
+                  width: 240,
+                  child: Column(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: LinearProgressIndicator(
+                          minHeight: 6,
+                          backgroundColor: theme.primaryColor.withValues(
+                            alpha: 0.1,
+                          ),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            theme.primaryColor,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        LocalizationKeys.loading.tr(context),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: (isDark ? Colors.white70 : Colors.black54)
+                              .withValues(alpha: 0.8),
+                          letterSpacing: 1.1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -253,7 +378,12 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
         : Column(
             children: [
               if (!Platform.isAndroid && !Platform.isIOS) ...[
-                CustomTitleBar(title: Text(AppConstants.appName)),
+                CustomTitleBar(
+                  title: Text(
+                    AppConstants.appName,
+                    style: const TextStyle(fontFamily: 'MicrosoftYaHei'),
+                  ),
+                ),
                 Divider(
                   height: 1,
                   color: Color(isDark ? 0xFF313131 : 0xFFD6D6D6),
