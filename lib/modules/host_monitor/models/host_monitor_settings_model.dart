@@ -84,10 +84,10 @@ class HostMonitorSettingsModel {
       cpuThreshold: (json['cpuThreshold'] ?? 90.0).toDouble(),
       memoryThreshold: (json['memoryThreshold'] ?? 90.0).toDouble(),
       diskThreshold: (json['diskThreshold'] ?? 90.0).toDouble(),
-      networkUploadThreshold:
-          (json['networkUploadThreshold'] ?? 10240.0).toDouble(),
-      networkDownloadThreshold:
-          (json['networkDownloadThreshold'] ?? 10240.0).toDouble(),
+      networkUploadThreshold: (json['networkUploadThreshold'] ?? 10240.0)
+          .toDouble(),
+      networkDownloadThreshold: (json['networkDownloadThreshold'] ?? 10240.0)
+          .toDouble(),
       notifyOnDisconnect: json['notifyOnDisconnect'] ?? true,
       soundEnabled: json['soundEnabled'] ?? true,
       vibrationEnabled: json['vibrationEnabled'] ?? true,

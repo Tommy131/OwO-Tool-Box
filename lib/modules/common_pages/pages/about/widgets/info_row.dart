@@ -39,8 +39,8 @@ class InfoRow extends StatelessWidget {
           child: Text(
             label,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade700,
-                ),
+              color: isDark ? Colors.grey.shade400 : Colors.grey.shade700,
+            ),
           ),
         ),
         const SizedBox(width: 8),
@@ -49,9 +49,9 @@ class InfoRow extends StatelessWidget {
           child: Text(
             value,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             textAlign: TextAlign.end,
           ),
         ),

@@ -74,8 +74,10 @@ class MetricsChart extends StatelessWidget {
                 ),
                 if (convertedData.points.isNotEmpty)
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: lineColor.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
@@ -117,10 +119,7 @@ class MetricsChart extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: theme.textTheme.titleMedium,
-              ),
+              Text(title, style: theme.textTheme.titleMedium),
               Expanded(
                 child: Center(
                   child: Text(
@@ -232,11 +231,13 @@ class MetricsChart extends StatelessWidget {
       ),
       titlesData: FlTitlesData(
         show: true,
-        rightTitles:
-            const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
         topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        bottomTitles:
-            const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        bottomTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,

@@ -54,10 +54,7 @@ class CopyrightCard extends StatelessWidget {
                   ).createShader(bounds),
                   child: const Text(
                     '❤',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
                 const SizedBox(width: 4),

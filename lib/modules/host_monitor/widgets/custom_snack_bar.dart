@@ -45,10 +45,8 @@ class CustomSnackBar {
             Icon(icon, color: iconColor),
             const SizedBox(width: 12),
             Expanded(
-                child: Text(
-              message,
-              style: TextStyle(color: textColor),
-            )),
+              child: Text(message, style: TextStyle(color: textColor)),
+            ),
           ],
         ),
         backgroundColor: backgroundColor,
@@ -62,10 +60,7 @@ class CustomSnackBar {
   void showNormal() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          message,
-          style: TextStyle(color: textColor),
-        ),
+        content: Text(message, style: TextStyle(color: textColor)),
         backgroundColor: backgroundColor,
         behavior: SnackBarBehavior.floating,
         duration: duration,

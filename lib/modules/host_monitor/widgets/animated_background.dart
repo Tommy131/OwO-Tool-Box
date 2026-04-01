@@ -77,24 +77,17 @@ class BackgroundPainter extends CustomPainter {
         ? const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0A0E27),
-              Color(0xFF151932),
-              Color(0xFF0A0E27),
-            ],
+            colors: [Color(0xFF0A0E27), Color(0xFF151932), Color(0xFF0A0E27)],
           )
         : const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFFE2E2E2),
-              Color(0xFFF5F5F5),
-              Color(0xFFDBDBDB),
-            ],
+            colors: [Color(0xFFE2E2E2), Color(0xFFF5F5F5), Color(0xFFDBDBDB)],
           );
 
-    paint.shader =
-        gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+    paint.shader = gradient.createShader(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+    );
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
 
     _drawAnimatedCircles(canvas, size);
@@ -117,18 +110,17 @@ class BackgroundPainter extends CustomPainter {
           ];
 
     for (var circle in circles) {
-      final x = size.width * (circle['x'] as double) +
+      final x =
+          size.width * (circle['x'] as double) +
           math.sin(animationValue * 2 * math.pi) * 50;
-      final y = size.height * (circle['y'] as double) +
+      final y =
+          size.height * (circle['y'] as double) +
           math.cos(animationValue * 2 * math.pi) * 50;
       final r = circle['r'] as double;
       final color = circle['color'] as Color;
 
       paint.shader = RadialGradient(
-        colors: [
-          color.withValues(alpha: 0.2),
-          color.withValues(alpha: 0.0),
-        ],
+        colors: [color.withValues(alpha: 0.2), color.withValues(alpha: 0.0)],
       ).createShader(Rect.fromCircle(center: Offset(x, y), radius: r));
 
       canvas.drawCircle(Offset(x, y), r, paint);

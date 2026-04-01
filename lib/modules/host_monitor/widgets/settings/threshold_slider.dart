@@ -31,10 +31,7 @@ class ThresholdSlider extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              label,
-              style: const TextStyle(fontSize: 14),
-            ),
+            Text(label, style: const TextStyle(fontSize: 14)),
             Text(
               '${value.toStringAsFixed(0)}$unit',
               style: TextStyle(
@@ -88,10 +85,7 @@ class SwitchCard extends StatelessWidget {
     return SwitchListTile(
       title: Text(title),
       subtitle: subtitle != null
-          ? Text(
-              subtitle!,
-              style: const TextStyle(fontSize: 12),
-            )
+          ? Text(subtitle!, style: const TextStyle(fontSize: 12))
           : null,
       value: value,
       activeThumbColor: theme.colorScheme.primary,

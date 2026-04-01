@@ -50,10 +50,7 @@ class SettingsCard extends StatelessWidget {
         const SizedBox(width: 12),
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ],
     );
@@ -84,9 +81,7 @@ class InputFieldCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-        ),
+        Text(label),
         const SizedBox(height: 8),
         TextField(
           controller: controller,
@@ -122,7 +117,7 @@ class InputFieldCard extends StatelessWidget {
               fontSize: 12,
             ),
           ),
-        ]
+        ],
       ],
     );
   }

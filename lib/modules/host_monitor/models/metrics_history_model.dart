@@ -37,14 +37,14 @@ class MetricsHistoryModel {
     List<MetricPoint>? load5History,
     List<MetricPoint>? load15History,
     this.maxDataPoints = 60,
-  })  : cpuHistory = cpuHistory ?? [],
-        memoryHistory = memoryHistory ?? [],
-        diskHistory = diskHistory ?? [],
-        uploadHistory = uploadHistory ?? [],
-        downloadHistory = downloadHistory ?? [],
-        load1History = load1History ?? [],
-        load5History = load5History ?? [],
-        load15History = load15History ?? [];
+  }) : cpuHistory = cpuHistory ?? [],
+       memoryHistory = memoryHistory ?? [],
+       diskHistory = diskHistory ?? [],
+       uploadHistory = uploadHistory ?? [],
+       downloadHistory = downloadHistory ?? [],
+       load1History = load1History ?? [],
+       load5History = load5History ?? [],
+       load15History = load15History ?? [];
 
   void addDataPoint(
     double cpu,
@@ -93,8 +93,5 @@ class MetricPoint {
   final DateTime timestamp;
   final double value;
 
-  MetricPoint({
-    required this.timestamp,
-    required this.value,
-  });
+  MetricPoint({required this.timestamp, required this.value});
 }

@@ -122,16 +122,18 @@ class _HostCardsState extends State<HostCards> {
                           Icon(
                             Icons.location_on_rounded,
                             size: 14,
-                            color: theme.colorScheme.onSurface
-                                .withValues(alpha: 0.5),
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.5,
+                            ),
                           ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               _getDisplayAddress(),
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurface
-                                    .withValues(alpha: 0.6),
+                                color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.6,
+                                ),
                                 fontFamily: _isIpVisible ? 'monospace' : null,
                               ),
                               overflow: TextOverflow.ellipsis,
@@ -146,8 +148,9 @@ class _HostCardsState extends State<HostCards> {
                           child: Text(
                             widget.geoInfo!.fullLocation,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface
-                                  .withValues(alpha: 0.5),
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.5,
+                              ),
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -239,7 +242,7 @@ class _HostCardsState extends State<HostCards> {
             color: color.withValues(alpha: 0.4),
             blurRadius: 4,
             spreadRadius: 1,
-          )
+          ),
         ],
       ),
     );

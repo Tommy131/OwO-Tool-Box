@@ -40,8 +40,9 @@ class DonationUser {
       amount: (json['amount'] as num).toDouble(),
       avatar: json['avatar'] as String?,
       message: json['message'] as String?,
-      date:
-          json['date'] != null ? DateTime.parse(json['date'] as String) : null,
+      date: json['date'] != null
+          ? DateTime.parse(json['date'] as String)
+          : null,
     );
   }
 

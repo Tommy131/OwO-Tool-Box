@@ -139,11 +139,13 @@ class SystemInfoModel {
       cpu: CpuInfo.fromJson(json['cpu'] ?? {}),
       memory: MemoryInfo.fromJson(json['memory'] ?? {}),
       system: SystemBaseInfo.fromJson(json['mainboard'] ?? {}),
-      disks: (json['disks'] as List<dynamic>?)
+      disks:
+          (json['disks'] as List<dynamic>?)
               ?.map((disk) => DiskInfo.fromJson(disk as Map<String, dynamic>))
               .toList() ??
           [],
-      networks: (json['network'] as List<dynamic>?)
+      networks:
+          (json['network'] as List<dynamic>?)
               ?.map((net) => NetworkInfo.fromJson(net as Map<String, dynamic>))
               .toList() ??
           [],
@@ -223,7 +225,8 @@ class CpuInfo {
       modelName: json['model_name'] as String? ?? 'Unknown',
       cores: json['cores'] as int? ?? 0,
       frequencyMhz: (json['frequency_mhz'] as num?)?.toDouble() ?? 0.0,
-      perCoreUsage: (json['usage_rate_percent'] as List<dynamic>?)
+      perCoreUsage:
+          (json['usage_rate_percent'] as List<dynamic>?)
               ?.map((e) => (e as num).toDouble())
               .toList() ??
           [],
@@ -511,10 +514,6 @@ class LoadAverageInfo {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'load1': load1min,
-      'load5': load5min,
-      'load15': load15min,
-    };
+    return {'load1': load1min, 'load5': load5min, 'load15': load15min};
   }
 }

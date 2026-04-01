@@ -52,14 +52,16 @@ class FormatUtils {
   /// 验证IPv4地址格式
   static bool isValidIPv4(String host) {
     final ipv4Regex = RegExp(
-        r'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$');
+      r'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$',
+    );
     return ipv4Regex.hasMatch(host);
   }
 
   /// 验证域名格式
   static bool isValidDomain(String host) {
     final domainRegex = RegExp(
-        r'^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$');
+      r'^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$',
+    );
     return domainRegex.hasMatch(host);
   }
 

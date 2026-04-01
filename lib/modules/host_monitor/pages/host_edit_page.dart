@@ -187,8 +187,7 @@ class _HostEditPageState extends State<HostEditPage> {
           context: context,
           style: ConfirmDialogStyle.material,
           title: _tr(HostL10n.LocalizationKeys.connectionFailed),
-          content:
-              '${_tr(HostL10n.LocalizationKeys.connectionTestError)}:\n$e',
+          content: '${_tr(HostL10n.LocalizationKeys.connectionTestError)}:\n$e',
           icon: Icons.error,
           confirmColor: Theme.of(context).colorScheme.error,
           confirmText: _tr(CoreL10n.LocalizationKeys.confirm),
