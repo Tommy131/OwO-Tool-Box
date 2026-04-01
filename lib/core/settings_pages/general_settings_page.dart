@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:math';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
@@ -28,6 +30,7 @@ class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
   String? _currentPath;
   bool _logEnabled = true;
   double _logMaxSizeMb = 5;
+  int _cacheSize = 0;
 
   @override
   void initState() {
@@ -36,6 +39,23 @@ class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
     final settings = AppLogger.loadSettings();
     _logEnabled = settings.enabled;
     _logMaxSizeMb = settings.maxFileSizeMb.toDouble();
+    _updateCacheSize();
+  }
+
+  Future<void> _updateCacheSize() async {
+    final size = await PersistenceService().getCacheSize();
+    if (mounted) {
+      setState(() {
+        _cacheSize = size;
+      });
+    }
+  }
+
+  String _formatBytes(int bytes) {
+    if (bytes <= 0) return '0 B';
+    const suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    var i = (log(bytes) / log(1024)).floor();
+    return '${(bytes / pow(1024, i)).toStringAsFixed(2)} ${suffixes[i]}';
   }
 
   Future<void> _updatePath(String newPath) async {
@@ -51,10 +71,9 @@ class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
     );
 
     if (result == true) {
-      await PersistenceService().init(customPath: newPath);
+      await PersistenceService().migrateTo(newPath);
       final finalPath = PersistenceService().rootPath!;
 
-      await PersistenceService().set('data_root_path', finalPath);
       await AppLogger.init();
 
       setState(() {
@@ -75,6 +94,9 @@ class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
       _logEnabled = value;
     });
     await AppLogger.updateSettings(enabled: value);
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> _updateLogMaxSize(double value) async {
@@ -117,8 +139,12 @@ class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
           _buildLogSection(theme),
           const SizedBox(height: AppThemeData.spacingSmall),
 
+          _buildCacheSection(theme),
+          const SizedBox(height: AppThemeData.spacingSmall),
+
           _buildUpdateCheckSection(theme),
           const SizedBox(height: AppThemeData.spacingSmall),
+
           _buildDangerSection(context, theme),
 
           if (kDebugMode) ...[
@@ -274,6 +300,103 @@ class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
     );
   }
 
+  Widget _buildCacheSection(ThemeData theme) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppThemeData.spacingMedium),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(
+                      AppThemeData.borderRadiusSmall,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.cleaning_services_outlined,
+                    color: theme.colorScheme.primary,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: AppThemeData.spacingSmall),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        LocalizationKeys.clearCache.tr(context),
+                        style: theme.textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        LocalizationKeys.clearCacheDesc.tr(context),
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppThemeData.spacingMedium),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    LocalizationKeys.cacheSize
+                        .tr(context)
+                        .replaceFirst('{}', _formatBytes(_cacheSize)),
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: _handleClearCache,
+                  icon: const Icon(Icons.delete_sweep_outlined, size: 18),
+                  label: Text(LocalizationKeys.clearCache.tr(context)),
+                  style: TextButton.styleFrom(
+                    foregroundColor: theme.colorScheme.error,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleClearCache() async {
+    final result = await showAdvancedConfirmDialog(
+      context: context,
+      title: LocalizationKeys.clearCacheConfirmTitle.tr(context),
+      content: LocalizationKeys.clearCacheConfirmContent.tr(context),
+      icon: Icons.cleaning_services_outlined,
+      confirmText: LocalizationKeys.confirm.tr(context),
+      cancelText: LocalizationKeys.cancel.tr(context),
+    );
+
+    if (result == true) {
+      try {
+        await PersistenceService().clearCache();
+        await _updateCacheSize();
+        if (mounted) {
+          SnackBarHelper.showSuccess(
+            context,
+            LocalizationKeys.clearCacheSuccess.tr(context),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          SnackBarHelper.showError(context, '清除缓存失败: $e');
+        }
+      }
+    }
+  }
+
   Widget _buildStorageSection(ThemeData theme) {
     return Card(
       child: Padding(
@@ -323,7 +446,7 @@ class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
               showHeader: false,
               contentPadding: EdgeInsets.zero,
               enableTap: false,
-              showChangeButton: true,
+              showChangeButton: !(Platform.isAndroid || Platform.isIOS),
             ),
           ],
         ),
@@ -412,6 +535,22 @@ class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
                   : null,
               onChangeEnd: _logEnabled ? _updateLogMaxSize : null,
             ),
+            if (_logEnabled && AppLogger.logDirectory != null) ...[
+              const SizedBox(height: AppThemeData.spacingMedium),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    final logDir = AppLogger.logDirectory;
+                    if (logDir != null) {
+                      await _openDirectory(logDir);
+                    }
+                  },
+                  icon: const Icon(Icons.folder_open, size: 18),
+                  label: Text(LocalizationKeys.openLogFolder.tr(context)),
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -575,7 +714,7 @@ class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
         cancelText: '',
       );
 
-      if (mounted) {
+      if (mounted && !Platform.isIOS && !Platform.isAndroid) {
         final executable = Platform.resolvedExecutable;
         await Process.start(executable, []);
         await windowManager.setPreventClose(false);
@@ -692,13 +831,33 @@ class _GeneralSettingsPageState extends State<GeneralSettingsPage> {
   Future<void> _openBootstrapDirectory(String? filePath) async {
     if (filePath == null) return;
     final directory = p.dirname(filePath);
-    if (await Directory(directory).exists()) {
+    await _openDirectory(directory);
+  }
+
+  Future<void> _openDirectory(String directory) async {
+    if (!await Directory(directory).exists()) {
+      if (mounted) {
+        SnackBarHelper.showError(context, '目录不存在: $directory');
+      }
+      return;
+    }
+
+    try {
       if (Platform.isWindows) {
         await Process.run('explorer.exe', [directory]);
       } else if (Platform.isMacOS) {
         await Process.run('open', [directory]);
       } else if (Platform.isLinux) {
         await Process.run('xdg-open', [directory]);
+      } else if (Platform.isAndroid || Platform.isIOS) {
+        await FilePicker.platform.getDirectoryPath(
+          dialogTitle: LocalizationKeys.openDirectory.tr(context),
+          initialDirectory: directory,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        SnackBarHelper.showError(context, '打开目录失败: $e');
       }
     }
   }

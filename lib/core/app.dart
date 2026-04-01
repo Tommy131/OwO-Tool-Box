@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -8,6 +9,7 @@ import 'settings_pages/settings_page.dart';
 import 'theme/theme_provider.dart';
 import 'constants/app_constants.dart';
 import 'module_registry/navigation/navigation_item.dart';
+import 'services/back_handler_service.dart';
 import 'services/notification_service.dart';
 import 'utils/logger.dart';
 import 'utils/update_checker.dart';
@@ -15,6 +17,7 @@ import 'layouts/desktop_layout.dart';
 import 'layouts/mobile_layout.dart';
 import 'layouts/responsive.dart';
 import 'widgets/common/dialog.dart';
+import 'widgets/common/snack_bar.dart';
 import 'widgets/desktop/custom_title_bar.dart';
 import 'module_registry/sidebar/sidebar_footer.dart';
 import 'module_registry/sidebar/sidebar_footer_registry.dart';
@@ -95,11 +98,19 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
   bool _isSetupMode = true;
   bool _isInitialized = false;
   int _selectedIndex = 0;
+  DateTime? _lastPopTime;
 
   @override
   void initState() {
     super.initState();
-    windowManager.addListener(this);
+
+    if (!Platform.isIOS && !Platform.isAndroid) {
+      windowManager.addListener(this);
+    }
+
+    NavigationCommandBus().targetId.addListener(
+      _handleNavigationCommandChanged,
+    );
 
     _initializeApp();
   }
@@ -120,7 +131,9 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
           final dir = Directory(configuredPath);
           try {
             if (!await dir.exists()) {
-              AppLogger.warning('存储路径不存在: $configuredPath，准备重置引导流程...');
+              AppLogger.warning(
+                'Storage path does not exist: $configuredPath, resetting boot flow...',
+              );
               if (mounted) {
                 await showAdvancedConfirmDialog(
                   context: context,
@@ -135,7 +148,7 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
               await bootstrap.reset(); // 删除 bootstrap.json 并重置
             }
           } catch (e) {
-            AppLogger.error('检查存储路径访问权限失败: $e');
+            AppLogger.error('Failed to check storage path permissions: $e');
             if (mounted) {
               await showAdvancedConfirmDialog(
                 context: context,
@@ -166,37 +179,43 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
 
       await AppLogger.init();
 
-      // 4. 初始化所有业务模块（通过统一入口）
-      ModulesRegisterEntry.registerAll();
-
-      // 5. 注册核心基础导航项 (如：设置)
-      ModuleRegistry().navigation.register(
-        (context) => NavigationItem(
-          id: 'settings',
-          title: LocalizationKeys.settings.tr(context),
-          icon: Icons.settings_outlined,
-          activeIcon: Icons.settings,
-          page: const SettingsPage(),
-          priority: 9999, // 设置页面通常放在最后
-        ),
-      );
+      final moduleRegistry = ModuleRegistry();
+      if (!moduleRegistry.isInitialized) {
+        ModulesRegisterEntry.registerAll();
+        moduleRegistry.navigation.register(
+          (context) => NavigationItem(
+            id: 'settings',
+            title: LocalizationKeys.settings.tr(context),
+            icon: Icons.settings_outlined,
+            activeIcon: Icons.settings,
+            page: const SettingsPage(),
+            priority: 9999,
+            defaultEnabled: true,
+          ),
+        );
+      }
 
       // 6. 初始化通知服务
       final notificationService = NotificationService();
       await notificationService.initialize();
 
-      // Add this line to override the default close handler
-      await windowManager.setPreventClose(true);
+      if (!Platform.isIOS && !Platform.isAndroid) {
+        // Add this line to override the default close handler
+        await windowManager.setPreventClose(true);
+      }
 
       // 模拟加载核心资源和数据（仅用于演示高级加载效果）
-      // AppLogger.info('正在模拟加载业务数据 (5s)...');
+      // AppLogger.info('Simulating loading business data (5s)...');
       // await Future.delayed(const Duration(seconds: 5));
-      // AppLogger.info('业务数据加载完成');
+      // AppLogger.info('Business data loading completed');
 
       if (mounted) {
         setState(() {
           _isSetupMode = bootstrap.isFirstLaunch();
           _isInitialized = true;
+        });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _consumeNavigationCommand();
         });
 
         if (!_isSetupMode) {
@@ -228,33 +247,127 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
   Future<void> _handleAppCleanup() async {
     try {
       // 在这里集中处理所有需要最后保存或清理的操作
-      AppLogger.info('开始执行应用清理操作...');
+      AppLogger.info('Starting app cleanup...');
 
       // 执行模块化注册的清理回调
       await ModuleRegistry().performCleanup();
 
       // 清理通知服务
       ModuleRegistry().registerCleanup(() async {
-        AppLogger.info('[Cleanup] 正在清理通知服务资源...');
+        AppLogger.info(
+          '[Cleanup] Cleaning up notification service resources...',
+        );
         await NotificationService().dispose();
       });
 
-      AppLogger.info('应用清理完成。');
+      AppLogger.info('App cleanup completed.');
     } catch (e) {
-      AppLogger.error('清理过程中出错: $e');
+      AppLogger.error('Error during cleanup: $e');
     }
   }
 
   @override
   void dispose() {
-    windowManager.removeListener(this);
+    NavigationCommandBus().targetId.removeListener(
+      _handleNavigationCommandChanged,
+    );
+
+    if (!Platform.isIOS && !Platform.isAndroid) {
+      windowManager.removeListener(this);
+    }
     super.dispose();
+  }
+
+  void _handleNavigationCommandChanged() {
+    _consumeNavigationCommand();
+  }
+
+  void _consumeNavigationCommand() {
+    final targetId = NavigationCommandBus().targetId.value;
+    if (targetId == null || targetId.isEmpty || !_isInitialized || !mounted) {
+      return;
+    }
+    final elements = NavigationRegistry().getNavigationElements(context);
+    final List<NavigationItem> flatItems = [];
+    for (final element in elements) {
+      if (element.isGroup) {
+        flatItems.addAll(element.children);
+      } else if (element.item != null) {
+        flatItems.add(element.item!);
+      }
+    }
+
+    final targetIndex = flatItems.indexWhere((item) => item.id == targetId);
+    NavigationCommandBus().clear();
+    if (targetIndex < 0 || targetIndex == _selectedIndex) {
+      return;
+    }
+    setState(() {
+      _selectedIndex = targetIndex;
+    });
   }
 
   void _onNavigationChanged(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  /// 处理 Android 物理返回键
+  void _handlePopInvoked(bool didPop, dynamic result) {
+    if (didPop) return;
+
+    // 优先执行模块注册的自定义返回回调
+    if (BackHandlerService().handleBack()) {
+      return;
+    }
+
+    // 如果 Navigator 还有可以返回的页面，则执行 Navigator 的 pop
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.pop();
+      return;
+    }
+
+    // 如果在初始化引导模式下，直接进入退出提示逻辑
+    if (_isSetupMode) {
+      _showExitPrompt();
+      return;
+    }
+
+    // 如果当前不在首页（第一个 Tab），则返回到首页
+    if (_selectedIndex != 0) {
+      setState(() {
+        _selectedIndex = 0;
+      });
+      return;
+    }
+
+    // 如果已经在首页，则提示再次操作以退出
+    _showExitPrompt();
+  }
+
+  /// 显示“再次操作以退出”提示或执行退出
+  void _showExitPrompt() {
+    final now = DateTime.now();
+    if (_lastPopTime == null ||
+        now.difference(_lastPopTime!) > const Duration(seconds: 2)) {
+      _lastPopTime = now;
+      if (mounted) {
+        SnackBarHelper.showInfo(
+          context,
+          LocalizationKeys.doubleBackExit.tr(context),
+        );
+      }
+      return;
+    }
+
+    // 连续两次触发，退出程序
+    if (Platform.isAndroid) {
+      SystemNavigator.pop();
+    } else {
+      exit(0);
+    }
   }
 
   @override
@@ -282,85 +395,96 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
               adjustment: themeProvider.lightContrastAdjustment,
             );
 
+      Widget loadingScaffold = Scaffold(
+        backgroundColor: isDark
+            ? const Color(0xFF121212)
+            : theme.scaffoldBackgroundColor,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // App Logo with subtle glow
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.primaryColor.withValues(alpha: 0.3),
+                      blurRadius: 40,
+                      spreadRadius: 5,
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: Image.asset(
+                    AppConstants.assetIconPath,
+                    width: 100,
+                    height: 100,
+                    errorBuilder: (context, error, stackTrace) =>
+                        Icon(Icons.apps, size: 80, color: theme.primaryColor),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 32),
+              // App Name with professional styling
+              Text(
+                AppConstants.appName,
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontFamily: 'MicrosoftYaHei',
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.5,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 48),
+              // Premium Progress Indicator
+              SizedBox(
+                width: 240,
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: LinearProgressIndicator(
+                        minHeight: 6,
+                        backgroundColor: theme.primaryColor.withValues(
+                          alpha: 0.1,
+                        ),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          theme.primaryColor,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      LocalizationKeys.loading.tr(context),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: (isDark ? Colors.white70 : Colors.black54)
+                            .withValues(alpha: 0.8),
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      // 针对 Android 设备在加载界面也提供返回键退出逻辑
+      if (Platform.isAndroid || Platform.isIOS) {
+        loadingScaffold = PopScope(
+          canPop: false,
+          onPopInvokedWithResult: _handlePopInvoked,
+          child: loadingScaffold,
+        );
+      }
+
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: theme,
-        home: Scaffold(
-          backgroundColor: isDark
-              ? const Color(0xFF121212)
-              : theme.scaffoldBackgroundColor,
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // App Logo with subtle glow
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: theme.primaryColor.withValues(alpha: 0.3),
-                        blurRadius: 40,
-                        spreadRadius: 5,
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(24),
-                    child: Image.asset(
-                      AppConstants.assetIconPath,
-                      width: 100,
-                      height: 100,
-                      errorBuilder: (context, error, stackTrace) =>
-                          Icon(Icons.apps, size: 80, color: theme.primaryColor),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 32),
-                // App Name with professional styling
-                Text(
-                  AppConstants.appName,
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    fontFamily: 'MicrosoftYaHei',
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.5,
-                    color: isDark ? Colors.white : Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 48),
-                // Premium Progress Indicator
-                SizedBox(
-                  width: 240,
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: LinearProgressIndicator(
-                          minHeight: 6,
-                          backgroundColor: theme.primaryColor.withValues(
-                            alpha: 0.1,
-                          ),
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            theme.primaryColor,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        LocalizationKeys.loading.tr(context),
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: (isDark ? Colors.white70 : Colors.black54)
-                              .withValues(alpha: 0.8),
-                          letterSpacing: 1.1,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        home: loadingScaffold,
       );
     }
 
@@ -368,23 +492,35 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     // 从注册表获取所有导航项
-    final List<NavigationItem> navigationItems = ModuleRegistry().navigation
-        .getAllItems(context);
+    final elements = NavigationRegistry().getNavigationElements(context);
+
+    // 扁平化所有项目，用于索引匹配和页面切换
+    final List<NavigationItem> flatItems = [];
+    for (final element in elements) {
+      if (element.isGroup) {
+        flatItems.addAll(element.children);
+      } else if (element.item != null) {
+        flatItems.add(element.item!);
+      }
+    }
 
     final moduleProviders = ModuleRegistry().providers.getAll();
 
     Widget child = _isSetupMode
         ? SetupWizard(
             key: ValueKey(_isSetupMode),
-            onCompleted: () => setState(() => _isSetupMode = false),
+            onCompleted: () async {
+              await _initializeApp();
+              setState(() => _isSetupMode = false);
+            },
           )
         : Column(
             children: [
               if (!Platform.isAndroid && !Platform.isIOS) ...[
-                const CustomTitleBar(
+                CustomTitleBar(
                   title: Text(
                     AppConstants.appName,
-                    style: TextStyle(fontFamily: 'MicrosoftYaHei'),
+                    style: const TextStyle(fontFamily: 'MicrosoftYaHei'),
                   ),
                 ),
                 Divider(
@@ -396,13 +532,13 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
                 child: Responsive(
                   // 移动端布局
                   mobile: MobileLayout(
-                    navigationItems: navigationItems,
+                    navigationItems: flatItems,
                     selectedIndex: _selectedIndex,
                     onNavigationChanged: _onNavigationChanged,
                   ),
                   // 桌面端布局
                   desktop: DesktopLayout(
-                    navigationItems: navigationItems,
+                    navigationElements: elements,
                     selectedIndex: _selectedIndex,
                     onNavigationChanged: _onNavigationChanged,
                   ),
@@ -412,7 +548,16 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
           );
 
     if (moduleProviders.isNotEmpty) {
-      return MultiProvider(providers: moduleProviders, child: child);
+      child = MultiProvider(providers: moduleProviders, child: child);
+    }
+
+    // 针对 Android 设备增强返回键处理
+    if (Platform.isAndroid || Platform.isIOS) {
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: _handlePopInvoked,
+        child: child,
+      );
     }
 
     return child;
@@ -420,6 +565,9 @@ class _MainScreenState extends State<MainScreen> with WindowListener {
 
   @override
   void onWindowClose() async {
+    if (!!Platform.isIOS && !Platform.isAndroid) {
+      return;
+    }
     bool isPreventClose = await windowManager.isPreventClose();
     if (isPreventClose && mounted) {
       final result = await showAdvancedConfirmDialog(

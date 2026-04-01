@@ -1,10 +1,15 @@
+import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_constants.dart';
 import '../theme/app_theme_data.dart';
 import '../utils/url_launcher_helper.dart';
+import '../utils/update_checker.dart';
 import '../localization/localization_keys.dart';
 import '../services/localization_service.dart';
+import '../widgets/common/overflow_marquee_text.dart';
 
 import '../module_registry/module_registry.dart';
 import '../module_registry/about_page/about_page_item.dart';
@@ -40,6 +45,22 @@ class AboutPage extends StatelessWidget {
         id: 'developer',
         priority: 30,
         builder: (_) => const _DeveloperCard(),
+      ),
+    );
+
+    registry.register(
+      AboutPageItem(
+        id: 'discord_community',
+        priority: 35,
+        builder: (_) => const _DiscordCommunityCard(),
+      ),
+    );
+
+    registry.register(
+      AboutPageItem(
+        id: 'contributors',
+        priority: 38,
+        builder: (_) => const _ContributorsCard(),
       ),
     );
 
@@ -98,49 +119,136 @@ class AboutPage extends StatelessWidget {
   }
 }
 
-class _AppIconCard extends StatelessWidget {
+class _AppIconCard extends StatefulWidget {
   const _AppIconCard();
+
+  @override
+  State<_AppIconCard> createState() => _AppIconCardState();
+}
+
+class _AppIconCardState extends State<_AppIconCard> {
+  final GlobalKey _logoKey = GlobalKey();
+  int _tapCount = 0;
+  DateTime? _lastTapTime;
+  Timer? _tapResetTimer;
+  OverlayEntry? _effectEntry;
+
+  @override
+  void dispose() {
+    _tapResetTimer?.cancel();
+    _removeEffect();
+    super.dispose();
+  }
+
+  void _handleLogoTap() {
+    final now = DateTime.now();
+    if (_lastTapTime == null ||
+        now.difference(_lastTapTime!) > const Duration(milliseconds: 1000)) {
+      _tapCount = 0;
+    }
+    _lastTapTime = now;
+    _tapCount += 1;
+    _tapResetTimer?.cancel();
+    _tapResetTimer = Timer(const Duration(milliseconds: 1400), () {
+      _tapCount = 0;
+    });
+    if (_tapCount < 10) {
+      return;
+    }
+    _tapCount = 0;
+    _triggerEasterEgg();
+  }
+
+  void _triggerEasterEgg() {
+    final context = _logoKey.currentContext;
+    if (context == null) {
+      return;
+    }
+    final renderBox = context.findRenderObject();
+    if (renderBox is! RenderBox || !renderBox.hasSize) {
+      return;
+    }
+    final origin = renderBox.localToGlobal(
+      Offset(renderBox.size.width / 2, renderBox.size.height + 12),
+    );
+    final overlay = Overlay.of(context, rootOverlay: true);
+    _removeEffect();
+    SystemSound.play(SystemSoundType.alert);
+    Timer(
+      const Duration(milliseconds: 140),
+      () => SystemSound.play(SystemSoundType.click),
+    );
+    Timer(
+      const Duration(milliseconds: 280),
+      () => SystemSound.play(SystemSoundType.click),
+    );
+    _effectEntry = OverlayEntry(
+      builder: (_) =>
+          _LogoRibbonOverlay(origin: origin, onFinished: _removeEffect),
+    );
+    overlay.insert(_effectEntry!);
+  }
+
+  void _removeEffect() {
+    _effectEntry?.remove();
+    _effectEntry = null;
+  }
+
+  Future<void> _checkForUpdates() {
+    return UpdateChecker.checkAndShowUpdate(
+      context,
+      showLoadingSnackBar: true,
+      showNoUpdateSnackBar: true,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
         children: [
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).colorScheme.secondary,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(30),
-              boxShadow: [
-                BoxShadow(
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
-                  blurRadius: 20,
-                  spreadRadius: 5,
-                  offset: const Offset(0, 8),
+          GestureDetector(
+            onTap: _handleLogoTap,
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              key: _logoKey,
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Theme.of(context).primaryColor,
+                    Theme.of(context).colorScheme.secondary,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(30),
-              child: Semantics(
-                image: true,
-                label: LocalizationKeys.appLogo.tr(context),
-                child: ExcludeSemantics(
-                  child: Image.asset(
-                    AppConstants.assetIconPath,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) => const Icon(
-                      Icons.dashboard_rounded,
-                      size: 60,
-                      color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(
+                      context,
+                    ).primaryColor.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                    spreadRadius: 5,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: Semantics(
+                  image: true,
+                  label: LocalizationKeys.appLogo.tr(context),
+                  child: ExcludeSemantics(
+                    child: Image.asset(
+                      AppConstants.assetIconPath,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.dashboard_rounded,
+                        size: 60,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -152,13 +260,201 @@ class _AppIconCard extends StatelessWidget {
             AppConstants.appName,
             style: Theme.of(context).textTheme.displaySmall,
           ),
-          Text(
-            'Version ${AppConstants.appVersion}',
-            style: Theme.of(context).textTheme.bodyMedium,
+          TextButton(
+            onPressed: _checkForUpdates,
+            child: Text(
+              'Version ${AppConstants.appVersion}',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
           ),
         ],
       ),
     );
+  }
+}
+
+class _LogoRibbonOverlay extends StatefulWidget {
+  final Offset origin;
+  final VoidCallback onFinished;
+
+  const _LogoRibbonOverlay({required this.origin, required this.onFinished});
+
+  @override
+  State<_LogoRibbonOverlay> createState() => _LogoRibbonOverlayState();
+}
+
+class _LogoRibbonOverlayState extends State<_LogoRibbonOverlay>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final List<_RibbonParticle> _particles;
+
+  @override
+  void initState() {
+    super.initState();
+    _particles = _buildParticles();
+    _controller =
+        AnimationController(
+            vsync: this,
+            duration: const Duration(milliseconds: 3600),
+          )
+          ..addStatusListener((status) {
+            if (status == AnimationStatus.completed) {
+              widget.onFinished();
+            }
+          })
+          ..forward();
+  }
+
+  List<_RibbonParticle> _buildParticles() {
+    final random = math.Random();
+    const palette = <Color>[
+      Color(0xFFFF5D73),
+      Color(0xFFFFC14D),
+      Color(0xFF6EE7B7),
+      Color(0xFF6EA8FF),
+      Color(0xFFB794F4),
+      Color(0xFF4ECDC4),
+      Color(0xFFFF7F50),
+      Color(0xFFE056FD),
+    ];
+    return List<_RibbonParticle>.generate(170, (index) {
+      final speedX = (random.nextDouble() - 0.5) * 240;
+      final speedY = 120 + random.nextDouble() * 260;
+      final delay = random.nextDouble() * 0.9;
+      final life = 1.8 + random.nextDouble() * 1.2;
+      final rotationSpeed = (random.nextDouble() - 0.5) * 7.2;
+      final width = 4.0 + random.nextDouble() * 4;
+      final height = 9.0 + random.nextDouble() * 13;
+      final color = palette[random.nextInt(palette.length)];
+      final baseRotation = random.nextDouble() * math.pi;
+      return _RibbonParticle(
+        velocity: Offset(speedX, speedY),
+        delaySec: delay,
+        lifeSec: life,
+        rotationSpeed: rotationSpeed,
+        width: width,
+        height: height,
+        color: color,
+        baseRotation: baseRotation,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final safePadding = MediaQuery.of(context).padding;
+    return IgnorePointer(
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, _) {
+          return CustomPaint(
+            size: size,
+            painter: _RibbonPainter(
+              particles: _particles,
+              progress: _controller.value,
+              origin: widget.origin,
+              settleY: size.height - safePadding.bottom - 84,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _RibbonParticle {
+  final Offset velocity;
+  final double delaySec;
+  final double lifeSec;
+  final double rotationSpeed;
+  final double width;
+  final double height;
+  final Color color;
+  final double baseRotation;
+
+  const _RibbonParticle({
+    required this.velocity,
+    required this.delaySec,
+    required this.lifeSec,
+    required this.rotationSpeed,
+    required this.width,
+    required this.height,
+    required this.color,
+    required this.baseRotation,
+  });
+}
+
+class _RibbonPainter extends CustomPainter {
+  final List<_RibbonParticle> particles;
+  final double progress;
+  final Offset origin;
+  final double settleY;
+
+  const _RibbonPainter({
+    required this.particles,
+    required this.progress,
+    required this.origin,
+    required this.settleY,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final totalSec = 3.6;
+    final nowSec = progress * totalSec;
+    final fadeGlobal = progress > 0.76 ? 1 - ((progress - 0.76) / 0.24) : 1.0;
+    for (final particle in particles) {
+      final age = nowSec - particle.delaySec;
+      if (age <= 0 || age >= particle.lifeSec) {
+        continue;
+      }
+      final lifeT = age / particle.lifeSec;
+      var px = origin.dx + particle.velocity.dx * age;
+      var py = origin.dy + particle.velocity.dy * age + 220 * age * age;
+      final settleClamp = settleY - (particle.height * 0.5);
+      if (py > settleClamp) {
+        py = settleClamp;
+      }
+      if (px < -40 || px > size.width + 40) {
+        continue;
+      }
+      final alpha = (1.0 - math.max(0, lifeT - 0.72) / 0.28) * fadeGlobal;
+      if (alpha <= 0) {
+        continue;
+      }
+      final paint = Paint()
+        ..color = particle.color.withValues(alpha: alpha.clamp(0, 1));
+      final angle = particle.baseRotation + particle.rotationSpeed * age;
+      canvas.save();
+      canvas.translate(px, py);
+      canvas.rotate(angle);
+      final rect = Rect.fromCenter(
+        center: Offset.zero,
+        width: particle.width,
+        height: particle.height,
+      );
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(rect, const Radius.circular(2)),
+        paint,
+      );
+      canvas.restore();
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _RibbonPainter oldDelegate) {
+    return oldDelegate.progress != progress ||
+        oldDelegate.origin != origin ||
+        oldDelegate.settleY != settleY ||
+        oldDelegate.particles != particles;
   }
 }
 
@@ -192,8 +488,14 @@ class _AppInfoCard extends StatelessWidget {
             const SizedBox(height: 12),
             _ClickableInfoRow(
               label: LocalizationKeys.versionLabel.tr(context),
-              value: AppConstants.appVersion,
+              value:
+                  '${AppConstants.appVersion} (${AppConstants.appBuildVersion})',
               icon: Icons.history_rounded,
+              onTap: () => UpdateChecker.checkAndShowUpdate(
+                context,
+                showLoadingSnackBar: true,
+                showNoUpdateSnackBar: true,
+              ),
             ),
           ],
         ),
@@ -270,10 +572,74 @@ class _OpenSourceCard extends StatelessWidget {
             const SizedBox(height: 12),
             _ClickableInfoRow(
               label: LocalizationKeys.projectSourceCode.tr(context),
-              value: 'GitHub / OwO-Dashboard',
+              value: 'GitHub',
               icon: Icons.code_rounded,
               onTap: () =>
                   UrlLauncherHelper.launchURL(AppConstants.githubRepoUrl),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DiscordCommunityCard extends StatelessWidget {
+  const _DiscordCommunityCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppThemeData.spacingMedium),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF5865F2).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(
+                      AppThemeData.borderRadiusSmall,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.forum_outlined,
+                    color: Color(0xFF5865F2),
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: AppThemeData.spacingSmall),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        LocalizationKeys.community.tr(context),
+                        style: theme.textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        LocalizationKeys.discordCommunityDesc.tr(context),
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppThemeData.spacingMedium),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () =>
+                    UrlLauncherHelper.launchURL(AppConstants.discordInviteUrl),
+                icon: const Icon(Icons.open_in_new_rounded, size: 18),
+                label: Text(LocalizationKeys.joinDiscord.tr(context)),
+              ),
             ),
           ],
         ),
@@ -305,6 +671,109 @@ class _CopyrightCard extends StatelessWidget {
   }
 }
 
+class _ContributorsCard extends StatelessWidget {
+  const _ContributorsCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final contributors = <_ContributorEntry>[
+      const _ContributorEntry(
+        name: 'HanskiJay (Tommy131)',
+        contribution: '最肝的开发者',
+      ),
+    ];
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppThemeData.spacingMedium),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _CardHeader(
+              icon: Icons.groups_rounded,
+              title: LocalizationKeys.contributors.tr(context),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              LocalizationKeys.contributorsDesc.tr(context),
+              style: theme.textTheme.bodySmall,
+            ),
+            const Divider(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    LocalizationKeys.contributors.tr(context),
+                    style: theme.textTheme.titleSmall,
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    '事件',
+                    style: theme.textTheme.titleSmall,
+                    textAlign: TextAlign.right,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            ...contributors.asMap().entries.expand(
+              (entry) => [
+                _ContributorRow(item: entry.value),
+                if (entry.key != contributors.length - 1)
+                  const Divider(height: 14),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ContributorRow extends StatelessWidget {
+  final _ContributorEntry item;
+
+  const _ContributorRow({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: OverflowMarqueeText(
+              text: item.name,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            flex: 3,
+            child: OverflowMarqueeText(
+              text: item.contribution,
+              textAlign: TextAlign.right,
+              style: Theme.of(context).textTheme.bodyMedium,
+              alignment: Alignment.centerRight,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ContributorEntry {
+  final String name;
+  final String contribution;
+
+  const _ContributorEntry({required this.name, required this.contribution});
+}
+
 class _CardHeader extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -317,11 +786,13 @@ class _CardHeader extends StatelessWidget {
       children: [
         Icon(icon, size: 20, color: Theme.of(context).primaryColor),
         const SizedBox(width: 8),
-        Text(
-          title,
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        Expanded(
+          child: OverflowMarqueeText(
+            text: title,
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     );
@@ -360,14 +831,25 @@ class _ClickableInfoRow extends StatelessWidget {
                   color: Theme.of(context).textTheme.bodyMedium?.color,
                 ),
                 const SizedBox(width: 12),
-                Text(label, style: Theme.of(context).textTheme.bodyLarge),
-                const Spacer(),
-                Text(
-                  value,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: onTap != null
-                        ? Theme.of(context).primaryColor
-                        : null,
+                Expanded(
+                  flex: 3,
+                  child: OverflowMarqueeText(
+                    text: label,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  flex: 4,
+                  child: OverflowMarqueeText(
+                    text: value,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: onTap != null
+                          ? Theme.of(context).primaryColor
+                          : null,
+                    ),
+                    textAlign: TextAlign.right,
+                    alignment: Alignment.centerRight,
                   ),
                 ),
                 if (onTap != null) ...[

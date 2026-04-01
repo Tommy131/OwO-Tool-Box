@@ -5,6 +5,9 @@ import 'navigation/navigation_registry.dart';
 import 'settings_page/settings_page_registry.dart';
 import 'about_page/about_page_registry.dart';
 import 'sidebar/sidebar_footer_registry.dart';
+import 'sidebar/sidebar_mini_card_registry.dart';
+import 'sidebar/sidebar_title_badge_registry.dart';
+import 'sidebar/sidebar_title_registry.dart';
 import 'provider/provider_registry.dart';
 
 /// 模块注册管理器
@@ -16,6 +19,7 @@ class ModuleRegistry {
   final List<ModuleRegistrar> _modules = [];
   final List<Future<void> Function()> _cleanupCallbacks = [];
   bool _initialized = false;
+  bool get isInitialized => _initialized;
 
   /// 注册模块
   void registerModule(ModuleRegistrar module) {
@@ -67,8 +71,22 @@ class ModuleRegistry {
   /// 获取导航项注册表
   NavigationRegistry get navigation => NavigationRegistry();
 
+  /// 获取导航可用性注册表
+  NavigationAvailabilityRegistry get navigationAvailability =>
+      NavigationAvailabilityRegistry();
+
   /// 获取侧边栏页脚注册表
   SidebarFooterRegistry get sidebarFooters => SidebarFooterRegistry();
+
+  /// 获取侧边栏迷你卡片注册表
+  SidebarMiniCardRegistry get sidebarMiniCards => SidebarMiniCardRegistry();
+
+  /// 获取侧边栏标题注册表
+  SidebarTitleRegistry get sidebarTitle => SidebarTitleRegistry();
+
+  /// 获取侧边栏标题状态标识注册表
+  SidebarTitleBadgeRegistry get sidebarTitleBadge =>
+      SidebarTitleBadgeRegistry();
 
   /// 获取 Provider 注册表
   ProviderRegistry get providers => ProviderRegistry();
@@ -82,7 +100,11 @@ class ModuleRegistry {
     SettingsPageRegistry().clear();
     AppBarActionRegistry().clear();
     NavigationRegistry().clear();
+    NavigationAvailabilityRegistry().clear();
     SidebarFooterRegistry().clear();
+    SidebarMiniCardRegistry().clear();
+    SidebarTitleRegistry().clear();
+    SidebarTitleBadgeRegistry().clear();
     _cleanupCallbacks.clear();
   }
 }

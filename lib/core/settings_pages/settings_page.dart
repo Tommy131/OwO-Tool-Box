@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../services/back_handler_service.dart';
 import '../theme/app_theme_data.dart';
 import '../localization/localization_keys.dart';
 import '../services/localization_service.dart';
@@ -98,6 +99,27 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    BackHandlerService().register(_onBack);
+  }
+
+  @override
+  void dispose() {
+    BackHandlerService().unregister(_onBack);
+    super.dispose();
+  }
+
+  bool _onBack() {
+    if (!mounted) return false;
+    if (_currentRoute != 'main') {
+      _goBack();
+      return true;
+    }
+    return false;
+  }
+
+  @override
   Widget build(BuildContext context) {
     context.watch<LocalizationService>();
     _settingsItems = _buildSettingsItems(context);
@@ -141,23 +163,12 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Widget _buildMainMenu() {
-    final theme = Theme.of(context);
+    Theme.of(context);
     return Scaffold(
       key: const ValueKey('main_menu'),
       body: ListView(
         padding: const EdgeInsets.all(AppThemeData.spacingMedium),
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: AppThemeData.spacingMedium,
-            ),
-            child: Text(
-              LocalizationKeys.settings.tr(context),
-              style: theme.textTheme.headlineMedium,
-            ),
-          ),
-          const SizedBox(height: AppThemeData.spacingSmall),
-
           // 根据注册列表自动生成菜单卡片
           ..._settingsItems.map(
             (item) => Padding(
@@ -189,7 +200,9 @@ class _SettingsMenuCard extends StatelessWidget {
         child: ExcludeSemantics(
           child: InkWell(
             onTap: onTap,
-            borderRadius: BorderRadius.circular(AppThemeData.borderRadiusMedium),
+            borderRadius: BorderRadius.circular(
+              AppThemeData.borderRadiusMedium,
+            ),
             child: Padding(
               padding: const EdgeInsets.all(AppThemeData.spacingMedium),
               child: Row(
@@ -197,7 +210,9 @@ class _SettingsMenuCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                      color: Theme.of(
+                        context,
+                      ).primaryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -218,9 +233,12 @@ class _SettingsMenuCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           item.subtitle,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).textTheme.bodySmall?.color,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.bodySmall?.color,
+                              ),
                         ),
                       ],
                     ),

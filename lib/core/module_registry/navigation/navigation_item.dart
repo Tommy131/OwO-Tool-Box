@@ -10,6 +10,8 @@ class NavigationItem {
   final Widget page;
   final String? badge; // 可选的徽章文本（如消息数量）
   final int priority; // 排序优先级，数值越小越靠前
+  final String? groupId; // 所属分组的 ID
+  final bool defaultEnabled; // 是否默认启用
 
   const NavigationItem({
     required this.id,
@@ -19,6 +21,8 @@ class NavigationItem {
     required this.page,
     this.badge,
     this.priority = 100, // 默认优先级为 100
+    this.groupId,
+    this.defaultEnabled = false, // 默认不启用
   });
 
   /// 复制并更新徽章
@@ -30,6 +34,8 @@ class NavigationItem {
     Widget? page,
     String? badge,
     int? priority,
+    String? groupId,
+    bool? defaultEnabled,
   }) {
     return NavigationItem(
       id: id ?? this.id,
@@ -39,6 +45,8 @@ class NavigationItem {
       page: page ?? this.page,
       badge: badge ?? this.badge,
       priority: priority ?? this.priority,
+      groupId: groupId ?? this.groupId,
+      defaultEnabled: defaultEnabled ?? this.defaultEnabled,
     );
   }
 }

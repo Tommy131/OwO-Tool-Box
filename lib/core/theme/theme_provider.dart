@@ -85,7 +85,7 @@ class ThemeProvider extends ChangeNotifier {
 
   /// 切换到下一个主题模式（循环切换）
   Future<void> toggleThemeMode() async {
-    const modes = ThemeMode.values;
+    final modes = ThemeMode.values;
     final currentIndex = modes.indexOf(_themeMode);
     final nextIndex = (currentIndex + 1) % modes.length;
     await setThemeMode(modes[nextIndex]);
@@ -165,7 +165,7 @@ class ThemeProvider extends ChangeNotifier {
       await persistence.setDouble(_lightContrastKey, _lightContrastAdjustment);
       await persistence.setDouble(_darkContrastKey, _darkContrastAdjustment);
     } catch (e) {
-      AppLogger.warning('保存主题设置失败: $e');
+      AppLogger.warning('Failed to save theme settings: $e');
     }
   }
 

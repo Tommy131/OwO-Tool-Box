@@ -30,6 +30,7 @@ class LocalizationKeys {
   static const String resetAppConfirmContent = 'reset_app_confirm_content';
   static const String resetSuccess = 'reset_success';
   static const String success = 'success';
+  static const String doubleBackExit = 'double_back_exit';
 
   // Wizard Steps
   static const String languageStep = 'language_step';
@@ -164,6 +165,13 @@ class LocalizationKeys {
   static const String bootstrapConfig = 'bootstrap_config';
   static const String bootstrapConfigDesc = 'bootstrap_config_desc';
   static const String openDirectory = 'open_directory';
+  static const String openLogFolder = 'open_log_folder';
+  static const String clearCache = 'clear_cache';
+  static const String clearCacheDesc = 'clear_cache_desc';
+  static const String clearCacheConfirmTitle = 'clear_cache_confirm_title';
+  static const String clearCacheConfirmContent = 'clear_cache_confirm_content';
+  static const String clearCacheSuccess = 'clear_cache_success';
+  static const String cacheSize = 'cache_size';
 
   // Update Check
   static const String updateCheck = 'update_check';
@@ -178,7 +186,17 @@ class LocalizationKeys {
   static const String latestVersionLabel = 'latest_version_label';
   static const String updateContent = 'update_content';
   static const String downloadUpdate = 'download_update';
+  static const String viewReleasePage = 'view_release_page';
   static const String alreadyLatestVersion = 'already_latest_version';
+  static const String community = 'community';
+  static const String discordCommunityDesc = 'discord_community_desc';
+  static const String joinDiscord = 'join_discord';
+  static const String contributors = 'contributors';
+  static const String contributorsDesc = 'contributors_desc';
+  static const String contributorsLoading = 'contributors_loading';
+  static const String contributorsEmpty = 'contributors_empty';
+  static const String contributorsRetry = 'contributors_retry';
+  static const String contributorsUnknown = 'contributors_unknown';
   static const String dataPathMissingTitle = 'data_path_missing_title';
   static const String dataPathMissingContent = 'data_path_missing_content';
 }

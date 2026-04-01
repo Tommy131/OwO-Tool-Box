@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../constants/app_constants.dart';
-import '../../theme/app_theme_data.dart';
 import '../../module_registry/navigation/navigation_item.dart';
+import '../../module_registry/navigation/navigation_registry.dart';
+import '../../module_registry/navigation/navigation_group.dart';
 import '../../theme/theme_provider.dart';
+import '../../theme/app_theme_data.dart';
+import '../../constants/app_constants.dart';
 import '../../localization/localization_keys.dart';
 import '../../services/localization_service.dart';
 import '../../module_registry/module_registry.dart';
@@ -12,14 +13,14 @@ import '../../module_registry/module_registry.dart';
 /// 桌面端侧边栏组件（紧凑型）
 /// 支持展开/折叠，带有流畅的动画过渡
 class DesktopSidebar extends StatefulWidget {
-  final List<NavigationItem> items;
+  final List<NavigationElement> elements;
   final int selectedIndex;
   final Function(int) onItemSelected;
   final bool initiallyExpanded;
 
   const DesktopSidebar({
     super.key,
-    required this.items,
+    required this.elements,
     required this.selectedIndex,
     required this.onItemSelected,
     this.initiallyExpanded = true,
@@ -35,6 +36,7 @@ class _DesktopSidebarState extends State<DesktopSidebar>
   late AnimationController _animationController;
   late Animation<double> _widthAnimation;
   late Animation<double> _fadeAnimation;
+  final Map<String, bool> _expandedGroups = {};
 
   // 提取常量，避免硬编码
   static const double _collapsedThreshold = 100.0;
@@ -46,6 +48,7 @@ class _DesktopSidebarState extends State<DesktopSidebar>
   void initState() {
     super.initState();
     _initializeAnimations();
+    _initializeGroups();
   }
 
   void _initializeAnimations() {
@@ -73,6 +76,28 @@ class _DesktopSidebarState extends State<DesktopSidebar>
     ).animate(curvedAnimation);
   }
 
+  void _initializeGroups() {
+    for (final element in widget.elements) {
+      if (element.isGroup) {
+        _expandedGroups[element.group!.id] = element.group!.initiallyExpanded;
+      }
+    }
+  }
+
+  @override
+  void didUpdateWidget(DesktopSidebar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.elements != widget.elements) {
+      // 保持现有的展开状态，仅添加新的分组
+      for (final element in widget.elements) {
+        if (element.isGroup &&
+            !_expandedGroups.containsKey(element.group!.id)) {
+          _expandedGroups[element.group!.id] = element.group!.initiallyExpanded;
+        }
+      }
+    }
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
@@ -85,6 +110,15 @@ class _DesktopSidebarState extends State<DesktopSidebar>
       _isExpanded
           ? _animationController.forward()
           : _animationController.reverse();
+    });
+  }
+
+  void _toggleGroup(String groupId) {
+    if (!_isExpanded) {
+      _toggleSidebar();
+    }
+    setState(() {
+      _expandedGroups[groupId] = !(_expandedGroups[groupId] ?? true);
     });
   }
 
@@ -105,6 +139,7 @@ class _DesktopSidebarState extends State<DesktopSidebar>
               _buildHeader(theme),
               const SizedBox(height: AppThemeData.spacingSmall),
               _buildNavigationList(),
+              _buildMiniInfoCard(theme),
               ...ModuleRegistry().sidebarFooters.getAllFooters().map(
                 (footer) => _isCollapsed
                     ? footer.buildCollapsed(context)
@@ -135,23 +170,6 @@ class _DesktopSidebarState extends State<DesktopSidebar>
       child: _isCollapsed
           ? _buildCollapsedHeader(theme)
           : _buildExpandedHeader(theme),
-    );
-  }
-
-  Widget _buildCollapsedHeader(ThemeData theme) {
-    return Center(
-      child: Semantics(
-        button: true,
-        label: LocalizationKeys.expandSidebar.tr(context),
-        child: Tooltip(
-          message: LocalizationKeys.expandSidebar.tr(context),
-          child: InkWell(
-            onTap: _toggleSidebar,
-            borderRadius: BorderRadius.circular(8),
-            child: ExcludeSemantics(child: _buildLogo(theme)),
-          ),
-        ),
-      ),
     );
   }
 
@@ -200,15 +218,60 @@ class _DesktopSidebarState extends State<DesktopSidebar>
   }
 
   Widget _buildLogoText(ThemeData theme) {
+    final titleBadge = ModuleRegistry().sidebarTitleBadge.resolve(context);
     return Expanded(
       child: _buildFadeTransition(
-        child: Text(
-          LocalizationKeys.userGreeting.tr(context),
-          style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (titleBadge != null) ...[
+              const SizedBox(height: 2),
+              titleBadge.build(context, theme: theme, isCollapsed: false),
+            ] else ...[
+              Text(
+                LocalizationKeys.userGreeting.tr(context),
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCollapsedHeader(ThemeData theme) {
+    final titleBadge = ModuleRegistry().sidebarTitleBadge.resolve(context);
+    return Center(
+      child: Semantics(
+        button: true,
+        label: LocalizationKeys.expandSidebar.tr(context),
+        child: Tooltip(
+          message: LocalizationKeys.expandSidebar.tr(context),
+          child: InkWell(
+            onTap: _toggleSidebar,
+            borderRadius: BorderRadius.circular(8),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                ExcludeSemantics(child: _buildLogo(theme)),
+                if (titleBadge != null)
+                  Positioned(
+                    right: -2,
+                    bottom: -2,
+                    child: titleBadge.build(
+                      context,
+                      theme: theme,
+                      isCollapsed: true,
+                    ),
+                  ),
+              ],
+            ),
           ),
-          overflow: TextOverflow.ellipsis,
         ),
       ),
     );
@@ -240,22 +303,104 @@ class _DesktopSidebarState extends State<DesktopSidebar>
   }
 
   Widget _buildNavigationList() {
+    int flatIndexCounter = 0;
+    final List<Widget> listItems = [];
+
+    for (final element in widget.elements) {
+      if (element.isGroup) {
+        final group = element.group!;
+        final isGroupExpanded = _expandedGroups[group.id] ?? true;
+        final showGroupChildren = isGroupExpanded || _isCollapsed;
+        final List<Widget> groupChildren = [];
+
+        listItems.add(
+          _GroupItemWidget(
+            group: group,
+            isExpanded: isGroupExpanded,
+            isCollapsed: _isCollapsed,
+            onTap: () => _toggleGroup(group.id),
+            fadeAnimation: _fadeAnimation,
+          ),
+        );
+
+        for (final item in element.children) {
+          final currentIndex = flatIndexCounter++;
+          groupChildren.add(
+            _NavigationItemWidget(
+              item: item,
+              index: currentIndex,
+              isSelected: widget.selectedIndex == currentIndex,
+              isEnabled: ModuleRegistry().navigationAvailability.isEnabled(
+                context,
+                item,
+              ),
+              isCollapsed: _isCollapsed,
+              isSubItem: true,
+              fadeAnimation: _fadeAnimation,
+              onTap: () => widget.onItemSelected(currentIndex),
+            ),
+          );
+        }
+
+        if (groupChildren.isNotEmpty) {
+          listItems.add(
+            _GroupChildrenWidget(
+              isVisible: showGroupChildren,
+              children: groupChildren,
+            ),
+          );
+        }
+      } else if (element.item != null) {
+        final currentIndex = flatIndexCounter++;
+        listItems.add(
+          _NavigationItemWidget(
+            item: element.item!,
+            index: currentIndex,
+            isSelected: widget.selectedIndex == currentIndex,
+            isEnabled: ModuleRegistry().navigationAvailability.isEnabled(
+              context,
+              element.item!,
+            ),
+            isCollapsed: _isCollapsed,
+            isSubItem: false,
+            fadeAnimation: _fadeAnimation,
+            onTap: () => widget.onItemSelected(currentIndex),
+          ),
+        );
+      }
+    }
+
     return Expanded(
-      child: ListView.builder(
+      child: ListView(
         padding: const EdgeInsets.symmetric(
           horizontal: AppThemeData.spacingSmall,
         ),
-        itemCount: widget.items.length,
-        itemBuilder: (context, index) {
-          return _NavigationItemWidget(
-            item: widget.items[index],
-            index: index,
-            isSelected: widget.selectedIndex == index,
-            isCollapsed: _isCollapsed,
-            fadeAnimation: _fadeAnimation,
-            onTap: () => widget.onItemSelected(index),
-          );
-        },
+        children: listItems,
+      ),
+    );
+  }
+
+  Widget _buildMiniInfoCard(ThemeData theme) {
+    final card = ModuleRegistry().sidebarMiniCards.resolve(context);
+    if (card == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppThemeData.spacingSmall,
+        0,
+        AppThemeData.spacingSmall,
+        AppThemeData.spacingSmall,
+      ),
+      child: AnimatedSwitcher(
+        duration: AppThemeData.animationDuration,
+        child: KeyedSubtree(
+          key: ValueKey(
+            '${card.id}_${_isCollapsed ? 'collapsed' : 'expanded'}',
+          ),
+          child: card.build(context, theme: theme, isCollapsed: _isCollapsed),
+        ),
       ),
     );
   }
@@ -265,12 +410,128 @@ class _DesktopSidebarState extends State<DesktopSidebar>
   }
 }
 
+/// 分组标题组件
+class _GroupItemWidget extends StatelessWidget {
+  final NavigationGroup group;
+  final bool isExpanded;
+  final bool isCollapsed;
+  final VoidCallback onTap;
+  final Animation<double> fadeAnimation;
+
+  const _GroupItemWidget({
+    required this.group,
+    required this.isExpanded,
+    required this.isCollapsed,
+    required this.onTap,
+    required this.fadeAnimation,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    if (isCollapsed) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Center(
+          child: Icon(
+            group.icon,
+            size: 16,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 12, bottom: 4, left: 4, right: 4),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppThemeData.borderRadiusSmall),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+          child: Row(
+            children: [
+              Icon(
+                group.icon,
+                size: 14,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Opacity(
+                  opacity: fadeAnimation.value,
+                  child: Text(
+                    group.title.toUpperCase(),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+              Opacity(
+                opacity: fadeAnimation.value,
+                child: AnimatedRotation(
+                  turns: isExpanded ? 0 : -0.25,
+                  duration: AppThemeData.animationDuration,
+                  curve: Curves.easeInOut,
+                  child: Icon(
+                    Icons.expand_more,
+                    size: 14,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GroupChildrenWidget extends StatelessWidget {
+  final bool isVisible;
+  final List<Widget> children;
+
+  const _GroupChildrenWidget({required this.isVisible, required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRect(
+      child: AnimatedSize(
+        duration: AppThemeData.animationDuration,
+        curve: Curves.easeInOut,
+        alignment: Alignment.topCenter,
+        child: Align(
+          alignment: Alignment.topCenter,
+          heightFactor: isVisible ? 1 : 0,
+          child: IgnorePointer(
+            ignoring: !isVisible,
+            child: AnimatedOpacity(
+              duration: AppThemeData.animationDuration,
+              curve: Curves.easeInOut,
+              opacity: isVisible ? 1 : 0,
+              child: Column(children: children),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// 导航项组件（提取为独立组件以提高复用性）
 class _NavigationItemWidget extends StatelessWidget {
   final NavigationItem item;
   final int index;
   final bool isSelected;
+  final bool isEnabled;
   final bool isCollapsed;
+  final bool isSubItem;
   final Animation<double> fadeAnimation;
   final VoidCallback onTap;
 
@@ -278,7 +539,9 @@ class _NavigationItemWidget extends StatelessWidget {
     required this.item,
     required this.index,
     required this.isSelected,
+    required this.isEnabled,
     required this.isCollapsed,
+    this.isSubItem = false,
     required this.fadeAnimation,
     required this.onTap,
   });
@@ -290,7 +553,10 @@ class _NavigationItemWidget extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
+      padding: EdgeInsets.only(
+        bottom: 4,
+        left: isSubItem && !isCollapsed ? 12 : 0,
+      ),
       child: Material(
         color: Colors.transparent,
         child: Semantics(
@@ -298,26 +564,30 @@ class _NavigationItemWidget extends StatelessWidget {
           button: true,
           selected: isSelected,
           label: _buildSemanticsLabel(context),
-          onTap: onTap,
-          enabled: true,
+          onTap: isEnabled ? onTap : null,
+          enabled: isEnabled,
           focusable: true,
           child: ExcludeSemantics(
             child: InkWell(
-              onTap: onTap,
+              onTap: isEnabled ? onTap : null,
               borderRadius: BorderRadius.circular(
                 AppThemeData.borderRadiusSmall,
               ),
-              child: AnimatedContainer(
+              child: AnimatedOpacity(
                 duration: AppThemeData.animationDuration,
-                curve: Curves.easeInOut,
-                padding: EdgeInsets.symmetric(
-                  horizontal: isCollapsed ? 6 : AppThemeData.spacingSmall,
-                  vertical: 10,
+                opacity: isEnabled ? 1 : 0.5,
+                child: AnimatedContainer(
+                  duration: AppThemeData.animationDuration,
+                  curve: Curves.easeInOut,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isCollapsed ? 6 : AppThemeData.spacingSmall,
+                    vertical: 10,
+                  ),
+                  decoration: _buildItemDecoration(theme),
+                  child: isCollapsed
+                      ? _buildCollapsedItem(theme)
+                      : _buildExpandedItem(context, theme),
                 ),
-                decoration: _buildItemDecoration(theme),
-                child: isCollapsed
-                    ? _buildCollapsedItem(theme)
-                    : _buildExpandedItem(context, theme),
               ),
             ),
           ),
@@ -327,6 +597,13 @@ class _NavigationItemWidget extends StatelessWidget {
   }
 
   BoxDecoration _buildItemDecoration(ThemeData theme) {
+    if (!isEnabled) {
+      return BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(AppThemeData.borderRadiusSmall),
+        border: Border.all(color: AppThemeData.getBorderColor(theme), width: 1),
+      );
+    }
     return BoxDecoration(
       color: isSelected
           ? theme.colorScheme.primary.withValues(alpha: 0.1)
@@ -408,6 +685,9 @@ class _NavigationItemWidget extends StatelessWidget {
   }
 
   Color _getItemColor(ThemeData theme) {
+    if (!isEnabled) {
+      return theme.colorScheme.onSurface.withValues(alpha: 0.45);
+    }
     return isSelected
         ? theme.colorScheme.primary
         : AppThemeData.getTextColor(theme, isPrimary: false);

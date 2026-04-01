@@ -15,6 +15,8 @@
  * @Telegram     : https://t.me/HanskiJay
  * @GitHub       : https://github.com/Tommy131
  */
+import 'package:package_info_plus/package_info_plus.dart';
+
 class AppConstants {
   // 私有构造函数，防止实例化
   AppConstants._();
@@ -22,8 +24,23 @@ class AppConstants {
   // ========== 应用信息 ==========
   static const String appName = 'OwO! Tool Box';
   static const String appPackageName = 'com.owoblog.owo_tool_box';
-  static const String appVersion = '0.0.3';
-  static const String appBuildVersion = '2026021401';
+
+  static String _appVersion = '0.0.0';
+  static String _appBuildVersion = '0';
+
+  static String get appVersion => _appVersion;
+  static String get appBuildVersion => _appBuildVersion;
+
+  /// 初始化应用版本信息 (从 pubspec.yaml 获取)
+  static Future<void> init() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      _appVersion = packageInfo.version;
+      _appBuildVersion = packageInfo.buildNumber;
+    } catch (e) {
+      // 保持默认值或记录错误
+    }
+  }
 
   // ========== 资源路径 ==========
   static const String assetIconPath = 'assets/icons/app_icon.png';
@@ -40,6 +57,7 @@ class AppConstants {
   static const String githubRepoUrl = '$githubUrl/OwO-Tool-Box';
   static const String instagramUrl = 'https://instagram.com/$instagramName';
   static const String owoServiceUrl = 'https://owoblog.com/service';
+  static const String discordInviteUrl = 'https://discord.gg/SjPaKwWW6P';
 
   // ========== API 配置 ==========
   static const String apiBaseUrl = 'https://owoserver.com/api/v1';

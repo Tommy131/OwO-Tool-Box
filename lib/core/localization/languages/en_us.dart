@@ -20,6 +20,10 @@ final Map<String, String> enUS = {
   LocalizationKeys.storageLocation: 'App Storage',
   LocalizationKeys.storageLocationDesc:
       'Set the location to store application data',
+  LocalizationKeys.storageLocationChangeConfirm:
+      'Changing the storage path will migrate app data to the new location. Continue?',
+  LocalizationKeys.storageLocationChangeSuccess:
+      'Storage path updated successfully',
   LocalizationKeys.logSettings: 'App Logs',
   LocalizationKeys.logSettingsDesc:
       'Record the operation process for easy troubleshooting',
@@ -29,9 +33,10 @@ final Map<String, String> enUS = {
   LocalizationKeys.resetAppDesc: 'Requires re-initialization after reset',
   LocalizationKeys.resetAppConfirmTitle: 'Confirm Reset App?',
   LocalizationKeys.resetAppConfirmContent:
-      'This operation will clear all configurations, cache data, and re-guide you through initialization.\n\nThis operation is irreversible!',
+      'This operation will clear all configurations, cache, and data, and re-guide you through initialization.\n\nThis operation is irreversible!',
   LocalizationKeys.resetSuccess: 'Reset complete, restarting application...',
   LocalizationKeys.success: 'Success',
+  LocalizationKeys.doubleBackExit: 'Press again to exit',
   LocalizationKeys.languageStep: 'Language Settings',
   LocalizationKeys.storagePathStep: 'Select Storage Path',
   LocalizationKeys.logSettingsStep: 'Log Settings',
@@ -146,6 +151,15 @@ final Map<String, String> enUS = {
   LocalizationKeys.bootstrapConfigDesc:
       'The configuration file that guides the app to the data storage path.',
   LocalizationKeys.openDirectory: 'Open Directory',
+  LocalizationKeys.openLogFolder: 'Open Log Folder',
+  LocalizationKeys.clearCache: 'Clear App Cache',
+  LocalizationKeys.clearCacheDesc:
+      'Clear temporary data, logs, and cache generated during app execution.',
+  LocalizationKeys.clearCacheConfirmTitle: 'Confirm Clear Cache?',
+  LocalizationKeys.clearCacheConfirmContent:
+      'This will delete all logs and temporary files, but will not affect your app settings.',
+  LocalizationKeys.clearCacheSuccess: 'Cache cleared successfully',
+  LocalizationKeys.cacheSize: 'Current cache size: {}',
   LocalizationKeys.updateCheck: 'Version Update',
   LocalizationKeys.updateCheckDesc: 'Check if a new version is available',
   LocalizationKeys.checkForUpdates: 'Check for Updates',
@@ -158,8 +172,18 @@ final Map<String, String> enUS = {
   LocalizationKeys.latestVersionLabel: 'Latest Version',
   LocalizationKeys.updateContent: 'Update Content',
   LocalizationKeys.downloadUpdate: 'Download Update',
+  LocalizationKeys.viewReleasePage: 'View Releases',
   LocalizationKeys.alreadyLatestVersion:
       'You are already using the latest version',
+  LocalizationKeys.community: 'Community',
+  LocalizationKeys.discordCommunityDesc: 'Join our Discord community',
+  LocalizationKeys.joinDiscord: 'Join Discord',
+  LocalizationKeys.contributors: 'Contributors',
+  LocalizationKeys.contributorsDesc: 'Thanks to everyone who contributed',
+  LocalizationKeys.contributorsLoading: 'Loading contributors...',
+  LocalizationKeys.contributorsEmpty: 'No contributor data',
+  LocalizationKeys.contributorsRetry: 'Retry',
+  LocalizationKeys.contributorsUnknown: 'Unknown Contributor',
   LocalizationKeys.dataPathMissingTitle: 'Storage Path Missing',
   LocalizationKeys.dataPathMissingContent:
       'The configured storage path could not be found or accessed. To ensure data safety, the application initialization has been reset. Please re-configure your storage path.',

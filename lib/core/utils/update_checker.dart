@@ -9,6 +9,8 @@ import '../widgets/common/dialog.dart';
 import '../localization/localization_keys.dart';
 import '../utils/logger.dart';
 
+enum _UpdateDialogAction { cancel, openReleasePage, download }
+
 /// 更新检测UI辅助类
 class UpdateChecker {
   /// 执行更新检测并显示UI反馈
@@ -31,7 +33,7 @@ class UpdateChecker {
         _showConfigurationWarning(context);
       } else {
         // Release模式：静默，什么也不做
-        AppLogger.info('更新服务未配置，跳过更新检测');
+        AppLogger.info('Update service not configured, skipping update check');
       }
       return;
     }
@@ -44,7 +46,7 @@ class UpdateChecker {
           LocalizationKeys.checkingForUpdates.tr(context),
         );
       } catch (e) {
-        AppLogger.warning('显示SnackBar失败: $e');
+        AppLogger.warning('Failed to show SnackBar: $e');
       }
     }
 
@@ -61,7 +63,9 @@ class UpdateChecker {
           // 只有手动检测时才显示错误
           _handleError(context, result.error!);
         } else {
-          AppLogger.info('自动更新检测失败（静默）: ${result.error}');
+          AppLogger.info(
+            'Automatic update check failed (silent): ${result.error}',
+          );
         }
       } else if (result.hasUpdate && result.versionInfo != null) {
         _showUpdateDialog(context, result);
@@ -73,12 +77,12 @@ class UpdateChecker {
               LocalizationKeys.alreadyLatestVersion.tr(context),
             );
           } catch (e) {
-            AppLogger.warning('显示SnackBar失败: $e');
+            AppLogger.warning('Failed to show SnackBar: $e');
           }
         }
       }
     } catch (e, stackTrace) {
-      AppLogger.error('更新检测异常', e, stackTrace);
+      AppLogger.error('Update check exception', e, stackTrace);
       if (context.mounted && showLoadingSnackBar) {
         // 只有手动检测时才显示错误
         try {
@@ -87,7 +91,7 @@ class UpdateChecker {
             '${LocalizationKeys.updateCheckFailed.tr(context)}: $e',
           );
         } catch (snackBarError) {
-          AppLogger.warning('显示错误SnackBar失败: $snackBarError');
+          AppLogger.warning('Failed to show error SnackBar: $snackBarError');
         }
       }
     }
@@ -131,19 +135,66 @@ class UpdateChecker {
     UpdateCheckResult result,
   ) async {
     final versionInfo = result.versionInfo!;
-
-    final shouldDownload = await showAdvancedConfirmDialog(
+    final action = await showDialog<_UpdateDialogAction>(
       context: context,
-      title: LocalizationKeys.updateAvailable.tr(context),
-      content: _buildUpdateContent(context, result),
-      icon: Icons.system_update_outlined,
-      confirmColor: Theme.of(context).primaryColor,
-      confirmText: LocalizationKeys.downloadUpdate.tr(context),
-      cancelText: LocalizationKeys.cancel.tr(context),
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        final theme = Theme.of(dialogContext);
+        final hasDownload = versionInfo.downloadUrl.isNotEmpty;
+        final hasReleasePage = versionInfo.releasePageUrl.isNotEmpty;
+
+        return AlertDialog(
+          icon: Icon(
+            Icons.system_update_outlined,
+            color: theme.colorScheme.primary,
+          ),
+          title: Text(LocalizationKeys.updateAvailable.tr(dialogContext)),
+          content: SingleChildScrollView(
+            child: Text(_buildUpdateContent(dialogContext, result)),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () =>
+                  Navigator.of(dialogContext).pop(_UpdateDialogAction.cancel),
+              child: Text(LocalizationKeys.cancel.tr(dialogContext)),
+            ),
+            if (hasReleasePage)
+              TextButton(
+                onPressed: () => Navigator.of(
+                  dialogContext,
+                ).pop(_UpdateDialogAction.openReleasePage),
+                child: Text(LocalizationKeys.viewReleasePage.tr(dialogContext)),
+              ),
+            if (hasDownload)
+              FilledButton(
+                onPressed: () => Navigator.of(
+                  dialogContext,
+                ).pop(_UpdateDialogAction.download),
+                child: Text(LocalizationKeys.downloadUpdate.tr(dialogContext)),
+              ),
+          ],
+        );
+      },
     );
 
-    if (shouldDownload == true && versionInfo.downloadUrl.isNotEmpty) {
-      _openDownloadUrl(context, versionInfo.downloadUrl);
+    if (!context.mounted) {
+      return;
+    }
+
+    if (action == _UpdateDialogAction.download &&
+        versionInfo.downloadUrl.isNotEmpty) {
+      await _openExternalUrl(
+        context,
+        versionInfo.downloadUrl,
+        failureMessage: '无法打开下载链接',
+      );
+    } else if (action == _UpdateDialogAction.openReleasePage &&
+        versionInfo.releasePageUrl.isNotEmpty) {
+      await _openExternalUrl(
+        context,
+        versionInfo.releasePageUrl,
+        failureMessage: '无法打开发布页面',
+      );
     }
   }
 
@@ -170,21 +221,24 @@ class UpdateChecker {
     return buffer.toString();
   }
 
-  /// 打开下载链接
-  static Future<void> _openDownloadUrl(BuildContext context, String url) async {
+  static Future<void> _openExternalUrl(
+    BuildContext context,
+    String url, {
+    required String failureMessage,
+  }) async {
     try {
       final uri = Uri.parse(url);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
         if (context.mounted) {
-          SnackBarHelper.showError(context, '无法打开下载链接');
+          SnackBarHelper.showError(context, failureMessage);
         }
       }
     } catch (e) {
-      AppLogger.error('打开下载链接失败', e);
+      AppLogger.error('Failed to open external link', e);
       if (context.mounted) {
-        SnackBarHelper.showError(context, '打开下载链接失败: $e');
+        SnackBarHelper.showError(context, '$failureMessage: $e');
       }
     }
   }

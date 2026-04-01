@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../localization/localization_keys.dart';
 import '../../services/localization_service.dart';
 
@@ -28,10 +30,17 @@ class StoragePathTile extends StatelessWidget {
   });
 
   Future<void> _pickPath(BuildContext context) async {
+    if (Platform.isAndroid || Platform.isIOS) {
+      final appSupportDir = await getApplicationSupportDirectory();
+      onPathSelected(appSupportDir.path);
+      return;
+    }
+
     String? result = await FilePicker.platform.getDirectoryPath(
       dialogTitle: LocalizationKeys.storagePathSelectionDialogTitle.tr(context),
     );
-    if (result != null) {
+
+    if (result != null && result.trim().isNotEmpty) {
       onPathSelected(result);
     }
   }
@@ -45,8 +54,10 @@ class StoragePathTile extends StatelessWidget {
     final pathLabel =
         currentPath ?? LocalizationKeys.storagePathNotSelected.tr(context);
     final changeLabel =
-        changeButtonLabel ?? LocalizationKeys.storagePathChangeButton.tr(context);
-    final tapLabel = '$displayTitle. $displaySubtitle. $pathLabel. $changeLabel';
+        changeButtonLabel ??
+        LocalizationKeys.storagePathChangeButton.tr(context);
+    final tapLabel =
+        '$displayTitle. $displaySubtitle. $pathLabel. $changeLabel';
 
     final content = Padding(
       padding: contentPadding,
@@ -97,7 +108,10 @@ class StoragePathTile extends StatelessWidget {
             child: ExcludeSemantics(
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(8),
@@ -141,9 +155,7 @@ class StoragePathTile extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: () => _pickPath(context),
                 icon: const Icon(Icons.drive_folder_upload_rounded, size: 18),
-                label: Text(
-                  changeLabel,
-                ),
+                label: Text(changeLabel),
               ),
             ),
           ],
