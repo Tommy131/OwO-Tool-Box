@@ -54,12 +54,30 @@ class CloudflareApiService {
         Uri.parse('$_baseUrl/user/tokens/verify'),
         headers: _getHeaders(config),
       );
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success'] == true) {
           return data['result'];
         }
       }
+
+      // Fallback: If the verify token endpoint fails, try to list zones.
+      // Some tokens may not have the permission to verify themselves via /user/tokens/verify
+      // but are still valid for DNS operations.
+      final zonesResponse = await http.get(
+        Uri.parse('$_baseUrl/zones'),
+        headers: _getHeaders(config),
+      );
+
+      if (zonesResponse.statusCode == 200) {
+        final data = json.decode(zonesResponse.body);
+        if (data['success'] == true) {
+          // Return a minimal result that satisfies the provider's check.
+          return {'status': 'active', 'expires_on': null};
+        }
+      }
+
       return null;
     } catch (e) {
       AppLogger.debug('Cloudflare verification details failed: $e');
