@@ -1,0 +1,110 @@
+import 'package:flutter/material.dart';
+
+import '../../../../../core/services/localization_service.dart';
+import '../../../localization/localization_keys.dart';
+import 'stat_card.dart';
+
+class DashboardStatsGrid extends StatelessWidget {
+  const DashboardStatsGrid({
+    super.key,
+    required this.deviceData,
+    required this.systemData,
+    required this.primaryColor,
+  });
+
+  final Map<String, dynamic> deviceData;
+  final Map<String, dynamic> systemData;
+  final Color primaryColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final stats = <Map<String, dynamic>>[];
+
+    if (deviceData.containsKey('numberOfCores')) {
+      stats.add({
+        'icon': Icons.memory_rounded,
+        'label': LocalizationKeys.processor.tr(context),
+        'value':
+            '${deviceData['numberOfCores']} ${LocalizationKeys.coresUnit.tr(context)}',
+        'color': Colors.blue,
+      });
+    }
+
+    if (systemData.containsKey('totalPhysicalMemory')) {
+      final totalGB = systemData['totalPhysicalMemory'] / (1024 * 1024 * 1024);
+      final freeGB = systemData['freePhysicalMemory'] / (1024 * 1024 * 1024);
+      final usedGB = totalGB - freeGB;
+      final usagePercent = (usedGB / totalGB * 100).toStringAsFixed(1);
+
+      stats.add({
+        'icon': Icons.storage_rounded,
+        'label': LocalizationKeys.memoryUsage.tr(context),
+        'value': '$usagePercent%',
+        'color': Colors.green,
+      });
+    } else if (deviceData.containsKey('systemMemoryInMegabytes')) {
+      final totalGB = (deviceData['systemMemoryInMegabytes'] / 1024)
+          .toStringAsFixed(1);
+      stats.add({
+        'icon': Icons.storage_rounded,
+        'label': LocalizationKeys.totalMemory.tr(context),
+        'value': '$totalGB GB',
+        'color': Colors.green,
+      });
+    } else if (deviceData.containsKey('memorySize')) {
+      final totalGB = (deviceData['memorySize'] / (1024 * 1024 * 1024))
+          .toStringAsFixed(1);
+      stats.add({
+        'icon': Icons.storage_rounded,
+        'label': LocalizationKeys.totalMemory.tr(context),
+        'value': '$totalGB GB',
+        'color': Colors.green,
+      });
+    }
+
+    if (systemData.containsKey('kernelArchitecture')) {
+      stats.add({
+        'icon': Icons.architecture_rounded,
+        'label': LocalizationKeys.systemArchitecture.tr(context),
+        'value': systemData['kernelArchitecture'],
+        'color': Colors.orange,
+      });
+    } else if (deviceData.containsKey('arch')) {
+      stats.add({
+        'icon': Icons.architecture_rounded,
+        'label': LocalizationKeys.systemArchitecture.tr(context),
+        'value': deviceData['arch'],
+        'color': Colors.orange,
+      });
+    }
+
+    stats.add({
+      'icon': Icons.computer_rounded,
+      'label': LocalizationKeys.platform.tr(context),
+      'value':
+          deviceData['platform'] ?? LocalizationKeys.unknownValue.tr(context),
+      'color': primaryColor,
+    });
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: MediaQuery.of(context).size.width > 600 ? 4 : 2,
+        childAspectRatio: 1.5,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+      ),
+      itemCount: stats.length,
+      itemBuilder: (context, index) {
+        final stat = stats[index];
+        return StatCard(
+          icon: stat['icon'],
+          label: stat['label'],
+          value: stat['value'],
+          color: stat['color'],
+        );
+      },
+    );
+  }
+}
