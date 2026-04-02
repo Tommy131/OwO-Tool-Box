@@ -3,7 +3,7 @@ name: owo_tool_box
 description: A multifunctional system tools app based of flutter.
 publish_to: 'none'  # 私有包，不发布到pub.dev
 
-version: 1.0.3+2026021401  # 版本号：主版本.次版本.补丁版本+构建号
+version: 1.0.3+20260402  # 版本号：主版本.次版本.补丁版本+构建号
 
 environment:
   sdk: ^3.9.2  # 支持的Dart SDK版本，确保兼容性

@@ -17,6 +17,7 @@
  */
 import 'dart:io';
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -46,6 +47,135 @@ class _DashboardPageState extends State<DashboardPage> {
   Map<String, dynamic> _deviceData = {};
   Map<String, dynamic> _systemData = {};
   Timer? _memoryTimer;
+
+  Future<Map<String, String>> _loadWindowsHardwareInfo() async {
+    final data = <String, String>{};
+
+    try {
+      final baseboardResult = await Process.run('wmic', [
+        'baseboard',
+        'get',
+        'product,Manufacturer',
+        '/format:list',
+      ]);
+      if (baseboardResult.exitCode == 0) {
+        final lines = baseboardResult.stdout.toString().split(RegExp(r'\r?\n'));
+        String manufacturer = '';
+        String product = '';
+        for (final line in lines) {
+          final trimmed = line.trim();
+          if (trimmed.startsWith('Manufacturer=')) {
+            manufacturer = trimmed.substring('Manufacturer='.length).trim();
+          } else if (trimmed.startsWith('Product=')) {
+            product = trimmed.substring('Product='.length).trim();
+          }
+        }
+        final motherboard = '$manufacturer $product'.trim();
+        if (motherboard.isNotEmpty) {
+          data['motherboard'] = motherboard;
+        }
+      }
+    } catch (_) {}
+
+    try {
+      final cpuResult = await Process.run('wmic', ['cpu', 'get', 'name']);
+      if (cpuResult.exitCode == 0) {
+        final lines = cpuResult.stdout.toString().split(RegExp(r'\r?\n'));
+        for (final line in lines) {
+          final trimmed = line.trim();
+          if (trimmed.isNotEmpty && trimmed != 'Name') {
+            data['processorModel'] = trimmed;
+            break;
+          }
+        }
+      }
+    } catch (_) {}
+
+    if (data['motherboard']?.isNotEmpty == true &&
+        data['processorModel']?.isNotEmpty == true) {
+      return data;
+    }
+
+    try {
+      const script = r'''
+function Get-First([string] $className) {
+  try {
+    return Get-CimInstance -ClassName $className -ErrorAction Stop | Select-Object -First 1
+  } catch {
+    try {
+      return Get-WmiObject -Class $className -ErrorAction Stop | Select-Object -First 1
+    } catch {
+      return $null
+    }
+  }
+}
+
+$bb = Get-First 'Win32_BaseBoard'
+$cpu = Get-First 'Win32_Processor'
+
+$motherboard = ''
+if ($bb -ne $null) {
+  $parts = @()
+  if ($bb.Manufacturer) { $parts += ($bb.Manufacturer.ToString().Trim()) }
+  if ($bb.Product) { $parts += ($bb.Product.ToString().Trim()) }
+  $motherboard = ($parts | Where-Object { $_ -and $_.Trim() -ne '' } | ForEach-Object { $_.Trim() }) -join ' '
+}
+
+$processorModel = ''
+if ($cpu -ne $null -and $cpu.Name) {
+  $processorModel = $cpu.Name.ToString().Trim()
+}
+
+$obj = [pscustomobject]@{
+  motherboard = $motherboard
+  processorModel = $processorModel
+}
+
+$json = $obj | ConvertTo-Json -Compress
+[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($json))
+''';
+
+      final psCommand =
+          '[Console]::OutputEncoding=[Text.Encoding]::UTF8; \$OutputEncoding=[Console]::OutputEncoding; \$ProgressPreference="SilentlyContinue"; ${script.trim()}';
+
+      final psResult = await Process.run(
+        'powershell',
+        [
+          '-NoProfile',
+          '-NonInteractive',
+          '-ExecutionPolicy',
+          'Bypass',
+          '-Command',
+          psCommand,
+        ],
+        stdoutEncoding: utf8,
+        stderrEncoding: utf8,
+      );
+
+      if (psResult.exitCode == 0) {
+        final base64Text = psResult.stdout.toString().trim();
+        if (base64Text.isNotEmpty) {
+          final jsonText = utf8.decode(base64Decode(base64Text));
+          final decoded = jsonDecode(jsonText);
+          if (decoded is Map) {
+            final motherboard = decoded['motherboard']?.toString().trim() ?? '';
+            final processorModel =
+                decoded['processorModel']?.toString().trim() ?? '';
+            if (data['motherboard']?.isNotEmpty != true &&
+                motherboard.isNotEmpty) {
+              data['motherboard'] = motherboard;
+            }
+            if (data['processorModel']?.isNotEmpty != true &&
+                processorModel.isNotEmpty) {
+              data['processorModel'] = processorModel;
+            }
+          }
+        }
+      }
+    } catch (_) {}
+
+    return data;
+  }
 
   @override
   void initState() {
@@ -188,31 +318,13 @@ class _DashboardPageState extends State<DashboardPage> {
           systemData['totalPhysicalMemory'] = SysInfo.getTotalPhysicalMemory();
           systemData['freePhysicalMemory'] = SysInfo.getFreePhysicalMemory();
 
-          // 获取主板信息
           if (Platform.isWindows) {
-            final result = await Process.run('wmic', [
-              'baseboard',
-              'get',
-              'product,Manufacturer',
-              '/format:list',
-            ]);
-            if (result.exitCode == 0) {
-              final lines = result.stdout.toString().split('\n');
-              String manufacturer = '';
-              String product = '';
-              for (var line in lines) {
-                final trimmed = line.trim();
-                if (trimmed.startsWith('Manufacturer=')) {
-                  manufacturer = trimmed
-                      .substring('Manufacturer='.length)
-                      .trim();
-                } else if (trimmed.startsWith('Product=')) {
-                  product = trimmed.substring('Product='.length).trim();
-                }
-              }
-              if (manufacturer.isNotEmpty || product.isNotEmpty) {
-                systemData['motherboard'] = '$manufacturer $product'.trim();
-              }
+            final hardware = await _loadWindowsHardwareInfo();
+            if (hardware['motherboard']?.isNotEmpty == true) {
+              systemData['motherboard'] = hardware['motherboard'];
+            }
+            if (hardware['processorModel']?.isNotEmpty == true) {
+              systemData['processorModel'] = hardware['processorModel'];
             }
           } else if (Platform.isLinux) {
             try {
@@ -228,20 +340,7 @@ class _DashboardPageState extends State<DashboardPage> {
             }
           }
 
-          // 获取 CPU 型号信息
-          if (Platform.isWindows) {
-            final result = await Process.run('wmic', ['cpu', 'get', 'name']);
-            if (result.exitCode == 0) {
-              final lines = result.stdout.toString().split('\n');
-              for (var line in lines) {
-                final trimmed = line.trim();
-                if (trimmed.isNotEmpty && trimmed != 'Name') {
-                  systemData['processorModel'] = trimmed;
-                  break;
-                }
-              }
-            }
-          } else if (Platform.isLinux) {
+          if (Platform.isLinux) {
             try {
               final cpuInfo = await File('/proc/cpuinfo').readAsString();
               final lines = cpuInfo.split('\n');

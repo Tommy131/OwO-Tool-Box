@@ -12,7 +12,6 @@ import 'localization/localization_keys.dart';
 
 // pages
 import 'pages/about/agreement_card.dart';
-import 'pages/about/app_icon_card.dart';
 import 'pages/about/app_info_card.dart';
 import 'pages/about/copyright_card.dart';
 import 'pages/about/developer_card.dart';
@@ -41,14 +40,6 @@ class CommonPages implements ModuleRegistrar {
         activeIcon: Icons.speed,
         page: const DashboardPage(),
         priority: 1,
-      ),
-    );
-
-    registry.aboutPages.register(
-      AboutPageItem(
-        id: 'app_icon',
-        priority: 10,
-        builder: (_) => const AppIconCard(),
       ),
     );
 
