@@ -7,6 +7,7 @@ import 'common_pages/common_pages.dart';
 import 'host_monitor/host_monitor.dart';
 import 'dev_tools/dev_tools.dart';
 import 'network_tools/network_tools.dart';
+import 'ssl_certificate_manager/ssl_certificate_manager.dart';
 import 'system_tools/system_tools.dart';
 
 /// 模块集中注册入口
@@ -26,6 +27,7 @@ class ModulesRegisterEntry {
     registry.registerModule(DevTools());
     registry.registerModule(SystemTools());
     registry.registerModule(NetworkTools());
+    registry.registerModule(SslCertificateManager());
 
     // 2. 初始化所有已注册模块
     registry.initializeAll();
