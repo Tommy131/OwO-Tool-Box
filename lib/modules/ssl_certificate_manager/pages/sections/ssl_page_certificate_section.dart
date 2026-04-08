@@ -779,43 +779,7 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              gradient: LinearGradient(
-                colors: [
-                  theme.colorScheme.primary.withValues(alpha: 0.16),
-                  theme.colorScheme.secondary.withValues(alpha: 0.1),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              border: Border.all(
-                color: theme.colorScheme.primary.withValues(alpha: 0.22),
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.auto_fix_high,
-                  color: theme.colorScheme.primary,
-                  size: 28,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    LocalizationKeys.issueGuideBanner.tr(context),
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
+          // Step progress indicator
           _buildStepProgressIndicator(
             currentStep: _issueStep,
             totalSteps: stepIcons.length,
@@ -823,25 +787,91 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
             icons: stepIcons,
           ),
           const SizedBox(height: 12),
+          // Main content card
           Expanded(
             child: Card(
               child: Padding(
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    _buildIssueCurrentStepHeader(
-                      theme,
-                      currentTitle,
-                      currentSubtitle,
+                    // Step title + subtitle + progress
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primary
+                                .withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
+                            stepIcons[_issueStep],
+                            size: 18,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                currentTitle,
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                currentSubtitle,
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onSurface
+                                      .withValues(alpha: 0.6),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Completion ratio badge
+                        ListenableBuilder(
+                          listenable: _issueProgressListenable(provider),
+                          builder: (context, _) {
+                            final ratio =
+                                _stepCompletionRatio(provider, _issueStep);
+                            final percent = (ratio * 100).round();
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ratio >= 1.0
+                                    ? Colors.green.withValues(alpha: 0.1)
+                                    : theme.colorScheme.primary
+                                        .withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                '$percent%',
+                                style: theme.textTheme.labelMedium?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: ratio >= 1.0
+                                      ? Colors.green
+                                      : theme.colorScheme.primary,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 10),
-                    ListenableBuilder(
-                      listenable: _issueProgressListenable(provider),
-                      builder: (context, _) {
-                        return _buildIssueGlobalProgressBar(provider);
-                      },
+                    const SizedBox(height: 14),
+                    Divider(
+                      height: 1,
+                      color: theme.dividerColor.withValues(alpha: 0.12),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 14),
+                    // Form content
                     Expanded(
                       child: SingleChildScrollView(
                         child: _buildIssueStepContent(
@@ -852,7 +882,8 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 12),
+                    // Navigation buttons
                     Row(
                       children: [
                         if (_issueStep > 0)
@@ -863,12 +894,12 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                                     if (_issueStep == 0) return;
                                     _changeIssueStep(-1);
                                   },
-                            icon: const Icon(Icons.arrow_back),
+                            icon: const Icon(Icons.arrow_back, size: 18),
                             label: Text(
                               LocalizationKeys.previousStep.tr(context),
                             ),
                           ),
-                        if (_issueStep > 0) const SizedBox(width: 8),
+                        const Spacer(),
                         FilledButton.icon(
                           onPressed: provider.isLoading
                               ? null
@@ -933,33 +964,6 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
   }
 
   // ---------------------------------------------------------------------------
-  // Issue Step Header
-  // ---------------------------------------------------------------------------
-
-  Widget _buildIssueCurrentStepHeader(
-    ThemeData theme,
-    String title,
-    String subtitle,
-  ) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: theme.textTheme.titleMedium),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ---------------------------------------------------------------------------
   // Issue Step Progress
   // ---------------------------------------------------------------------------
 
@@ -968,49 +972,6 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
     int step,
   ) {
     return _stepProgressStats(provider, step).ratio;
-  }
-
-  Widget _buildIssueGlobalProgressBar(SslCertificateManagerProvider provider) {
-    final theme = Theme.of(context);
-    final value = _stepCompletionRatio(provider, _issueStep);
-    final percent = (value * 100).round();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                '${_issueStep + 1}/${_issueStepTitles().length} ${_issueStepTitles()[_issueStep]}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            Text(
-              '$percent%',
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(999),
-          child: LinearProgressIndicator(
-            value: value,
-            minHeight: 10,
-            backgroundColor: theme.dividerColor.withValues(alpha: 0.18),
-            valueColor: AlwaysStoppedAnimation<Color>(
-              theme.colorScheme.primary,
-            ),
-          ),
-        ),
-      ],
-    );
   }
 
   _IssueStepProgressStats _stepProgressStats(
@@ -1195,33 +1156,43 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildFieldRow([
-                _buildIssueField(
-                  provider.domainController,
-                  LocalizationKeys.domain.tr(context),
-                  provider,
-                  requiredField: true,
+              _buildSectionContainer(
+                title: LocalizationKeys.sectionIdentity.tr(context),
+                child: Column(
+                  children: [
+                    _buildFieldRow([
+                      _buildIssueField(
+                        provider.domainController,
+                        LocalizationKeys.domain.tr(context),
+                        provider,
+                        requiredField: true,
+                      ),
+                      _buildIssueField(
+                        provider.commonNameController,
+                        LocalizationKeys.commonName.tr(context),
+                        provider,
+                        requiredField: true,
+                      ),
+                    ]),
+                  ],
                 ),
-                _buildIssueField(
-                  provider.commonNameController,
-                  LocalizationKeys.commonName.tr(context),
-                  provider,
-                  requiredField: true,
-                ),
-              ]),
-              _buildFieldRow([
-                _buildIssueField(
-                  provider.challengePasswordController,
-                  LocalizationKeys.challengePassword.tr(context),
-                  provider,
-                ),
-                _buildIssueField(
-                  provider.validDaysController,
-                  LocalizationKeys.validDays.tr(context),
-                  provider,
-                  requiredField: true,
-                ),
-              ]),
+              ),
+              _buildSectionContainer(
+                title: LocalizationKeys.sectionSecurity.tr(context),
+                child: _buildFieldRow([
+                  _buildIssueField(
+                    provider.validDaysController,
+                    LocalizationKeys.validDays.tr(context),
+                    provider,
+                    requiredField: true,
+                  ),
+                  _buildIssueField(
+                    provider.challengePasswordController,
+                    LocalizationKeys.challengePassword.tr(context),
+                    provider,
+                  ),
+                ]),
+              ),
               _buildAltNamesPanel(provider),
             ],
           ),
@@ -1229,61 +1200,74 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildFieldRow([
-                _buildIssueField(
-                  provider.countryNameController,
-                  LocalizationKeys.countryName.tr(context),
-                  provider,
-                  requiredField: true,
+              _buildSectionContainer(
+                title: LocalizationKeys.summaryLocation.tr(context),
+                child: _buildFieldRow([
+                  _buildIssueField(
+                    provider.countryNameController,
+                    LocalizationKeys.countryName.tr(context),
+                    provider,
+                    requiredField: true,
+                  ),
+                  _buildIssueField(
+                    provider.stateNameController,
+                    LocalizationKeys.stateName.tr(context),
+                    provider,
+                  ),
+                  _buildIssueField(
+                    provider.localityNameController,
+                    LocalizationKeys.localityName.tr(context),
+                    provider,
+                  ),
+                ]),
+              ),
+              _buildSectionContainer(
+                title: LocalizationKeys.sectionOrganization.tr(context),
+                child: _buildFieldRow([
+                  _buildIssueField(
+                    provider.organizationNameController,
+                    LocalizationKeys.organizationName.tr(context),
+                    provider,
+                    requiredField: true,
+                  ),
+                  _buildIssueField(
+                    provider.organizationalUnitNameController,
+                    LocalizationKeys.orgUnitName.tr(context),
+                    provider,
+                  ),
+                ]),
+              ),
+              _buildSectionContainer(
+                title: LocalizationKeys.summaryEmail.tr(context),
+                child: Column(
+                  children: [
+                    _buildFieldRow([
+                      _buildIssueField(
+                        provider.emailAddressController,
+                        LocalizationKeys.emailAddress.tr(context),
+                        provider,
+                      ),
+                      _buildIssueField(
+                        provider.ocspDomainController,
+                        LocalizationKeys.ocspDomain.tr(context),
+                        provider,
+                      ),
+                    ]),
+                    _buildFieldRow([
+                      _buildIssueField(
+                        provider.explicitTextController,
+                        LocalizationKeys.explicitText.tr(context),
+                        provider,
+                      ),
+                      _buildIssueField(
+                        provider.unstructuredNameController,
+                        LocalizationKeys.unstructuredName.tr(context),
+                        provider,
+                      ),
+                    ]),
+                  ],
                 ),
-                _buildIssueField(
-                  provider.stateNameController,
-                  LocalizationKeys.stateName.tr(context),
-                  provider,
-                ),
-                _buildIssueField(
-                  provider.localityNameController,
-                  LocalizationKeys.localityName.tr(context),
-                  provider,
-                ),
-              ]),
-              _buildFieldRow([
-                _buildIssueField(
-                  provider.organizationNameController,
-                  LocalizationKeys.organizationName.tr(context),
-                  provider,
-                  requiredField: true,
-                ),
-                _buildIssueField(
-                  provider.organizationalUnitNameController,
-                  LocalizationKeys.orgUnitName.tr(context),
-                  provider,
-                ),
-              ]),
-              _buildFieldRow([
-                _buildIssueField(
-                  provider.emailAddressController,
-                  LocalizationKeys.emailAddress.tr(context),
-                  provider,
-                ),
-                _buildIssueField(
-                  provider.ocspDomainController,
-                  LocalizationKeys.ocspDomain.tr(context),
-                  provider,
-                ),
-              ]),
-              _buildFieldRow([
-                _buildIssueField(
-                  provider.explicitTextController,
-                  LocalizationKeys.explicitText.tr(context),
-                  provider,
-                ),
-                _buildIssueField(
-                  provider.unstructuredNameController,
-                  LocalizationKeys.unstructuredName.tr(context),
-                  provider,
-                ),
-              ]),
+              ),
             ],
           ),
         if (_issueStep == 2) _buildUsageTypePanel(provider),
@@ -1551,28 +1535,31 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
   // ---------------------------------------------------------------------------
 
   Widget _buildEndpointAddressPanel(SslCertificateManagerProvider provider) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildIssueField(
-          provider.crlDistributionUrlController,
-          LocalizationKeys.crlDistributionUrl.tr(context),
-          provider,
-          requiredField: true,
-        ),
-        _buildIssueField(
-          provider.ocspCaIssuersUrlController,
-          LocalizationKeys.ocspCaIssuersUrl.tr(context),
-          provider,
-          requiredField: true,
-        ),
-        _buildIssueField(
-          provider.ocspResponderUrlController,
-          LocalizationKeys.ocspResponderUrl.tr(context),
-          provider,
-          requiredField: true,
-        ),
-      ],
+    return _buildSectionContainer(
+      title: LocalizationKeys.sectionEndpoints.tr(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildIssueField(
+            provider.crlDistributionUrlController,
+            LocalizationKeys.crlDistributionUrl.tr(context),
+            provider,
+            requiredField: true,
+          ),
+          _buildIssueField(
+            provider.ocspCaIssuersUrlController,
+            LocalizationKeys.ocspCaIssuersUrl.tr(context),
+            provider,
+            requiredField: true,
+          ),
+          _buildIssueField(
+            provider.ocspResponderUrlController,
+            LocalizationKeys.ocspResponderUrl.tr(context),
+            provider,
+            requiredField: true,
+          ),
+        ],
+      ),
     );
   }
 
