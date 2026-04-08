@@ -19,6 +19,8 @@ part 'sections/ssl_page_openssl_template_section.dart';
 part 'sections/ssl_page_storage_section.dart';
 part 'sections/ssl_page_shared_widgets_section.dart';
 part 'sections/ssl_page_diff.dart';
+part 'sections/ssl_page_csr_import_section.dart';
+part 'sections/ssl_page_audit_log_section.dart';
 
 class SslCertificateManagerPage extends StatefulWidget {
   const SslCertificateManagerPage({super.key});
@@ -108,6 +110,8 @@ class _SslCertificateManagerPageState extends State<SslCertificateManagerPage> {
             _buildIssueTab(provider),
             _buildOpenSslTemplateTab(provider),
             _buildStorageTab(provider),
+            _buildCsrImportTab(provider),
+            _buildAuditLogTab(provider),
           ],
         ),
         buildPanel:
@@ -175,6 +179,22 @@ class _SslCertificateManagerPageState extends State<SslCertificateManagerPage> {
           label: LocalizationKeys.storageConfig.tr(context),
           isSelected: provider.selectedNavIndex == 3,
           onTap: () => _onNavSelect(provider, 3, useCompactNav, showLabel),
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+        ),
+        SidebarNavItemTile(
+          icon: Icons.upload_file_outlined,
+          label: LocalizationKeys.importCsr.tr(context),
+          isSelected: provider.selectedNavIndex == 4,
+          onTap: () => _onNavSelect(provider, 4, useCompactNav, showLabel),
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+        ),
+        SidebarNavItemTile(
+          icon: Icons.history_outlined,
+          label: LocalizationKeys.auditLog.tr(context),
+          isSelected: provider.selectedNavIndex == 5,
+          onTap: () => _onNavSelect(provider, 5, useCompactNav, showLabel),
           primaryColor: primaryColor,
           showLabel: showLabel,
         ),

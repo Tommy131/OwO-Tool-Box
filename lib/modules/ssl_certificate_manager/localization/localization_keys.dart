@@ -264,4 +264,42 @@ class LocalizationKeys {
   static const String editorUnsaved = 'ssl_editor_unsaved';
   static const String editorSaved = 'ssl_editor_saved';
   static const String selectCertificate = 'ssl_select_certificate';
+
+  // Batch operations
+  static const String batchMode = 'ssl_batch_mode';
+  static const String batchSelectAll = 'ssl_batch_select_all';
+  static const String batchDeselectAll = 'ssl_batch_deselect_all';
+  static const String batchRevoke = 'ssl_batch_revoke';
+  static const String batchDelete = 'ssl_batch_delete';
+  static const String batchSelectedCount = 'ssl_batch_selected_count';
+  static const String batchRevokeConfirm = 'ssl_batch_revoke_confirm';
+  static const String batchDeleteConfirm = 'ssl_batch_delete_confirm';
+  static const String batchRevokeSuccess = 'ssl_batch_revoke_success';
+  static const String batchDeleteSuccess = 'ssl_batch_delete_success';
+
+  // Expiry warning
+  static const String expiryWarningTitle = 'ssl_expiry_warning_title';
+  static const String expiryWarningMessage = 'ssl_expiry_warning_message';
+
+  // CSR import
+  static const String importCsr = 'ssl_import_csr';
+  static const String importCsrTitle = 'ssl_import_csr_title';
+  static const String importCsrSubtitle = 'ssl_import_csr_subtitle';
+  static const String csrFilePath = 'ssl_csr_file_path';
+  static const String csrFileAllowedOnly = 'ssl_csr_file_allowed_only';
+  static const String signCsr = 'ssl_sign_csr';
+  static const String signCsrSuccess = 'ssl_sign_csr_success';
+  static const String signCsrFailed = 'ssl_sign_csr_failed';
+
+  // Audit log
+  static const String auditLog = 'ssl_audit_log';
+  static const String auditLogEmpty = 'ssl_audit_log_empty';
+  static const String auditActionIssue = 'ssl_audit_action_issue';
+  static const String auditActionRevoke = 'ssl_audit_action_revoke';
+  static const String auditActionDelete = 'ssl_audit_action_delete';
+  static const String auditActionExport = 'ssl_audit_action_export';
+  static const String auditActionCrl = 'ssl_audit_action_crl';
+  static const String auditActionImportCsr = 'ssl_audit_action_import_csr';
+  static const String auditClearLog = 'ssl_audit_clear_log';
+  static const String auditClearConfirm = 'ssl_audit_clear_confirm';
 }

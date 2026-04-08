@@ -591,6 +591,39 @@ class SslCertificateRecord {
   }
 }
 
+enum AuditAction { issue, revoke, delete, export, crl, importCsr }
+
+class AuditLogEntry {
+  const AuditLogEntry({
+    required this.timestamp,
+    required this.action,
+    required this.detail,
+  });
+
+  final DateTime timestamp;
+  final AuditAction action;
+  final String detail;
+
+  Map<String, dynamic> toJson() => {
+    'timestamp': timestamp.toIso8601String(),
+    'action': action.name,
+    'detail': detail,
+  };
+
+  factory AuditLogEntry.fromJson(Map<String, dynamic> json) {
+    return AuditLogEntry(
+      timestamp:
+          DateTime.tryParse((json['timestamp'] ?? '').toString()) ??
+          DateTime.now(),
+      action: AuditAction.values.firstWhere(
+        (e) => e.name == json['action'],
+        orElse: () => AuditAction.issue,
+      ),
+      detail: (json['detail'] ?? '').toString(),
+    );
+  }
+}
+
 class SslManagerStateSnapshot {
   const SslManagerStateSnapshot({
     required this.config,
@@ -599,6 +632,7 @@ class SslManagerStateSnapshot {
     this.pinnedIssueFieldKeys = const [],
     this.pinnedIssueFieldValues = const {},
     this.crlState = const CrlState(),
+    this.auditLog = const [],
   });
 
   final SslManagerConfig config;
@@ -607,6 +641,7 @@ class SslManagerStateSnapshot {
   final List<String> pinnedIssueFieldKeys;
   final Map<String, String> pinnedIssueFieldValues;
   final CrlState crlState;
+  final List<AuditLogEntry> auditLog;
 
   Map<String, dynamic> toJson() => {
     'config': config.toJson(),
@@ -615,6 +650,7 @@ class SslManagerStateSnapshot {
     'pinnedIssueFieldKeys': pinnedIssueFieldKeys,
     'pinnedIssueFieldValues': pinnedIssueFieldValues,
     'crlState': crlState.toJson(),
+    'auditLog': auditLog.map((e) => e.toJson()).toList(),
   };
 
   String toPrettyJson() => const JsonEncoder.withIndent('  ').convert(toJson());
@@ -642,6 +678,11 @@ class SslManagerStateSnapshot {
       crlState: json['crlState'] is Map
           ? CrlState.fromJson(Map<String, dynamic>.from(json['crlState'] as Map))
           : const CrlState(),
+      auditLog: ((json['auditLog'] as List?) ?? [])
+          .map(
+            (e) => AuditLogEntry.fromJson(Map<String, dynamic>.from(e)),
+          )
+          .toList(),
     );
   }
 }

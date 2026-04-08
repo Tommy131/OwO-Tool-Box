@@ -13,6 +13,10 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
       child: Column(
         children: [
           _buildCertificateStatsBar(provider),
+          if (provider.expiringSoonCount > 0) ...[
+            const SizedBox(height: 8),
+            _buildExpiryWarningBanner(provider),
+          ],
           const SizedBox(height: 12),
           _buildSearchAndFilterBar(provider),
           const SizedBox(height: 12),
@@ -136,6 +140,67 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
             ),
           ],
         ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            OutlinedButton.icon(
+              onPressed: () => provider.toggleBatchMode(),
+              icon: Icon(
+                provider.batchMode ? Icons.close : Icons.checklist,
+                size: 16,
+              ),
+              label: Text(LocalizationKeys.batchMode.tr(context)),
+              style: OutlinedButton.styleFrom(
+                visualDensity: VisualDensity.compact,
+                foregroundColor: provider.batchMode
+                    ? theme.colorScheme.error
+                    : null,
+              ),
+            ),
+            if (provider.batchMode) ...[
+              const SizedBox(width: 8),
+              TextButton(
+                onPressed: () => provider.batchSelectAll(),
+                child: Text(LocalizationKeys.batchSelectAll.tr(context)),
+              ),
+              TextButton(
+                onPressed: () => provider.batchDeselectAll(),
+                child: Text(LocalizationKeys.batchDeselectAll.tr(context)),
+              ),
+              const Spacer(),
+              Text(
+                LocalizationKeys.batchSelectedCount
+                    .tr(context)
+                    .replaceAll('@count', '${provider.batchSelectedIds.length}'),
+                style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(width: 12),
+              FilledButton.icon(
+                onPressed: provider.batchSelectedIds.isEmpty
+                    ? null
+                    : () => _handleBatchRevoke(provider),
+                icon: const Icon(Icons.block, size: 16),
+                label: Text(LocalizationKeys.batchRevoke.tr(context)),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  visualDensity: VisualDensity.compact,
+                ),
+              ),
+              const SizedBox(width: 6),
+              FilledButton.icon(
+                onPressed: provider.batchSelectedIds.isEmpty
+                    ? null
+                    : () => _handleBatchDelete(provider),
+                icon: const Icon(Icons.delete_outline, size: 16),
+                label: Text(LocalizationKeys.batchDelete.tr(context)),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  visualDensity: VisualDensity.compact,
+                ),
+              ),
+            ],
+          ],
+        ),
       ],
     );
   }
@@ -209,6 +274,14 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                 children: [
                   Row(
                     children: [
+                      if (provider.batchMode) ...[
+                        Checkbox(
+                          value: provider.batchSelectedIds.contains(item.id),
+                          onChanged: (_) => provider.toggleBatchSelect(item.id),
+                          visualDensity: VisualDensity.compact,
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ],
                       Container(
                         width: 8,
                         height: 8,
@@ -1765,6 +1838,91 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
         fontWeight: FontWeight.w400,
         height: 1.5,
       ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Expiry Warning Banner
+  // ---------------------------------------------------------------------------
+
+  Widget _buildExpiryWarningBanner(SslCertificateManagerProvider provider) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.amber.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.amber.withValues(alpha: 0.25)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.warning_amber_rounded, color: Colors.amber.shade700, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              LocalizationKeys.expiryWarningMessage
+                  .tr(context)
+                  .replaceAll('@count', '${provider.expiringSoonCount}'),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: Colors.amber.shade800,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Batch Action Handlers
+  // ---------------------------------------------------------------------------
+
+  Future<void> _handleBatchRevoke(SslCertificateManagerProvider provider) async {
+    final count = provider.batchSelectedIds.length;
+    final confirmed = await showAdvancedConfirmDialog(
+      context: context,
+      style: ConfirmDialogStyle.darkNeon,
+      title: LocalizationKeys.batchRevoke.tr(context),
+      content: LocalizationKeys.batchRevokeConfirm
+          .tr(context)
+          .replaceAll('@count', '$count'),
+      icon: Icons.block,
+      confirmText: LocalizationKeys.batchRevoke.tr(context),
+      cancelText: LocalizationKeys.cancel.tr(context),
+      confirmColor: Colors.orange,
+    );
+    if (!mounted || confirmed != true) return;
+    final revoked = await provider.batchRevoke('批量撤销');
+    if (!mounted) return;
+    _showInlineMessage(
+      LocalizationKeys.batchRevokeSuccess
+          .tr(context)
+          .replaceAll('@count', '$revoked'),
+    );
+  }
+
+  Future<void> _handleBatchDelete(SslCertificateManagerProvider provider) async {
+    final count = provider.batchSelectedIds.length;
+    final confirmed = await showAdvancedConfirmDialog(
+      context: context,
+      style: ConfirmDialogStyle.darkNeon,
+      title: LocalizationKeys.batchDelete.tr(context),
+      content: LocalizationKeys.batchDeleteConfirm
+          .tr(context)
+          .replaceAll('@count', '$count'),
+      icon: Icons.delete_forever,
+      confirmText: LocalizationKeys.batchDelete.tr(context),
+      cancelText: LocalizationKeys.cancel.tr(context),
+      confirmColor: Colors.red,
+    );
+    if (!mounted || confirmed != true) return;
+    final deleted = await provider.batchDelete();
+    if (!mounted) return;
+    _showInlineMessage(
+      LocalizationKeys.batchDeleteSuccess
+          .tr(context)
+          .replaceAll('@count', '$deleted'),
     );
   }
 }

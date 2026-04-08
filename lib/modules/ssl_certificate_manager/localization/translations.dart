@@ -235,6 +235,44 @@ final Map<String, Map<String, String>> translations = {
     LocalizationKeys.editorUnsaved: '未保存',
     LocalizationKeys.editorSaved: '已保存',
     LocalizationKeys.selectCertificate: '选择一个证书查看详情',
+
+    // Batch operations
+    LocalizationKeys.batchMode: '批量操作',
+    LocalizationKeys.batchSelectAll: '全选',
+    LocalizationKeys.batchDeselectAll: '取消全选',
+    LocalizationKeys.batchRevoke: '批量撤销',
+    LocalizationKeys.batchDelete: '批量删除',
+    LocalizationKeys.batchSelectedCount: '已选择 @count 项',
+    LocalizationKeys.batchRevokeConfirm: '确定要撤销选中的 @count 张证书吗？此操作不可撤销。',
+    LocalizationKeys.batchDeleteConfirm: '确定要删除选中的 @count 张证书及其相关文件吗？此操作不可撤销。',
+    LocalizationKeys.batchRevokeSuccess: '已批量撤销 @count 张证书。',
+    LocalizationKeys.batchDeleteSuccess: '已批量删除 @count 张证书。',
+
+    // Expiry warning
+    LocalizationKeys.expiryWarningTitle: '到期提醒',
+    LocalizationKeys.expiryWarningMessage: '@count 张证书将在 30 天内到期，请及时续期。',
+
+    // CSR import
+    LocalizationKeys.importCsr: '导入 CSR 签发',
+    LocalizationKeys.importCsrTitle: '导入外部 CSR',
+    LocalizationKeys.importCsrSubtitle: '选择一个外部 CSR 文件，使用当前根 CA 签发证书。',
+    LocalizationKeys.csrFilePath: 'CSR 文件路径',
+    LocalizationKeys.csrFileAllowedOnly: 'CSR 仅允许 .csr 或 .pem 文件。',
+    LocalizationKeys.signCsr: '签发证书',
+    LocalizationKeys.signCsrSuccess: '外部 CSR 签发成功。',
+    LocalizationKeys.signCsrFailed: '外部 CSR 签发失败',
+
+    // Audit log
+    LocalizationKeys.auditLog: '操作审计日志',
+    LocalizationKeys.auditLogEmpty: '暂无审计记录',
+    LocalizationKeys.auditActionIssue: '签发证书',
+    LocalizationKeys.auditActionRevoke: '撤销证书',
+    LocalizationKeys.auditActionDelete: '删除证书',
+    LocalizationKeys.auditActionExport: '导出证书',
+    LocalizationKeys.auditActionCrl: '生成 CRL',
+    LocalizationKeys.auditActionImportCsr: '导入 CSR 签发',
+    LocalizationKeys.auditClearLog: '清空日志',
+    LocalizationKeys.auditClearConfirm: '确定要清空所有审计日志记录吗？',
   },
   'en_US': {
     LocalizationKeys.navSslManager: 'SSL Manager',
@@ -508,5 +546,47 @@ final Map<String, Map<String, String>> translations = {
     LocalizationKeys.editorUnsaved: 'Unsaved',
     LocalizationKeys.editorSaved: 'Saved',
     LocalizationKeys.selectCertificate: 'Select a certificate to view details',
+
+    // Batch operations
+    LocalizationKeys.batchMode: 'Batch Mode',
+    LocalizationKeys.batchSelectAll: 'Select All',
+    LocalizationKeys.batchDeselectAll: 'Deselect All',
+    LocalizationKeys.batchRevoke: 'Batch Revoke',
+    LocalizationKeys.batchDelete: 'Batch Delete',
+    LocalizationKeys.batchSelectedCount: '@count selected',
+    LocalizationKeys.batchRevokeConfirm:
+        'Revoke @count selected certificate(s)? This cannot be undone.',
+    LocalizationKeys.batchDeleteConfirm:
+        'Delete @count selected certificate(s) and their files? This cannot be undone.',
+    LocalizationKeys.batchRevokeSuccess: 'Batch revoked @count certificate(s).',
+    LocalizationKeys.batchDeleteSuccess: 'Batch deleted @count certificate(s).',
+
+    // Expiry warning
+    LocalizationKeys.expiryWarningTitle: 'Expiry Warning',
+    LocalizationKeys.expiryWarningMessage:
+        '@count certificate(s) will expire within 30 days. Please renew promptly.',
+
+    // CSR import
+    LocalizationKeys.importCsr: 'Import CSR',
+    LocalizationKeys.importCsrTitle: 'Import External CSR',
+    LocalizationKeys.importCsrSubtitle:
+        'Select an external CSR file and sign it with the current Root CA.',
+    LocalizationKeys.csrFilePath: 'CSR File Path',
+    LocalizationKeys.csrFileAllowedOnly: 'CSR only supports .csr or .pem files.',
+    LocalizationKeys.signCsr: 'Sign Certificate',
+    LocalizationKeys.signCsrSuccess: 'External CSR signed successfully.',
+    LocalizationKeys.signCsrFailed: 'External CSR signing failed',
+
+    // Audit log
+    LocalizationKeys.auditLog: 'Audit Log',
+    LocalizationKeys.auditLogEmpty: 'No audit records',
+    LocalizationKeys.auditActionIssue: 'Issue Certificate',
+    LocalizationKeys.auditActionRevoke: 'Revoke Certificate',
+    LocalizationKeys.auditActionDelete: 'Delete Certificate',
+    LocalizationKeys.auditActionExport: 'Export Certificate',
+    LocalizationKeys.auditActionCrl: 'Generate CRL',
+    LocalizationKeys.auditActionImportCsr: 'Import CSR Signing',
+    LocalizationKeys.auditClearLog: 'Clear Log',
+    LocalizationKeys.auditClearConfirm: 'Clear all audit log entries?',
   },
 };

@@ -220,6 +220,20 @@ class SslCertificateManagerProvider with ChangeNotifier {
   // Renewal tracking
   String? renewingCertId;
 
+  // Batch operations
+  bool _batchMode = false;
+  final Set<String> _batchSelectedIds = {};
+  bool get batchMode => _batchMode;
+  Set<String> get batchSelectedIds => Set.unmodifiable(_batchSelectedIds);
+
+  // Audit log
+  final List<AuditLogEntry> _auditLog = [];
+  List<AuditLogEntry> get auditLog => List.unmodifiable(_auditLog);
+
+  // CSR import
+  final csrFilePathController = TextEditingController();
+  final csrValidDaysController = TextEditingController();
+
   // Stats
   int get totalCertCount => _certificates.length;
   int get issuedCertCount => _certificates
@@ -745,6 +759,10 @@ class SslCertificateManagerProvider with ChangeNotifier {
       _certificates.insert(0, newRecord);
       selectedCertId = newRecord.id;
       infoMessage = '证书已根据 OpenSSL 配置完成真实签发。';
+      _addAuditEntry(
+        AuditAction.issue,
+        '签发: $domain (SN: ${certMeta.serialNumber})',
+      );
       AppLogger.info(
         '[SSL] issueCertificate success, serial=${certMeta.serialNumber}',
       );
@@ -791,6 +809,10 @@ class SslCertificateManagerProvider with ChangeNotifier {
         mode: FileMode.append,
       );
       infoMessage = '证书已撤销。';
+      _addAuditEntry(
+        AuditAction.revoke,
+        '撤销: ${_certificates[index].domain} (SN: ${_certificates[index].serialNumber})',
+      );
       AppLogger.info('[SSL] revokeCertificate success, id=$certificateId');
       await _persistAll();
       // Auto-generate CRL after revocation (best-effort, don't block)
@@ -883,6 +905,10 @@ class SslCertificateManagerProvider with ChangeNotifier {
       selectedCertId = null;
     }
     infoMessage = '证书记录已删除。';
+    _addAuditEntry(
+      AuditAction.delete,
+      '删除: ${item.domain} (SN: ${item.serialNumber})',
+    );
 
     await _deleteIfExists(item.configFilePath);
     await _deleteIfExists(item.certFilePath);
@@ -962,6 +988,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
         crlDays: days,
       );
       infoMessage = 'CRL 吊销列表已生成。';
+      _addAuditEntry(AuditAction.crl, '生成 CRL: $crlOutputPath');
       AppLogger.info('[SSL] generateCrl success, path=$crlOutputPath');
       await _persistAll();
     } catch (e) {
@@ -1090,6 +1117,10 @@ class SslCertificateManagerProvider with ChangeNotifier {
       );
 
       infoMessage = '证书已导出至 $pfxPath';
+      _addAuditEntry(
+        AuditAction.export,
+        '导出 PFX: ${record.domain} → $pfxPath',
+      );
       AppLogger.info('[SSL] exportPkcs12 success, path=$pfxPath');
       notifyListeners();
       return pfxPath;
@@ -1133,6 +1164,247 @@ class SslCertificateManagerProvider with ChangeNotifier {
       );
     } catch (e) {
       return (valid: false, message: '验证失败: $e');
+    }
+  }
+
+  // ========== Batch Operations ==========
+
+  void toggleBatchMode() {
+    _batchMode = !_batchMode;
+    if (!_batchMode) _batchSelectedIds.clear();
+    notifyListeners();
+  }
+
+  void toggleBatchSelect(String certId) {
+    if (_batchSelectedIds.contains(certId)) {
+      _batchSelectedIds.remove(certId);
+    } else {
+      _batchSelectedIds.add(certId);
+    }
+    notifyListeners();
+  }
+
+  void batchSelectAll() {
+    _batchSelectedIds.clear();
+    for (final cert in filteredCertificates) {
+      _batchSelectedIds.add(cert.id);
+    }
+    notifyListeners();
+  }
+
+  void batchDeselectAll() {
+    _batchSelectedIds.clear();
+    notifyListeners();
+  }
+
+  Future<int> batchRevoke(String reason) async {
+    int count = 0;
+    for (final certId in [..._batchSelectedIds]) {
+      final index = _certificates.indexWhere((e) => e.id == certId);
+      if (index < 0 || _certificates[index].status == SslCertStatus.revoked) {
+        continue;
+      }
+      _certificates[index] = _certificates[index].copyWith(
+        status: SslCertStatus.revoked,
+        revokeReason: reason.isEmpty ? '批量撤销' : reason,
+      );
+      count++;
+    }
+    if (count > 0) {
+      _addAuditEntry(AuditAction.revoke, '批量撤销 $count 张证书');
+      _batchSelectedIds.clear();
+      _batchMode = false;
+      await _persistAll();
+      try {
+        await generateCrl();
+      } catch (_) {}
+    }
+    notifyListeners();
+    return count;
+  }
+
+  Future<int> batchDelete() async {
+    int count = 0;
+    for (final certId in [..._batchSelectedIds]) {
+      final index = _certificates.indexWhere((e) => e.id == certId);
+      if (index < 0) continue;
+      final item = _certificates.removeAt(index);
+      await _deleteIfExists(item.configFilePath);
+      await _deleteIfExists(item.certFilePath);
+      await _deleteIfExists(item.keyFilePath);
+      await _deleteIfExists(item.csrFilePath);
+      count++;
+    }
+    if (count > 0) {
+      _addAuditEntry(AuditAction.delete, '批量删除 $count 张证书');
+      _batchSelectedIds.clear();
+      _batchMode = false;
+      if (selectedCertId != null &&
+          !_certificates.any((c) => c.id == selectedCertId)) {
+        selectedCertId = null;
+      }
+      await _persistAll();
+    }
+    notifyListeners();
+    return count;
+  }
+
+  // ========== Audit Log ==========
+
+  void _addAuditEntry(AuditAction action, String detail) {
+    _auditLog.insert(
+      0,
+      AuditLogEntry(
+        timestamp: DateTime.now(),
+        action: action,
+        detail: detail,
+      ),
+    );
+    // Keep max 200 entries
+    if (_auditLog.length > 200) {
+      _auditLog.removeRange(200, _auditLog.length);
+    }
+  }
+
+  void clearAuditLog() {
+    _auditLog.clear();
+    _persistAll();
+    notifyListeners();
+  }
+
+  // ========== CSR Import Signing ==========
+
+  Future<SslIssueExecutionResult> signExternalCsr({
+    required String csrFilePath,
+    required int validDays,
+  }) async {
+    if (!isInitialized) {
+      return const SslIssueExecutionResult(
+        success: false,
+        message: '请先完成初始化。',
+      );
+    }
+    if (!await _ensureStorageAvailableOrRecover()) {
+      notifyListeners();
+      return SslIssueExecutionResult(success: false, message: infoMessage);
+    }
+    isLoading = true;
+    notifyListeners();
+    try {
+      await _ensureOpenSslAvailable();
+
+      final csrFile = File(csrFilePath);
+      if (!await csrFile.exists()) {
+        throw Exception('CSR 文件不存在: $csrFilePath');
+      }
+
+      // Read CSR subject to extract domain/CN
+      final csrInfo = await _runOpenSsl([
+        'req',
+        '-in',
+        csrFilePath,
+        '-noout',
+        '-subject',
+      ]);
+      if (csrInfo == null || csrInfo.exitCode != 0) {
+        throw Exception('无法读取 CSR 信息，请检查文件格式。');
+      }
+      final subjectLine = csrInfo.stdout.toString().trim();
+      final cn = _extractCommonName(subjectLine) ?? 'external-csr';
+
+      final now = DateTime.now();
+      final safeName = _sanitizeFileStem(cn);
+      final fileToken = 'csr_${safeName}_${now.millisecondsSinceEpoch}';
+      final certPath = p.join(
+        _config.storagePath,
+        'newcerts',
+        '$fileToken.crt',
+      );
+      final rootCertPath = rootCACertPathController.text.trim();
+      final rootKeyPath = rootCAKeyPathController.text.trim();
+      if (rootCertPath.isEmpty || rootKeyPath.isEmpty) {
+        throw Exception('未找到可用的根证书或根私钥。');
+      }
+
+      final caSerialPath = p.join(
+        _config.storagePath,
+        '_files',
+        'issued_cert.srl',
+      );
+      final signArgs = <String>[
+        'x509',
+        '-req',
+        '-in',
+        csrFilePath,
+        '-CA',
+        rootCertPath,
+        '-CAkey',
+        rootKeyPath,
+        '-out',
+        certPath,
+        '-days',
+        '$validDays',
+        '-sha256',
+        '-CAserial',
+        caSerialPath,
+      ];
+      if (!await File(caSerialPath).exists()) {
+        signArgs.add('-CAcreateserial');
+      }
+      if (rootCAPasswordController.text.isNotEmpty) {
+        signArgs.addAll(['-passin', 'pass:${rootCAPasswordController.text}']);
+      }
+
+      await _runOpenSslOrThrow(
+        signArgs,
+        action: '签发外部 CSR',
+        timeout: const Duration(seconds: 20),
+      );
+
+      final certMeta = await _readIssuedCertificateMeta(certPath);
+      if (certMeta == null) {
+        throw Exception('证书已生成，但无法读取签发结果。');
+      }
+
+      final newRecord = SslCertificateRecord(
+        id: fileToken,
+        domain: cn,
+        commonName: cn,
+        issuer: certMeta.issuer,
+        serialNumber: certMeta.serialNumber,
+        issuedAt: certMeta.issuedAt,
+        expiresAt: certMeta.expiresAt,
+        status: SslCertStatus.issued,
+        altNames: const [],
+        configFilePath: '',
+        certFilePath: certPath,
+        keyFilePath: '',
+        csrFilePath: csrFilePath,
+      );
+      _certificates.insert(0, newRecord);
+      selectedCertId = newRecord.id;
+
+      _addAuditEntry(
+        AuditAction.importCsr,
+        'CSR 签发: $cn (SN: ${certMeta.serialNumber})',
+      );
+      infoMessage = '外部 CSR 签发成功。';
+      AppLogger.info(
+        '[SSL] signExternalCsr success, cn=$cn, serial=${certMeta.serialNumber}',
+      );
+      await _persistAll();
+      return SslIssueExecutionResult(
+        success: true,
+        message: infoMessage,
+        record: newRecord,
+      );
+    } catch (e) {
+      infoMessage = 'CSR 签发失败: $e';
+      AppLogger.error('[SSL] signExternalCsr failed', e);
+      return SslIssueExecutionResult(success: false, message: infoMessage);
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -1417,6 +1689,8 @@ class SslCertificateManagerProvider with ChangeNotifier {
     revokeReasonController.dispose();
     cnfEditorController.dispose();
     searchController.dispose();
+    csrFilePathController.dispose();
+    csrValidDaysController.dispose();
     super.dispose();
   }
 
@@ -1472,6 +1746,9 @@ class SslCertificateManagerProvider with ChangeNotifier {
       ..clear()
       ..addAll(sanitizedPinnedValues);
     _crlState = snapshot.crlState;
+    _auditLog
+      ..clear()
+      ..addAll(snapshot.auditLog);
     isInitialized = _config.initialized;
     importRootCA = _config.importRootCA;
     _applyTemplateToControllers(_template);
@@ -1953,6 +2230,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
           ..sort((left, right) => left.key.compareTo(right.key)),
       ),
       crlState: _crlState,
+      auditLog: _auditLog,
     );
 
     await persistence.setModuleData(
