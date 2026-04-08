@@ -19,9 +19,12 @@ class DashboardStatsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stats = <Map<String, dynamic>>[];
+    final mediaQuery = MediaQuery.of(context);
+    final useNarrowLayout = mediaQuery.size.width < 1020;
 
     if (deviceData.containsKey('numberOfCores')) {
       stats.add({
+        'id': 'processor',
         'icon': Icons.memory_rounded,
         'label': LocalizationKeys.processor.tr(context),
         'value':
@@ -30,22 +33,37 @@ class DashboardStatsGrid extends StatelessWidget {
       });
     }
 
-    if (systemData.containsKey('totalPhysicalMemory')) {
+    if (systemData.containsKey('totalPhysicalMemory') &&
+        systemData.containsKey('freePhysicalMemory')) {
       final totalGB = systemData['totalPhysicalMemory'] / (1024 * 1024 * 1024);
       final freeGB = systemData['freePhysicalMemory'] / (1024 * 1024 * 1024);
-      final usedGB = totalGB - freeGB;
-      final usagePercent = (usedGB / totalGB * 100).toStringAsFixed(1);
+      if (totalGB > 0) {
+        final usedGB = totalGB - freeGB;
+        final usagePercent = (usedGB / totalGB * 100).toStringAsFixed(1);
 
+        stats.add({
+          'id': 'memory',
+          'icon': Icons.storage_rounded,
+          'label': LocalizationKeys.memoryUsage.tr(context),
+          'value': '$usagePercent%',
+          'color': Colors.green,
+        });
+      }
+    } else if (systemData.containsKey('totalPhysicalMemory')) {
+      final totalGB = (systemData['totalPhysicalMemory'] / (1024 * 1024 * 1024))
+          .toStringAsFixed(1);
       stats.add({
+        'id': 'memory',
         'icon': Icons.storage_rounded,
-        'label': LocalizationKeys.memoryUsage.tr(context),
-        'value': '$usagePercent%',
+        'label': LocalizationKeys.totalMemory.tr(context),
+        'value': '$totalGB GB',
         'color': Colors.green,
       });
     } else if (deviceData.containsKey('systemMemoryInMegabytes')) {
       final totalGB = (deviceData['systemMemoryInMegabytes'] / 1024)
           .toStringAsFixed(1);
       stats.add({
+        'id': 'memory',
         'icon': Icons.storage_rounded,
         'label': LocalizationKeys.totalMemory.tr(context),
         'value': '$totalGB GB',
@@ -55,6 +73,7 @@ class DashboardStatsGrid extends StatelessWidget {
       final totalGB = (deviceData['memorySize'] / (1024 * 1024 * 1024))
           .toStringAsFixed(1);
       stats.add({
+        'id': 'memory',
         'icon': Icons.storage_rounded,
         'label': LocalizationKeys.totalMemory.tr(context),
         'value': '$totalGB GB',
@@ -64,6 +83,7 @@ class DashboardStatsGrid extends StatelessWidget {
 
     if (systemData.containsKey('kernelArchitecture')) {
       stats.add({
+        'id': 'architecture',
         'icon': Icons.architecture_rounded,
         'label': LocalizationKeys.systemArchitecture.tr(context),
         'value': systemData['kernelArchitecture'],
@@ -71,6 +91,7 @@ class DashboardStatsGrid extends StatelessWidget {
       });
     } else if (deviceData.containsKey('arch')) {
       stats.add({
+        'id': 'architecture',
         'icon': Icons.architecture_rounded,
         'label': LocalizationKeys.systemArchitecture.tr(context),
         'value': deviceData['arch'],
@@ -79,6 +100,7 @@ class DashboardStatsGrid extends StatelessWidget {
     }
 
     stats.add({
+      'id': 'platform',
       'icon': Icons.computer_rounded,
       'label': LocalizationKeys.platform.tr(context),
       'value':
@@ -86,11 +108,39 @@ class DashboardStatsGrid extends StatelessWidget {
       'color': primaryColor,
     });
 
+    const narrowLayoutTargetIds = {
+      'processor',
+      'memory',
+      'architecture',
+      'platform',
+    };
+    final shouldUseColumnLayout =
+        useNarrowLayout &&
+        stats.every((stat) => narrowLayoutTargetIds.contains(stat['id']));
+
+    if (shouldUseColumnLayout) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var index = 0; index < stats.length; index++) ...[
+            StatCard(
+              icon: stats[index]['icon'],
+              label: stats[index]['label'],
+              value: stats[index]['value'],
+              color: stats[index]['color'],
+              horizontalLayout: true,
+            ),
+            if (index != stats.length - 1) const SizedBox(height: 12),
+          ],
+        ],
+      );
+    }
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: MediaQuery.of(context).size.width > 600 ? 4 : 2,
+        crossAxisCount: mediaQuery.size.width > 600 ? 4 : 2,
         childAspectRatio: 1.5,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,

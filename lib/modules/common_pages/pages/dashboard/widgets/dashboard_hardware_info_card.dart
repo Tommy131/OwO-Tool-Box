@@ -27,23 +27,31 @@ class DashboardHardwareInfoCard extends StatelessWidget {
       });
     }
 
-    if (systemData.containsKey('totalPhysicalMemory')) {
+    if (systemData.containsKey('totalPhysicalMemory') &&
+        systemData.containsKey('freePhysicalMemory')) {
       final total = systemData['totalPhysicalMemory'] / (1024 * 1024 * 1024);
       final free = systemData['freePhysicalMemory'] / (1024 * 1024 * 1024);
-      final used = total - free;
-
+      if (total > 0) {
+        final used = total - free;
+        items.add({
+          'label': LocalizationKeys.memoryTotal.tr(context),
+          'value': '${total.toStringAsFixed(2)} GB',
+        });
+        items.add({
+          'label': LocalizationKeys.memoryUsed.tr(context),
+          'value':
+              '${used.toStringAsFixed(2)} GB (${(used / total * 100).toStringAsFixed(1)}%)',
+        });
+        items.add({
+          'label': LocalizationKeys.memoryFree.tr(context),
+          'value': '${free.toStringAsFixed(2)} GB',
+        });
+      }
+    } else if (systemData.containsKey('totalPhysicalMemory')) {
+      final total = systemData['totalPhysicalMemory'] / (1024 * 1024 * 1024);
       items.add({
         'label': LocalizationKeys.memoryTotal.tr(context),
         'value': '${total.toStringAsFixed(2)} GB',
-      });
-      items.add({
-        'label': LocalizationKeys.memoryUsed.tr(context),
-        'value':
-            '${used.toStringAsFixed(2)} GB (${(used / total * 100).toStringAsFixed(1)}%)',
-      });
-      items.add({
-        'label': LocalizationKeys.memoryFree.tr(context),
-        'value': '${free.toStringAsFixed(2)} GB',
       });
     }
 

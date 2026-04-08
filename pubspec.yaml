@@ -61,6 +61,8 @@ dependencies:
   path_provider_platform_interface: ^2.1.2
   confetti: ^0.8.0
   package_info_plus: ^9.0.1
+  ffi: ^2.1.4
+  win32: ^5.14.0
 
 # 🛠️ **开发依赖（Dev Dependencies）**：仅用于开发和测试的包。
 dev_dependencies:

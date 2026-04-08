@@ -8,6 +8,7 @@ import 'host_monitor/host_monitor.dart';
 import 'dev_tools/dev_tools.dart';
 import 'network_tools/network_tools.dart';
 import 'system_tools/system_tools.dart';
+import 'ssl_certificate_manager/ssl_certificate_manager.dart';
 
 /// 模块集中注册入口
 /// 负责在应用启动时注册所有业务模块，以及处理全局清理逻辑
@@ -26,6 +27,7 @@ class ModulesRegisterEntry {
     registry.registerModule(DevTools());
     registry.registerModule(SystemTools());
     registry.registerModule(NetworkTools());
+    registry.registerModule(SslCertificateManager());
 
     // 2. 初始化所有已注册模块
     registry.initializeAll();
