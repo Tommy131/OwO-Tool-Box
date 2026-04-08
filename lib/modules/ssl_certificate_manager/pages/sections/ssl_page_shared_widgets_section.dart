@@ -448,51 +448,6 @@ extension _SslPageSharedWidgetsSection on _SslCertificateManagerPageState {
     );
   }
 
-  Widget _sizedField(
-    TextEditingController controller,
-    String label,
-    double width, {
-    Widget? suffix,
-    String? pinFieldKey,
-    bool requiredField = false,
-  }) {
-    final provider = context.read<SslCertificateManagerProvider>();
-    final config = _resolveInputConfig(controller);
-    return SizedBox(
-      width: width,
-      child: ListenableBuilder(
-        listenable: pinFieldKey == null
-            ? controller
-            : Listenable.merge([controller, provider]),
-        builder: (context, _) {
-          final isPinned =
-              pinFieldKey != null && provider.isIssueFieldPinned(pinFieldKey);
-          return TextField(
-            controller: controller,
-            keyboardType: config.keyboardType,
-            inputFormatters: config.inputFormatters,
-            obscureText: config.obscureText,
-            readOnly: isPinned,
-            textCapitalization: config.textCapitalization,
-            decoration: InputDecoration(
-              labelText: _buildFieldLabel(label, requiredField),
-              suffixIconConstraints: const BoxConstraints(
-                minWidth: 0,
-                minHeight: 0,
-              ),
-              suffixIcon: _buildInputSuffix(
-                controller: controller,
-                suffix: suffix ?? config.suffix,
-                pinFieldKey: pinFieldKey,
-              ),
-              errorText: _validationErrorForController(controller),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
   Widget? _buildInputSuffix({
     required TextEditingController controller,
     Widget? suffix,

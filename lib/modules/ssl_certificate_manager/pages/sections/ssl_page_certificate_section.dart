@@ -1032,6 +1032,83 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
   // Issue Step Content
   // ---------------------------------------------------------------------------
 
+  /// Builds a responsive row of fields that adapts to available width.
+  /// Each field gets equal share of the row, with a minimum width constraint.
+  Widget _buildFieldRow(List<Widget> fields) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const minFieldWidth = 200.0;
+        const spacing = 12.0;
+        final availableWidth = constraints.maxWidth;
+        // Calculate how many fields fit per row
+        int perRow = fields.length;
+        while (perRow > 1 &&
+            (availableWidth - (perRow - 1) * spacing) / perRow <
+                minFieldWidth) {
+          perRow--;
+        }
+        if (perRow >= fields.length) {
+          // All fit in one row
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (int i = 0; i < fields.length; i++) ...[
+                if (i > 0) const SizedBox(width: spacing),
+                Expanded(child: fields[i]),
+              ],
+            ],
+          );
+        }
+        // Split into multiple rows
+        final rows = <Widget>[];
+        for (int i = 0; i < fields.length; i += perRow) {
+          final rowFields = fields.sublist(
+            i,
+            (i + perRow).clamp(0, fields.length),
+          );
+          rows.add(
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (int j = 0; j < rowFields.length; j++) ...[
+                  if (j > 0) const SizedBox(width: spacing),
+                  Expanded(child: rowFields[j]),
+                ],
+                // Fill remaining space if last row is incomplete
+                for (int j = rowFields.length; j < perRow; j++) ...[
+                  const SizedBox(width: spacing),
+                  const Expanded(child: SizedBox.shrink()),
+                ],
+              ],
+            ),
+          );
+        }
+        return Column(
+          children: [
+            for (int i = 0; i < rows.length; i++) ...[
+              if (i > 0) const SizedBox(height: 4),
+              rows[i],
+            ],
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildIssueField(
+    TextEditingController controller,
+    String label,
+    SslCertificateManagerProvider provider, {
+    bool requiredField = false,
+  }) {
+    return _buildTextField(
+      controller: controller,
+      label: label,
+      pinFieldKey: provider.issueFieldKeyForController(controller),
+      requiredField: requiredField,
+    );
+  }
+
   Widget _buildIssueStepContent(
     SslCertificateManagerProvider provider,
     ThemeData theme,
@@ -1045,137 +1122,95 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: [
-                  _sizedField(
-                    provider.domainController,
-                    LocalizationKeys.domain.tr(context),
-                    280,
-                    pinFieldKey: provider.issueFieldKeyForController(
-                      provider.domainController,
-                    ),
-                    requiredField: true,
-                  ),
-                  _sizedField(
-                    provider.commonNameController,
-                    LocalizationKeys.commonName.tr(context),
-                    280,
-                    pinFieldKey: provider.issueFieldKeyForController(
-                      provider.commonNameController,
-                    ),
-                    requiredField: true,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: [
-                  _sizedField(
-                    provider.challengePasswordController,
-                    LocalizationKeys.challengePassword.tr(context),
-                    300,
-                    pinFieldKey: provider.issueFieldKeyForController(
-                      provider.challengePasswordController,
-                    ),
-                  ),
-                  _sizedField(
-                    provider.validDaysController,
-                    LocalizationKeys.validDays.tr(context),
-                    180,
-                    pinFieldKey: provider.issueFieldKeyForController(
-                      provider.validDaysController,
-                    ),
-                    requiredField: true,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
+              _buildFieldRow([
+                _buildIssueField(
+                  provider.domainController,
+                  LocalizationKeys.domain.tr(context),
+                  provider,
+                  requiredField: true,
+                ),
+                _buildIssueField(
+                  provider.commonNameController,
+                  LocalizationKeys.commonName.tr(context),
+                  provider,
+                  requiredField: true,
+                ),
+              ]),
+              _buildFieldRow([
+                _buildIssueField(
+                  provider.challengePasswordController,
+                  LocalizationKeys.challengePassword.tr(context),
+                  provider,
+                ),
+                _buildIssueField(
+                  provider.validDaysController,
+                  LocalizationKeys.validDays.tr(context),
+                  provider,
+                  requiredField: true,
+                ),
+              ]),
               _buildAltNamesPanel(provider),
             ],
           ),
         if (_issueStep == 1)
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _sizedField(
-                provider.countryNameController,
-                LocalizationKeys.countryName.tr(context),
-                180,
-                pinFieldKey: provider.issueFieldKeyForController(
+              _buildFieldRow([
+                _buildIssueField(
                   provider.countryNameController,
+                  LocalizationKeys.countryName.tr(context),
+                  provider,
+                  requiredField: true,
                 ),
-                requiredField: true,
-              ),
-              _sizedField(
-                provider.stateNameController,
-                LocalizationKeys.stateName.tr(context),
-                220,
-                pinFieldKey: provider.issueFieldKeyForController(
+                _buildIssueField(
                   provider.stateNameController,
+                  LocalizationKeys.stateName.tr(context),
+                  provider,
                 ),
-              ),
-              _sizedField(
-                provider.localityNameController,
-                LocalizationKeys.localityName.tr(context),
-                220,
-                pinFieldKey: provider.issueFieldKeyForController(
+                _buildIssueField(
                   provider.localityNameController,
+                  LocalizationKeys.localityName.tr(context),
+                  provider,
                 ),
-              ),
-              _sizedField(
-                provider.organizationNameController,
-                LocalizationKeys.organizationName.tr(context),
-                260,
-                pinFieldKey: provider.issueFieldKeyForController(
+              ]),
+              _buildFieldRow([
+                _buildIssueField(
                   provider.organizationNameController,
+                  LocalizationKeys.organizationName.tr(context),
+                  provider,
+                  requiredField: true,
                 ),
-                requiredField: true,
-              ),
-              _sizedField(
-                provider.organizationalUnitNameController,
-                LocalizationKeys.orgUnitName.tr(context),
-                260,
-                pinFieldKey: provider.issueFieldKeyForController(
+                _buildIssueField(
                   provider.organizationalUnitNameController,
+                  LocalizationKeys.orgUnitName.tr(context),
+                  provider,
                 ),
-              ),
-              _sizedField(
-                provider.emailAddressController,
-                LocalizationKeys.emailAddress.tr(context),
-                260,
-                pinFieldKey: provider.issueFieldKeyForController(
+              ]),
+              _buildFieldRow([
+                _buildIssueField(
                   provider.emailAddressController,
+                  LocalizationKeys.emailAddress.tr(context),
+                  provider,
                 ),
-              ),
-              _sizedField(
-                provider.explicitTextController,
-                LocalizationKeys.explicitText.tr(context),
-                280,
-                pinFieldKey: provider.issueFieldKeyForController(
-                  provider.explicitTextController,
-                ),
-              ),
-              _sizedField(
-                provider.unstructuredNameController,
-                LocalizationKeys.unstructuredName.tr(context),
-                260,
-                pinFieldKey: provider.issueFieldKeyForController(
-                  provider.unstructuredNameController,
-                ),
-              ),
-              _sizedField(
-                provider.ocspDomainController,
-                LocalizationKeys.ocspDomain.tr(context),
-                260,
-                pinFieldKey: provider.issueFieldKeyForController(
+                _buildIssueField(
                   provider.ocspDomainController,
+                  LocalizationKeys.ocspDomain.tr(context),
+                  provider,
                 ),
-              ),
+              ]),
+              _buildFieldRow([
+                _buildIssueField(
+                  provider.explicitTextController,
+                  LocalizationKeys.explicitText.tr(context),
+                  provider,
+                ),
+                _buildIssueField(
+                  provider.unstructuredNameController,
+                  LocalizationKeys.unstructuredName.tr(context),
+                  provider,
+                ),
+              ]),
             ],
           ),
         if (_issueStep == 2) _buildUsageTypePanel(provider),
@@ -1184,40 +1219,19 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildSectionContainer(
-                title: LocalizationKeys.issueSummary.tr(context),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: summaryRows
-                        .map(
-                          (line) => Padding(
-                            padding: const EdgeInsets.only(bottom: 6),
-                            child: SelectableText(
-                              line,
-                              style: theme.textTheme.bodySmall,
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-              ),
+              _buildIssueSummarySection(provider, theme),
               _buildCard(
                 title: LocalizationKeys.draftOpenSslConfig.tr(context),
                 child: SizedBox(
                   width: double.infinity,
-                  child: SizedBox(
-                    height: 220,
-                    child: SingleChildScrollView(
-                      child: SelectableText(
-                        configPreview,
-                        style: const TextStyle(
-                          fontFamily: 'monospace',
-                          fontSize: 12,
-                          height: 1.4,
-                        ),
+                  height: 220,
+                  child: SingleChildScrollView(
+                    child: SelectableText(
+                      configPreview,
+                      style: const TextStyle(
+                        fontFamily: 'monospace',
+                        fontSize: 12,
+                        height: 1.4,
                       ),
                     ),
                   ),
@@ -1243,6 +1257,107 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
     );
   }
 
+  /// Structured summary for step 4 using _buildSectionContainer + _buildInfoRow.
+  Widget _buildIssueSummarySection(
+    SslCertificateManagerProvider provider,
+    ThemeData theme,
+  ) {
+    final altLines = provider.altNames
+        .where((e) => e.value.trim().isNotEmpty)
+        .map((e) => '${e.type == AltNameType.dns ? 'DNS' : 'IP'}: ${e.value}')
+        .join(', ');
+    return Column(
+      children: [
+        _buildSectionContainer(
+          title: LocalizationKeys.sectionIdentity.tr(context),
+          child: Column(
+            children: [
+              _buildInfoRow(
+                label: LocalizationKeys.summaryDomain.tr(context),
+                value: provider.domainController.text.trim(),
+              ),
+              _buildInfoRow(
+                label: LocalizationKeys.summaryCommonName.tr(context),
+                value: provider.commonNameController.text.trim(),
+              ),
+              _buildInfoRow(
+                label: LocalizationKeys.summaryAltNames.tr(context),
+                value: altLines.isEmpty
+                    ? LocalizationKeys.summaryNone.tr(context)
+                    : altLines,
+              ),
+            ],
+          ),
+        ),
+        _buildSectionContainer(
+          title: LocalizationKeys.sectionOrganization.tr(context),
+          child: Column(
+            children: [
+              _buildInfoRow(
+                label: LocalizationKeys.summaryLocation.tr(context),
+                value:
+                    '${provider.countryNameController.text.trim()} / ${provider.stateNameController.text.trim()} / ${provider.localityNameController.text.trim()}',
+              ),
+              _buildInfoRow(
+                label: LocalizationKeys.summaryOrganization.tr(context),
+                value:
+                    '${provider.organizationNameController.text.trim()} / ${provider.organizationalUnitNameController.text.trim()}',
+              ),
+              _buildInfoRow(
+                label: LocalizationKeys.summaryEmail.tr(context),
+                value: provider.emailAddressController.text.trim(),
+              ),
+            ],
+          ),
+        ),
+        _buildSectionContainer(
+          title: LocalizationKeys.sectionSecurity.tr(context),
+          child: Column(
+            children: [
+              _buildInfoRow(
+                label: LocalizationKeys.summaryValidDays.tr(context),
+                value: provider.validDaysController.text.trim(),
+              ),
+              _buildInfoRow(
+                label: LocalizationKeys.summaryPassword.tr(context),
+                value: provider.challengePasswordController.text.isEmpty
+                    ? LocalizationKeys.summaryPasswordNotSet.tr(context)
+                    : LocalizationKeys.summaryPasswordSet.tr(context),
+              ),
+              _buildInfoRow(
+                label: LocalizationKeys.summaryKeyUsage.tr(context),
+                value: provider.selectedKeyUsageTypes.join(', '),
+              ),
+              _buildInfoRow(
+                label: LocalizationKeys.summaryExtendedKeyUsage.tr(context),
+                value: provider.selectedExtendedKeyUsageTypes.join(', '),
+              ),
+            ],
+          ),
+        ),
+        _buildSectionContainer(
+          title: LocalizationKeys.sectionEndpoints.tr(context),
+          child: Column(
+            children: [
+              _buildInfoRow(
+                label: LocalizationKeys.summaryCrlUrl.tr(context),
+                value: provider.crlDistributionUrlController.text.trim(),
+              ),
+              _buildInfoRow(
+                label: LocalizationKeys.summaryOcspCaIssuersUrl.tr(context),
+                value: provider.ocspCaIssuersUrlController.text.trim(),
+              ),
+              _buildInfoRow(
+                label: LocalizationKeys.summaryOcspResponderUrl.tr(context),
+                value: provider.ocspResponderUrlController.text.trim(),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   // ---------------------------------------------------------------------------
   // Usage Type Panel
   // ---------------------------------------------------------------------------
@@ -1251,51 +1366,48 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          LocalizationKeys.keyUsageLabel.tr(context),
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
-        const SizedBox(height: 6),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: SslCertificateManagerProvider.availableKeyUsageTypes
-              .map(
-                (usage) => Tooltip(
-                  message: _keyUsageDescription(usage),
-                  child: FilterChip(
-                    label: Text(usage),
-                    selected: provider.selectedKeyUsageTypes.contains(usage),
-                    onSelected: (v) => provider.toggleKeyUsageType(usage, v),
-                  ),
-                ),
-              )
-              .toList(),
-        ),
-        const SizedBox(height: 14),
-        Text(
-          LocalizationKeys.extendedKeyUsageLabel.tr(context),
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
-        const SizedBox(height: 6),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: SslCertificateManagerProvider.availableExtendedKeyUsageTypes
-              .map(
-                (usage) => Tooltip(
-                  message: _extendedKeyUsageDescription(usage),
-                  child: FilterChip(
-                    label: Text(usage),
-                    selected: provider.selectedExtendedKeyUsageTypes.contains(
-                      usage,
+        _buildSectionContainer(
+          title: LocalizationKeys.keyUsageLabel.tr(context),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: SslCertificateManagerProvider.availableKeyUsageTypes
+                .map(
+                  (usage) => Tooltip(
+                    message: _keyUsageDescription(usage),
+                    child: FilterChip(
+                      label: Text(usage),
+                      selected:
+                          provider.selectedKeyUsageTypes.contains(usage),
+                      onSelected: (v) =>
+                          provider.toggleKeyUsageType(usage, v),
                     ),
-                    onSelected: (v) =>
-                        provider.toggleExtendedKeyUsageType(usage, v),
                   ),
-                ),
-              )
-              .toList(),
+                )
+                .toList(),
+          ),
+        ),
+        _buildSectionContainer(
+          title: LocalizationKeys.extendedKeyUsageLabel.tr(context),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: SslCertificateManagerProvider
+                .availableExtendedKeyUsageTypes
+                .map(
+                  (usage) => Tooltip(
+                    message: _extendedKeyUsageDescription(usage),
+                    child: FilterChip(
+                      label: Text(usage),
+                      selected: provider.selectedExtendedKeyUsageTypes
+                          .contains(usage),
+                      onSelected: (v) =>
+                          provider.toggleExtendedKeyUsageType(usage, v),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
         ),
       ],
     );
@@ -1367,30 +1479,24 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
 
   Widget _buildEndpointAddressPanel(SslCertificateManagerProvider provider) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 8),
-        _buildTextField(
-          controller: provider.crlDistributionUrlController,
-          label: LocalizationKeys.crlDistributionUrl.tr(context),
-          pinFieldKey: provider.issueFieldKeyForController(
-            provider.crlDistributionUrlController,
-          ),
+        _buildIssueField(
+          provider.crlDistributionUrlController,
+          LocalizationKeys.crlDistributionUrl.tr(context),
+          provider,
           requiredField: true,
         ),
-        _buildTextField(
-          controller: provider.ocspCaIssuersUrlController,
-          label: LocalizationKeys.ocspCaIssuersUrl.tr(context),
-          pinFieldKey: provider.issueFieldKeyForController(
-            provider.ocspCaIssuersUrlController,
-          ),
+        _buildIssueField(
+          provider.ocspCaIssuersUrlController,
+          LocalizationKeys.ocspCaIssuersUrl.tr(context),
+          provider,
           requiredField: true,
         ),
-        _buildTextField(
-          controller: provider.ocspResponderUrlController,
-          label: LocalizationKeys.ocspResponderUrl.tr(context),
-          pinFieldKey: provider.issueFieldKeyForController(
-            provider.ocspResponderUrlController,
-          ),
+        _buildIssueField(
+          provider.ocspResponderUrlController,
+          LocalizationKeys.ocspResponderUrl.tr(context),
+          provider,
           requiredField: true,
         ),
       ],
