@@ -5,6 +5,7 @@ import 'package:fl_chart/fl_chart.dart';
 
 import '../../../core/services/localization_service.dart';
 import '../../../core/theme/theme_provider.dart';
+import '../../../core/widgets/navigation/module_side_nav.dart';
 
 import '../localization/localization_keys.dart';
 import '../providers/network_tools_provider.dart';
@@ -19,6 +20,11 @@ class NetworkToolsPage extends StatefulWidget {
 class _NetworkToolsPageState extends State<NetworkToolsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool _isNavExpanded = false;
+  static const double _compactNavWidth = 68;
+  static const double _expandedNavWidth = 200;
+  static const double _navHeaderHeight = 60;
+  static const double _mainContentPadding = 16;
 
   @override
   void initState() {
@@ -34,121 +40,117 @@ class _NetworkToolsPageState extends State<NetworkToolsPage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final useCompactNav = screenWidth < 1100;
+
+    final content = TabBarView(
+      controller: _tabController,
+      physics: const NeverScrollableScrollPhysics(),
+      children: [
+        _buildPingTool(),
+        _buildPerformanceTool(),
+        _buildSiteTool(),
+        _buildPortScanTool(),
+      ],
+    );
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Row(
-        children: [
-          // 左侧导航
-          Container(
-            width: 200,
-            decoration: BoxDecoration(
-              color: theme.cardColor.withValues(alpha: 0.5),
-              border: Border(
-                right: BorderSide(
-                  color: theme.dividerColor.withValues(alpha: 0.1),
-                ),
-              ),
+      body: ResponsiveSidebarShell(
+        isCompact: useCompactNav,
+        isExpanded: _isNavExpanded,
+        compactWidth: _compactNavWidth,
+        expandedWidth: _expandedNavWidth,
+        content: content,
+        onCollapse: () => setState(() => _isNavExpanded = false),
+        buildPanel:
+            ({
+              required bool useCompactNav,
+              required bool showLabel,
+              required bool isFloating,
+            }) => _buildNavPanel(
+              useCompactNav: useCompactNav,
+              showLabel: showLabel,
+              isFloating: isFloating,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
-                Expanded(
-                  child: ListView(
-                    children: [
-                      _buildNavItem(
-                        0,
-                        Icons.speed_rounded,
-                        LocalizationKeys.networkPing.tr(context),
-                      ),
-                      _buildNavItem(
-                        1,
-                        Icons.bolt_rounded,
-                        LocalizationKeys.networkPerformanceTest.tr(context),
-                      ),
-                      _buildNavItem(
-                        2,
-                        Icons.security_rounded,
-                        LocalizationKeys.networkSiteTest.tr(context),
-                      ),
-                      _buildNavItem(
-                        3,
-                        Icons.lan_rounded,
-                        LocalizationKeys.networkPortScan.tr(context),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // 右侧内容
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                _buildPingTool(),
-                _buildPerformanceTool(),
-                _buildSiteTool(),
-                _buildPortScanTool(),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, String label) {
-    final theme = Theme.of(context);
-    final isSelected = _tabController.index == index;
+  Widget _buildNavPanel({
+    required bool useCompactNav,
+    required bool showLabel,
+    bool isFloating = false,
+  }) {
     final primaryColor = context
         .watch<ThemeProvider>()
         .currentTheme
         .primaryColor;
+    final width = showLabel ? _expandedNavWidth : _compactNavWidth;
+    return SidebarPanelContainer(
+      width: width,
+      isFloating: isFloating,
+      onBlankTap: isFloating
+          ? () => setState(() => _isNavExpanded = false)
+          : null,
+      topSlot: !showLabel
+          ? _buildNavToggle(showLabel: showLabel, useCompactNav: useCompactNav)
+          : (isFloating
+                ? const SizedBox(height: _navHeaderHeight)
+                : const SizedBox(height: 8)),
+      children: [
+        SidebarNavItemTile(
+          icon: Icons.speed_rounded,
+          label: LocalizationKeys.networkPing.tr(context),
+          isSelected: _tabController.index == 0,
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+          onTap: () => _onNavSelect(0, useCompactNav, showLabel),
+        ),
+        SidebarNavItemTile(
+          icon: Icons.bolt_rounded,
+          label: LocalizationKeys.networkPerformanceTest.tr(context),
+          isSelected: _tabController.index == 1,
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+          onTap: () => _onNavSelect(1, useCompactNav, showLabel),
+        ),
+        SidebarNavItemTile(
+          icon: Icons.security_rounded,
+          label: LocalizationKeys.networkSiteTest.tr(context),
+          isSelected: _tabController.index == 2,
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+          onTap: () => _onNavSelect(2, useCompactNav, showLabel),
+        ),
+        SidebarNavItemTile(
+          icon: Icons.lan_rounded,
+          label: LocalizationKeys.networkPortScan.tr(context),
+          isSelected: _tabController.index == 3,
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+          onTap: () => _onNavSelect(3, useCompactNav, showLabel),
+        ),
+      ],
+    );
+  }
 
-    return InkWell(
-      onTap: () => setState(() => _tabController.index = index),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        decoration: BoxDecoration(
-          border: Border(
-            right: BorderSide(
-              color: isSelected ? primaryColor : Colors.transparent,
-              width: 3,
-            ),
-          ),
-          color: isSelected
-              ? primaryColor.withValues(alpha: 0.1)
-              : Colors.transparent,
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 20,
-              color: isSelected
-                  ? primaryColor
-                  : theme.colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Text(
-                label,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: isSelected
-                      ? primaryColor
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+  void _onNavSelect(int index, bool useCompactNav, bool showLabel) {
+    setState(() => _tabController.index = index);
+    if (useCompactNav && showLabel) {
+      setState(() => _isNavExpanded = false);
+    }
+  }
+
+  Widget _buildNavToggle({
+    required bool showLabel,
+    required bool useCompactNav,
+  }) {
+    return SidebarToggleButton(
+      showLabel: showLabel,
+      enabled: useCompactNav,
+      isExpanded: _isNavExpanded,
+      onPressed: () => setState(() => _isNavExpanded = !_isNavExpanded),
     );
   }
 
@@ -215,113 +217,136 @@ class _NetworkToolsPageState extends State<NetworkToolsPage>
     final provider = context.watch<NetworkToolsProvider>();
     final theme = Theme.of(context);
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 标题与控制栏
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Text(
-                LocalizationKeys.networkPerformanceTest.tr(context),
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-                maxLines: 1,
-                softWrap: false,
-              ),
-              const SizedBox(width: 12),
-              DropdownButton<String>(
-                value: provider.testMode,
-                items: [
-                  DropdownMenuItem(
-                    value: 'Client',
-                    child: Text(LocalizationKeys.modeClient.tr(context)),
-                  ),
-                  DropdownMenuItem(
-                    value: 'Server',
-                    child: Text(LocalizationKeys.modeServer.tr(context)),
-                  ),
-                ].toList(),
-                onChanged: (v) {
-                  if (v != null) setState(() => provider.testMode = v);
-                },
-                underline: const SizedBox(),
-              ),
-              const SizedBox(width: 12),
-              _buildActionButton(
-                onPressed: provider.isPerfRunning
-                    ? provider.stopPerfTest
-                    : provider.runPerfTest,
-                icon: provider.isPerfRunning
-                    ? Icons.stop_rounded
-                    : Icons.play_arrow_rounded,
-                label: provider.isPerfRunning
-                    ? LocalizationKeys.stopTest.tr(context)
-                    : (provider.testMode == 'Server'
-                          ? LocalizationKeys.startMonitor.tr(context)
-                          : LocalizationKeys.startSend.tr(context)),
-                color: provider.isPerfRunning
-                    ? Colors.redAccent.withValues(alpha: 0.9)
-                    : Colors.green.withValues(alpha: 0.8),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          _buildControlBar(provider),
-          const SizedBox(height: 24),
-
-          // 数据监控区域 (发送/接收 详情)
-          Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compact = constraints.maxWidth < 900;
+        final chartColumns = constraints.maxWidth < 1050 ? 1 : 2;
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(_mainContentPadding),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 2, child: _buildLogArea(provider)),
-              const SizedBox(width: 16),
-              Expanded(flex: 1, child: _buildStatsHierarchy(provider)),
-            ],
-          ),
-          const SizedBox(height: 24),
+              // 标题与控制栏
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text(
+                    LocalizationKeys.networkPerformanceTest.tr(context),
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(width: 12),
+                  DropdownButton<String>(
+                    value: provider.testMode,
+                    items: [
+                      DropdownMenuItem(
+                        value: 'Client',
+                        child: Text(LocalizationKeys.modeClient.tr(context)),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Server',
+                        child: Text(LocalizationKeys.modeServer.tr(context)),
+                      ),
+                    ].toList(),
+                    onChanged: (v) {
+                      if (v != null) setState(() => provider.testMode = v);
+                    },
+                    underline: const SizedBox(),
+                  ),
+                  const SizedBox(width: 12),
+                  _buildActionButton(
+                    onPressed: provider.isPerfRunning
+                        ? provider.stopPerfTest
+                        : provider.runPerfTest,
+                    icon: provider.isPerfRunning
+                        ? Icons.stop_rounded
+                        : Icons.play_arrow_rounded,
+                    label: provider.isPerfRunning
+                        ? LocalizationKeys.stopTest.tr(context)
+                        : (provider.testMode == 'Server'
+                              ? LocalizationKeys.startMonitor.tr(context)
+                              : LocalizationKeys.startSend.tr(context)),
+                    color: provider.isPerfRunning
+                        ? Colors.redAccent.withValues(alpha: 0.9)
+                        : Colors.green.withValues(alpha: 0.8),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              _buildControlBar(provider),
+              const SizedBox(height: 24),
 
-          // 图表网格
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            childAspectRatio: 1.8,
-            children: [
-              _buildChartCard(
-                LocalizationKeys.socketSend.tr(context),
-                provider.socketSendHistory,
-                Colors.blue,
-                ' Pkt/s',
+              // 数据监控区域 (发送/接收 详情)
+              Wrap(
+                runSpacing: 16,
+                spacing: 16,
+                children: compact
+                    ? [
+                        SizedBox(
+                          width: constraints.maxWidth,
+                          child: _buildLogArea(provider),
+                        ),
+                        SizedBox(
+                          width: constraints.maxWidth,
+                          child: _buildStatsHierarchy(provider),
+                        ),
+                      ]
+                    : [
+                        SizedBox(
+                          width: (constraints.maxWidth - 16) * 2 / 3,
+                          child: _buildLogArea(provider),
+                        ),
+                        SizedBox(
+                          width: (constraints.maxWidth - 16) / 3,
+                          child: _buildStatsHierarchy(provider),
+                        ),
+                      ],
               ),
-              _buildChartCard(
-                LocalizationKeys.socketReceive.tr(context),
-                provider.socketReceiveHistory,
-                Colors.green,
-                ' Pkt/s',
-              ),
-              _buildChartCard(
-                LocalizationKeys.sendSpeed.tr(context),
-                provider.sendBytesHistory,
-                Colors.orange,
-                ' MB/s',
-              ),
-              _buildChartCard(
-                LocalizationKeys.receiveSpeed.tr(context),
-                provider.receiveBytesHistory,
-                Colors.cyan,
-                ' MB/s',
+              const SizedBox(height: 24),
+
+              // 图表网格
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: chartColumns,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 1.8,
+                children: [
+                  _buildChartCard(
+                    LocalizationKeys.socketSend.tr(context),
+                    provider.socketSendHistory,
+                    Colors.blue,
+                    ' Pkt/s',
+                  ),
+                  _buildChartCard(
+                    LocalizationKeys.socketReceive.tr(context),
+                    provider.socketReceiveHistory,
+                    Colors.green,
+                    ' Pkt/s',
+                  ),
+                  _buildChartCard(
+                    LocalizationKeys.sendSpeed.tr(context),
+                    provider.sendBytesHistory,
+                    Colors.orange,
+                    ' MB/s',
+                  ),
+                  _buildChartCard(
+                    LocalizationKeys.receiveSpeed.tr(context),
+                    provider.receiveBytesHistory,
+                    Colors.cyan,
+                    ' MB/s',
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -344,9 +369,10 @@ class _NetworkToolsPageState extends State<NetworkToolsPage>
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Wrap(
         spacing: 10,
+        runSpacing: 10,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           DropdownButton<String>(
             value: provider.protocol,
@@ -698,53 +724,77 @@ class _NetworkToolsPageState extends State<NetworkToolsPage>
     VoidCallback? onClear,
   }) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final actionWidgets = _normalizeActions(actions);
+        return Padding(
+          padding: const EdgeInsets.all(_mainContentPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+              Wrap(
+                runSpacing: 8,
+                spacing: 12,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (onClear != null)
+                    TextButton.icon(
+                      onPressed: onClear,
+                      icon: const Icon(Icons.clear_all_rounded, size: 20),
+                      label: Text(LocalizationKeys.clear.tr(context)),
+                      style: TextButton.styleFrom(
+                        foregroundColor: theme.colorScheme.error,
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              if (topContent != null)
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: theme.cardColor.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: theme.dividerColor.withValues(alpha: 0.3),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: topContent,
+                ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: actionWidgets,
                 ),
               ),
-              const Spacer(),
-              if (onClear != null)
-                TextButton.icon(
-                  onPressed: onClear,
-                  icon: const Icon(Icons.clear_all_rounded, size: 20),
-                  label: Text(LocalizationKeys.clear.tr(context)),
-                  style: TextButton.styleFrom(
-                    foregroundColor: theme.colorScheme.error,
-                  ),
-                ),
+              Expanded(child: bottomContent),
             ],
           ),
-          const SizedBox(height: 24),
-          if (topContent != null)
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: theme.cardColor.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: theme.dividerColor.withValues(alpha: 0.3),
-                  width: 1.5,
-                ),
-              ),
-              child: topContent,
-            ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Row(children: actions),
-          ),
-          Expanded(child: bottomContent),
-        ],
-      ),
+        );
+      },
     );
+  }
+
+  List<Widget> _normalizeActions(List<Widget> actions) {
+    final normalized = <Widget>[];
+    for (final action in actions) {
+      if (action is Spacer) {
+        normalized.add(const SizedBox(width: 12));
+        continue;
+      }
+      normalized.add(action);
+    }
+    return normalized;
   }
 
   Widget _buildTextArea({

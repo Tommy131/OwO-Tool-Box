@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 
 import '../../../core/services/localization_service.dart';
+import '../../../core/widgets/navigation/module_side_nav.dart';
 
 import '../localization/localization_keys.dart';
 import '../../../core/theme/theme_provider.dart';
@@ -35,6 +36,11 @@ class DevToolsPage extends StatefulWidget {
 class _DevToolsPageState extends State<DevToolsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  bool _isNavExpanded = false;
+  static const double _compactNavWidth = 68;
+  static const double _expandedNavWidth = 200;
+  static const double _navHeaderHeight = 60;
+  static const double _mainContentPadding = 16;
 
   @override
   void initState() {
@@ -50,133 +56,135 @@ class _DevToolsPageState extends State<DevToolsPage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final useCompactNav = screenWidth < 1100;
+
+    final content = TabBarView(
+      controller: _tabController,
+      physics: const NeverScrollableScrollPhysics(),
+      children: [
+        _buildBase64Tool(),
+        _buildUrlTool(),
+        _buildJsonTool(),
+        _buildUuidTool(),
+        _buildHashTool(),
+        _buildPasswordTool(),
+      ],
+    );
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Row(
-        children: [
-          // 左侧导航
-          Container(
-            width: 200,
-            decoration: BoxDecoration(
-              color: theme.cardColor.withValues(alpha: 0.5),
-              border: Border(
-                right: BorderSide(
-                  color: theme.dividerColor.withValues(alpha: 0.1),
-                ),
-              ),
+      body: ResponsiveSidebarShell(
+        isCompact: useCompactNav,
+        isExpanded: _isNavExpanded,
+        compactWidth: _compactNavWidth,
+        expandedWidth: _expandedNavWidth,
+        content: content,
+        onCollapse: () => setState(() => _isNavExpanded = false),
+        buildPanel:
+            ({
+              required bool useCompactNav,
+              required bool showLabel,
+              required bool isFloating,
+            }) => _buildNavPanel(
+              useCompactNav: useCompactNav,
+              showLabel: showLabel,
+              isFloating: isFloating,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
-                Expanded(
-                  child: ListView(
-                    children: [
-                      _buildNavItem(
-                        0,
-                        Icons.code_rounded,
-                        LocalizationKeys.devToolsBase64.tr(context),
-                      ),
-                      _buildNavItem(
-                        1,
-                        Icons.link_rounded,
-                        LocalizationKeys.devToolsUrl.tr(context),
-                      ),
-                      _buildNavItem(
-                        2,
-                        Icons.data_object_rounded,
-                        LocalizationKeys.devToolsJson.tr(context),
-                      ),
-                      _buildNavItem(
-                        3,
-                        Icons.fingerprint_rounded,
-                        LocalizationKeys.devToolsUuid.tr(context),
-                      ),
-                      _buildNavItem(
-                        4,
-                        Icons.security_rounded,
-                        LocalizationKeys.hashTool.tr(context),
-                      ),
-                      _buildNavItem(
-                        5,
-                        Icons.password_rounded,
-                        LocalizationKeys.devToolsPassword.tr(context),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // 右侧内容
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                _buildBase64Tool(),
-                _buildUrlTool(),
-                _buildJsonTool(),
-                _buildUuidTool(),
-                _buildHashTool(),
-                _buildPasswordTool(),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, String label) {
-    final theme = Theme.of(context);
-    final isSelected = _tabController.index == index;
+  Widget _buildNavPanel({
+    required bool useCompactNav,
+    required bool showLabel,
+    bool isFloating = false,
+  }) {
     final primaryColor = context
         .watch<ThemeProvider>()
         .currentTheme
         .primaryColor;
+    final width = showLabel ? _expandedNavWidth : _compactNavWidth;
+    return SidebarPanelContainer(
+      width: width,
+      isFloating: isFloating,
+      onBlankTap: isFloating
+          ? () => setState(() => _isNavExpanded = false)
+          : null,
+      topSlot: !showLabel
+          ? _buildNavToggle(showLabel: showLabel, useCompactNav: useCompactNav)
+          : (isFloating
+                ? const SizedBox(height: _navHeaderHeight)
+                : const SizedBox(height: 8)),
+      children: [
+        SidebarNavItemTile(
+          icon: Icons.code_rounded,
+          label: LocalizationKeys.devToolsBase64.tr(context),
+          isSelected: _tabController.index == 0,
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+          onTap: () => _onNavSelect(0, useCompactNav, showLabel),
+        ),
+        SidebarNavItemTile(
+          icon: Icons.link_rounded,
+          label: LocalizationKeys.devToolsUrl.tr(context),
+          isSelected: _tabController.index == 1,
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+          onTap: () => _onNavSelect(1, useCompactNav, showLabel),
+        ),
+        SidebarNavItemTile(
+          icon: Icons.data_object_rounded,
+          label: LocalizationKeys.devToolsJson.tr(context),
+          isSelected: _tabController.index == 2,
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+          onTap: () => _onNavSelect(2, useCompactNav, showLabel),
+        ),
+        SidebarNavItemTile(
+          icon: Icons.fingerprint_rounded,
+          label: LocalizationKeys.devToolsUuid.tr(context),
+          isSelected: _tabController.index == 3,
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+          onTap: () => _onNavSelect(3, useCompactNav, showLabel),
+        ),
+        SidebarNavItemTile(
+          icon: Icons.security_rounded,
+          label: LocalizationKeys.hashTool.tr(context),
+          isSelected: _tabController.index == 4,
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+          onTap: () => _onNavSelect(4, useCompactNav, showLabel),
+        ),
+        SidebarNavItemTile(
+          icon: Icons.password_rounded,
+          label: LocalizationKeys.devToolsPassword.tr(context),
+          isSelected: _tabController.index == 5,
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+          onTap: () => _onNavSelect(5, useCompactNav, showLabel),
+        ),
+      ],
+    );
+  }
 
-    return InkWell(
-      onTap: () => setState(() => _tabController.index = index),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        decoration: BoxDecoration(
-          border: Border(
-            right: BorderSide(
-              color: isSelected ? primaryColor : Colors.transparent,
-              width: 3,
-            ),
-          ),
-          color: isSelected
-              ? primaryColor.withValues(alpha: 0.1)
-              : Colors.transparent,
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 20,
-              color: isSelected
-                  ? primaryColor
-                  : theme.colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Text(
-                label,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: isSelected
-                      ? primaryColor
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+  void _onNavSelect(int index, bool useCompactNav, bool showLabel) {
+    setState(() => _tabController.index = index);
+    if (useCompactNav && showLabel) {
+      setState(() => _isNavExpanded = false);
+    }
+  }
+
+  Widget _buildNavToggle({
+    required bool showLabel,
+    required bool useCompactNav,
+  }) {
+    return SidebarToggleButton(
+      showLabel: showLabel,
+      enabled: useCompactNav,
+      isExpanded: _isNavExpanded,
+      onPressed: () => setState(() => _isNavExpanded = !_isNavExpanded),
     );
   }
 
@@ -189,41 +197,65 @@ class _DevToolsPageState extends State<DevToolsPage>
     VoidCallback? onClear,
   }) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final actionWidgets = _normalizeActions(actions);
+        return Padding(
+          padding: const EdgeInsets.all(_mainContentPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+              Wrap(
+                runSpacing: 8,
+                spacing: 12,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (onClear != null)
+                    TextButton.icon(
+                      onPressed: onClear,
+                      icon: const Icon(Icons.clear_all_rounded, size: 20),
+                      label: Text(LocalizationKeys.clear.tr(context)),
+                      style: TextButton.styleFrom(
+                        foregroundColor: theme.colorScheme.error,
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              if (topContent != null) Expanded(child: topContent),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: actionWidgets,
                 ),
               ),
-              const Spacer(),
-              if (onClear != null)
-                TextButton.icon(
-                  onPressed: onClear,
-                  icon: const Icon(Icons.clear_all_rounded, size: 20),
-                  label: Text(LocalizationKeys.clear.tr(context)),
-                  style: TextButton.styleFrom(
-                    foregroundColor: theme.colorScheme.error,
-                  ),
-                ),
+              Expanded(child: bottomContent),
             ],
           ),
-          const SizedBox(height: 24),
-          if (topContent != null) Expanded(child: topContent),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Row(children: actions),
-          ),
-          Expanded(child: bottomContent),
-        ],
-      ),
+        );
+      },
     );
+  }
+
+  List<Widget> _normalizeActions(List<Widget> actions) {
+    final normalized = <Widget>[];
+    for (final action in actions) {
+      if (action is Spacer) {
+        normalized.add(const SizedBox(width: 12));
+        continue;
+      }
+      normalized.add(action);
+    }
+    return normalized;
   }
 
   Widget _buildTextArea({

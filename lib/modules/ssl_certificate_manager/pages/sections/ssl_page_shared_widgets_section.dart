@@ -2,62 +2,6 @@ part of '../ssl_certificate_manager_page.dart';
 
 /// 通用组件区：复用导航项、卡片、输入框与文件选择逻辑。
 extension _SslPageSharedWidgetsSection on _SslCertificateManagerPageState {
-  Widget _buildNavItem(
-    int index,
-    IconData icon,
-    String label,
-    int selectedNavIndex,
-  ) {
-    final theme = Theme.of(context);
-    final isSelected = selectedNavIndex == index;
-    final primaryColor = context
-        .watch<ThemeProvider>()
-        .currentTheme
-        .primaryColor;
-    return InkWell(
-      onTap: () {
-        context.read<SslCertificateManagerProvider>().selectNav(index);
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        decoration: BoxDecoration(
-          border: Border(
-            right: BorderSide(
-              color: isSelected ? primaryColor : Colors.transparent,
-              width: 3,
-            ),
-          ),
-          color: isSelected
-              ? primaryColor.withValues(alpha: 0.1)
-              : Colors.transparent,
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 20,
-              color: isSelected
-                  ? primaryColor
-                  : theme.colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Text(
-                label,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: isSelected
-                      ? primaryColor
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildCard({required String title, required Widget child}) {
     return Column(
       children: [

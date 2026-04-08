@@ -8,7 +8,7 @@ import 'package:path/path.dart' as p;
 
 import '../../../core/widgets/common/dialog.dart';
 import '../../../core/services/localization_service.dart';
-import '../../../core/theme/theme_provider.dart';
+import '../../../core/widgets/navigation/module_side_nav.dart';
 import '../localization/localization_keys.dart';
 import '../models/ssl_models.dart';
 import '../providers/ssl_certificate_manager_provider.dart';
@@ -30,6 +30,10 @@ class SslCertificateManagerPage extends StatefulWidget {
 
 class _SslCertificateManagerPageState extends State<SslCertificateManagerPage> {
   final ScrollController _cnfEditorScrollController = ScrollController();
+  bool _isNavExpanded = false;
+  static const double _compactNavWidth = 68;
+  static const double _expandedNavWidth = 200;
+  static const double _navHeaderHeight = 60;
   int _issueStep = 0;
   bool _showRootCaPassword = false;
   bool _showChallengePassword = false;
@@ -74,7 +78,10 @@ class _SslCertificateManagerPageState extends State<SslCertificateManagerPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final useCompactNav = screenWidth < 1100;
     final provider = context.watch<SslCertificateManagerProvider>();
+    final primaryColor = theme.colorScheme.primary;
 
     if (provider.isLoading && !provider.isInitialized) {
       return const Center(child: CircularProgressIndicator());
@@ -86,61 +93,114 @@ class _SslCertificateManagerPageState extends State<SslCertificateManagerPage> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Row(
-        children: [
-          Container(
-            width: 200,
-            decoration: BoxDecoration(
-              color: theme.cardColor.withValues(alpha: 0.5),
-              border: Border(
-                right: BorderSide(
-                  color: theme.dividerColor.withValues(alpha: 0.1),
-                ),
-              ),
+      body: ResponsiveSidebarShell(
+        isCompact: useCompactNav,
+        isExpanded: _isNavExpanded,
+        compactWidth: _compactNavWidth,
+        expandedWidth: _expandedNavWidth,
+        onCollapse: () => setState(() => _isNavExpanded = false),
+        content: IndexedStack(
+          index: provider.selectedNavIndex,
+          children: [
+            _buildCertificateList(provider),
+            _buildIssueTab(provider),
+            _buildOpenSslTemplateTab(provider),
+            _buildStorageTab(provider),
+          ],
+        ),
+        buildPanel:
+            ({
+              required bool useCompactNav,
+              required bool showLabel,
+              required bool isFloating,
+            }) => _buildNavPanel(
+              provider: provider,
+              primaryColor: primaryColor,
+              useCompactNav: useCompactNav,
+              showLabel: showLabel,
+              isFloating: isFloating,
             ),
-            child: ListView(
-              children: [
-                const SizedBox(height: 8),
-                _buildNavItem(
-                  0,
-                  Icons.badge_outlined,
-                  LocalizationKeys.certList.tr(context),
-                  provider.selectedNavIndex,
-                ),
-                _buildNavItem(
-                  1,
-                  Icons.note_add_outlined,
-                  LocalizationKeys.certIssue.tr(context),
-                  provider.selectedNavIndex,
-                ),
-                _buildNavItem(
-                  2,
-                  Icons.code_outlined,
-                  LocalizationKeys.opensslTemplate.tr(context),
-                  provider.selectedNavIndex,
-                ),
-                _buildNavItem(
-                  3,
-                  Icons.folder_open_outlined,
-                  LocalizationKeys.storageConfig.tr(context),
-                  provider.selectedNavIndex,
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: IndexedStack(
-              index: provider.selectedNavIndex,
-              children: [
-                _buildCertificateList(provider),
-                _buildIssueTab(provider),
-                _buildOpenSslTemplateTab(provider),
-                _buildStorageTab(provider),
-              ],
-            ),
-          ),
-        ],
       ),
     );
+  }
+
+  Widget _buildNavPanel({
+    required SslCertificateManagerProvider provider,
+    required Color primaryColor,
+    required bool useCompactNav,
+    required bool showLabel,
+    bool isFloating = false,
+  }) {
+    final width = showLabel ? _expandedNavWidth : _compactNavWidth;
+    return SidebarPanelContainer(
+      width: width,
+      isFloating: isFloating,
+      onBlankTap: isFloating
+          ? () => setState(() => _isNavExpanded = false)
+          : null,
+      topSlot: !showLabel
+          ? _buildNavToggle(showLabel: showLabel, useCompactNav: useCompactNav)
+          : (isFloating
+                ? const SizedBox(height: _navHeaderHeight)
+                : const SizedBox(height: 8)),
+      children: [
+        SidebarNavItemTile(
+          icon: Icons.badge_outlined,
+          label: LocalizationKeys.certList.tr(context),
+          isSelected: provider.selectedNavIndex == 0,
+          onTap: () => _onNavSelect(provider, 0, useCompactNav, showLabel),
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+        ),
+        SidebarNavItemTile(
+          icon: Icons.note_add_outlined,
+          label: LocalizationKeys.certIssue.tr(context),
+          isSelected: provider.selectedNavIndex == 1,
+          onTap: () => _onNavSelect(provider, 1, useCompactNav, showLabel),
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+        ),
+        SidebarNavItemTile(
+          icon: Icons.code_outlined,
+          label: LocalizationKeys.opensslTemplate.tr(context),
+          isSelected: provider.selectedNavIndex == 2,
+          onTap: () => _onNavSelect(provider, 2, useCompactNav, showLabel),
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+        ),
+        SidebarNavItemTile(
+          icon: Icons.folder_open_outlined,
+          label: LocalizationKeys.storageConfig.tr(context),
+          isSelected: provider.selectedNavIndex == 3,
+          onTap: () => _onNavSelect(provider, 3, useCompactNav, showLabel),
+          primaryColor: primaryColor,
+          showLabel: showLabel,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNavToggle({
+    required bool showLabel,
+    required bool useCompactNav,
+  }) {
+    return SidebarToggleButton(
+      showLabel: showLabel,
+      enabled: useCompactNav,
+      isExpanded: _isNavExpanded,
+      onPressed: () => setState(() => _isNavExpanded = !_isNavExpanded),
+    );
+  }
+
+  void _onNavSelect(
+    SslCertificateManagerProvider provider,
+    int index,
+    bool useCompactNav,
+    bool showLabel,
+  ) {
+    provider.selectNav(index);
+    if (useCompactNav && showLabel) {
+      setState(() => _isNavExpanded = false);
+    }
   }
 }
