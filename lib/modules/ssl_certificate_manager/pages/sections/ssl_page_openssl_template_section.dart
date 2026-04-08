@@ -4,252 +4,285 @@ part of '../ssl_certificate_manager_page.dart';
 extension _SslPageOpenSslTemplateSection on _SslCertificateManagerPageState {
   Widget _buildOpenSslTemplateTab(SslCertificateManagerProvider provider) {
     final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Expanded(
-            child: _buildPremiumCard(
-              title: LocalizationKeys.defaultOpenSslCnf.tr(context),
-              icon: Icons.code_outlined,
-              trailing: ValueListenableBuilder<TextEditingValue>(
-                valueListenable: provider.cnfEditorController,
-                builder: (context, value, _) {
-                  final isModified =
-                      value.text != provider.savedCnfContent;
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isModified
-                          ? Colors.orange.withValues(alpha: 0.1)
-                          : Colors.green.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isModified
-                            ? Colors.orange.withValues(alpha: 0.3)
-                            : Colors.green.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          isModified
-                              ? Icons.edit_outlined
-                              : Icons.check_circle_outline,
-                          size: 14,
-                          color: isModified ? Colors.orange : Colors.green,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          isModified
-                              ? LocalizationKeys.editorUnsaved.tr(context)
-                              : LocalizationKeys.editorSaved.tr(context),
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: isModified ? Colors.orange : Colors.green,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.cardColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: primaryColor.withValues(alpha: 0.15)),
+          boxShadow: [
+            BoxShadow(
+              color: theme.shadowColor.withValues(alpha: 0.06),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            // Header
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    primaryColor.withValues(alpha: 0.08),
+                    primaryColor.withValues(alpha: 0.02),
+                  ],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(15)),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  // Toolbar row
-                  Row(
-                    children: [
-                      // Line count badge
-                      ValueListenableBuilder<TextEditingValue>(
-                        valueListenable: provider.cnfEditorController,
-                        builder: (context, value, _) {
-                          final lineCount = value.text.split('\n').length;
-                          return Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.surfaceContainerHighest
-                                  .withValues(alpha: 0.3),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              LocalizationKeys.editorLineCount
-                                  .tr(context)
-                                  .replaceAll('@count', '$lineCount'),
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                fontFamily: 'monospace',
-                                color: theme.colorScheme.onSurface
-                                    .withValues(alpha: 0.6),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      const Spacer(),
-                      // Action buttons
-                      _buildToolbarButton(
-                        icon: Icons.save_outlined,
-                        label: LocalizationKeys.saveCnf.tr(context),
-                        onPressed: provider.saveDefaultCnf,
-                        theme: theme,
-                      ),
-                      const SizedBox(width: 6),
-                      _buildToolbarButton(
-                        icon: Icons.auto_fix_high_outlined,
-                        label: LocalizationKeys.regenerateCnf.tr(context),
-                        onPressed: provider.regenerateDefaultCnf,
-                        theme: theme,
-                        outlined: true,
-                      ),
-                      const SizedBox(width: 6),
-                      _buildToolbarButton(
-                        icon: Icons.compare_arrows_outlined,
-                        label: LocalizationKeys.compareChanges.tr(context),
-                        onPressed: () => _showCnfDiffDialog(provider),
-                        theme: theme,
-                        tonal: true,
-                      ),
-                    ],
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: primaryColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(Icons.code_outlined, size: 18,
+                        color: primaryColor),
                   ),
-                  const SizedBox(height: 10),
-                  // Editor area
+                  const SizedBox(width: 12),
                   Expanded(
-                    child: PrimaryScrollController.none(
-                      child: Container(
+                    child: Text(
+                      LocalizationKeys.defaultOpenSslCnf.tr(context),
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: provider.cnfEditorController,
+                    builder: (context, value, _) {
+                      final isModified = value.text != provider.savedCnfContent;
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
+                          color: isModified
+                              ? Colors.orange.withValues(alpha: 0.1)
+                              : Colors.green.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: theme.dividerColor.withValues(alpha: 0.2),
+                            color: isModified
+                                ? Colors.orange.withValues(alpha: 0.3)
+                                : Colors.green.withValues(alpha: 0.3),
                           ),
-                          borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Container(
-                              width: 56,
-                              padding: const EdgeInsets.only(right: 6),
-                              decoration: BoxDecoration(
-                                color: theme
-                                    .colorScheme.surfaceContainerHighest
-                                    .withValues(alpha: 0.15),
-                                border: Border(
-                                  right: BorderSide(
-                                    color: theme.dividerColor
-                                        .withValues(alpha: 0.2),
-                                  ),
-                                ),
-                              ),
-                              child: ClipRect(
-                                child: AnimatedBuilder(
-                                  animation: _cnfEditorScrollController,
-                                  builder: (context, child) {
-                                    final offset =
-                                        _cnfEditorScrollController.hasClients
-                                        ? _cnfEditorScrollController.offset
-                                        : 0.0;
-                                    return Transform.translate(
-                                      offset: Offset(0, -offset),
-                                      child: child,
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 8.5,
-                                    ),
-                                    child:
-                                        ValueListenableBuilder<
-                                          TextEditingValue
-                                        >(
-                                          valueListenable:
-                                              provider.cnfEditorController,
-                                          builder: (context, _, __) {
-                                            final lines = provider
-                                                .cnfEditorController
-                                                .text
-                                                .split('\n')
-                                                .length;
-                                            return OverflowBox(
-                                              alignment: Alignment.topRight,
-                                              minHeight: 0,
-                                              maxHeight: double.infinity,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                children: [
-                                                  for (
-                                                    int i = 1;
-                                                    i <= lines;
-                                                    i++
-                                                  )
-                                                    Text(
-                                                      '$i',
-                                                      style: theme
-                                                          .textTheme.bodySmall
-                                                          ?.copyWith(
-                                                            fontFamily:
-                                                                'monospace',
-                                                            color: theme
-                                                                .colorScheme
-                                                                .onSurface
-                                                                .withValues(
-                                                                  alpha: 0.45,
-                                                                ),
-                                                            height: 1.4,
-                                                          ),
-                                                    ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                  ),
-                                ),
-                              ),
+                            Icon(
+                              isModified
+                                  ? Icons.edit_outlined
+                                  : Icons.check_circle_outline,
+                              size: 14,
+                              color: isModified ? Colors.orange : Colors.green,
                             ),
-                            Expanded(
-                              child: Scrollbar(
-                                controller: _cnfEditorScrollController,
-                                thumbVisibility: true,
-                                child: TextField(
-                                  controller: provider.cnfEditorController,
-                                  scrollController:
-                                      _cnfEditorScrollController,
-                                  scrollPhysics:
-                                      const ClampingScrollPhysics(),
-                                  maxLines: null,
-                                  expands: true,
-                                  style: const TextStyle(
-                                    fontFamily: 'monospace',
-                                    fontSize: 12,
-                                    height: 1.4,
-                                  ),
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 12,
-                                    ),
-                                  ),
-                                ),
+                            const SizedBox(width: 4),
+                            Text(
+                              isModified
+                                  ? LocalizationKeys.editorUnsaved.tr(context)
+                                  : LocalizationKeys.editorSaved.tr(context),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color:
+                                    isModified ? Colors.orange : Colors.green,
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+            // Toolbar
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              child: Row(
+                children: [
+                  ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: provider.cnfEditorController,
+                    builder: (context, value, _) {
+                      final lineCount = value.text.split('\n').length;
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surfaceContainerHighest
+                              .withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          LocalizationKeys.editorLineCount
+                              .tr(context)
+                              .replaceAll('@count', '$lineCount'),
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            fontFamily: 'monospace',
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.6),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const Spacer(),
+                  _buildToolbarButton(
+                    icon: Icons.save_outlined,
+                    label: LocalizationKeys.saveCnf.tr(context),
+                    onPressed: provider.saveDefaultCnf,
+                    theme: theme,
+                  ),
+                  const SizedBox(width: 6),
+                  _buildToolbarButton(
+                    icon: Icons.auto_fix_high_outlined,
+                    label: LocalizationKeys.regenerateCnf.tr(context),
+                    onPressed: provider.regenerateDefaultCnf,
+                    theme: theme,
+                    outlined: true,
+                  ),
+                  const SizedBox(width: 6),
+                  _buildToolbarButton(
+                    icon: Icons.compare_arrows_outlined,
+                    label: LocalizationKeys.compareChanges.tr(context),
+                    onPressed: () => _showCnfDiffDialog(provider),
+                    theme: theme,
+                    tonal: true,
+                  ),
+                ],
+              ),
+            ),
+            // Editor (takes remaining space)
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: PrimaryScrollController.none(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: theme.dividerColor.withValues(alpha: 0.2),
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 56,
+                          padding: const EdgeInsets.only(right: 6),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.15),
+                            border: Border(
+                              right: BorderSide(
+                                color: theme.dividerColor
+                                    .withValues(alpha: 0.2),
+                              ),
+                            ),
+                          ),
+                          child: ClipRect(
+                            child: AnimatedBuilder(
+                              animation: _cnfEditorScrollController,
+                              builder: (context, child) {
+                                final offset =
+                                    _cnfEditorScrollController.hasClients
+                                    ? _cnfEditorScrollController.offset
+                                    : 0.0;
+                                return Transform.translate(
+                                  offset: Offset(0, -offset),
+                                  child: child,
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8.5,
+                                ),
+                                child: ValueListenableBuilder<
+                                  TextEditingValue
+                                >(
+                                  valueListenable:
+                                      provider.cnfEditorController,
+                                  builder: (context, _, __) {
+                                    final lines = provider
+                                        .cnfEditorController.text
+                                        .split('\n')
+                                        .length;
+                                    return OverflowBox(
+                                      alignment: Alignment.topRight,
+                                      minHeight: 0,
+                                      maxHeight: double.infinity,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          for (int i = 1; i <= lines; i++)
+                                            Text(
+                                              '$i',
+                                              style: theme.textTheme.bodySmall
+                                                  ?.copyWith(
+                                                    fontFamily: 'monospace',
+                                                    color: theme
+                                                        .colorScheme.onSurface
+                                                        .withValues(
+                                                          alpha: 0.45,
+                                                        ),
+                                                    height: 1.4,
+                                                  ),
+                                            ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Scrollbar(
+                            controller: _cnfEditorScrollController,
+                            thumbVisibility: true,
+                            child: TextField(
+                              controller: provider.cnfEditorController,
+                              scrollController: _cnfEditorScrollController,
+                              scrollPhysics: const ClampingScrollPhysics(),
+                              maxLines: null,
+                              expands: true,
+                              style: const TextStyle(
+                                fontFamily: 'monospace',
+                                fontSize: 12,
+                                height: 1.4,
+                              ),
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
