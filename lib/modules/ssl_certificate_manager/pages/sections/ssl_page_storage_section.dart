@@ -7,8 +7,9 @@ extension _SslPageStorageSection on _SslCertificateManagerPageState {
       padding: const EdgeInsets.all(16),
       child: ListView(
         children: [
-          _buildCard(
+          _buildPremiumCard(
             title: LocalizationKeys.storageConfig.tr(context),
+            icon: Icons.folder_outlined,
             child: Column(
               children: [
                 _buildTextField(
@@ -46,6 +47,101 @@ extension _SslPageStorageSection on _SslCertificateManagerPageState {
                 ),
               ],
             ),
+          ),
+          _buildCrlManagementCard(provider),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCrlManagementCard(SslCertificateManagerProvider provider) {
+    final theme = Theme.of(context);
+    final crl = provider.crlState;
+    final crlDaysController = TextEditingController(
+      text: crl.crlDays.toString(),
+    );
+
+    final lastGenerated = crl.lastGeneratedAt;
+    final lastGeneratedText = lastGenerated != null
+        ? lastGenerated.toLocal().toString().split('.').first
+        : LocalizationKeys.crlNotGenerated.tr(context);
+
+    return _buildPremiumCard(
+      title: LocalizationKeys.crlManagement.tr(context),
+      icon: Icons.playlist_remove_outlined,
+      accentColor: Colors.red,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildInfoRow(
+            label: LocalizationKeys.crlFilePath.tr(context),
+            value: crl.crlFilePath ??
+                LocalizationKeys.crlNotGenerated.tr(context),
+            copyable: crl.crlFilePath != null,
+          ),
+          _buildInfoRow(
+            label: LocalizationKeys.crlLastGenerated.tr(context),
+            value: lastGeneratedText,
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              SizedBox(
+                width: 160,
+                child: TextField(
+                  controller: crlDaysController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(5),
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
+                  decoration: InputDecoration(
+                    labelText: LocalizationKeys.crlDays.tr(context),
+                    border: const OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              FilledButton.icon(
+                onPressed: provider.isLoading
+                    ? null
+                    : () async {
+                        final days = int.tryParse(
+                          crlDaysController.text.trim(),
+                        );
+                        try {
+                          await provider.generateCrl(crlDays: days);
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                LocalizationKeys.crlGenerateSuccess.tr(context),
+                              ),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        } catch (_) {
+                          if (!mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                LocalizationKeys.crlGenerateFailed.tr(context),
+                              ),
+                              backgroundColor: theme.colorScheme.error,
+                              duration: const Duration(seconds: 3),
+                            ),
+                          );
+                        }
+                      },
+                icon: const Icon(Icons.refresh_outlined),
+                label: Text(LocalizationKeys.generateCrl.tr(context)),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
           ),
         ],
       ),

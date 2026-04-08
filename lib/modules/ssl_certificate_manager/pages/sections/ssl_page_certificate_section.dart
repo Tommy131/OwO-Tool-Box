@@ -1,67 +1,34 @@
 part of '../ssl_certificate_manager_page.dart';
 
-/// 证书功能区：包含证书列表、详情展示与签发模板表单。
+/// Certificate section: certificate list, detail panel, and issue wizard.
 extension _SslPageCertificateSection on _SslCertificateManagerPageState {
+  // ---------------------------------------------------------------------------
+  // Certificate List Tab
+  // ---------------------------------------------------------------------------
+
   Widget _buildCertificateList(SslCertificateManagerProvider provider) {
-    final data = provider.certificates;
+    final data = provider.filteredCertificates;
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          if (provider.infoMessage.isNotEmpty)
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(provider.infoMessage),
-            ),
-          const SizedBox(height: 8),
+          _buildCertificateStatsBar(provider),
+          const SizedBox(height: 12),
+          _buildSearchAndFilterBar(provider),
+          const SizedBox(height: 12),
           Expanded(
             child: data.isEmpty
-                ? Center(child: Text(LocalizationKeys.noData.tr(context)))
+                ? _buildEmptyState()
                 : Row(
                     children: [
                       Expanded(
-                        flex: 2,
-                        child: Card(
-                          child: ListView.separated(
-                            itemCount: data.length,
-                            separatorBuilder: (_, __) =>
-                                const Divider(height: 1),
-                            itemBuilder: (context, index) {
-                              final item = data[index];
-                              final isSelected =
-                                  provider.selectedCertId == item.id;
-                              return ListTile(
-                                selected: isSelected,
-                                title: Text(item.domain),
-                                subtitle: Text(
-                                  '${LocalizationKeys.issuer.tr(context)}: ${item.issuer} | ${LocalizationKeys.expiresAt.tr(context)}: ${item.expiresAt.toLocal().toString().split(".").first}',
-                                ),
-                                trailing: Chip(
-                                  label: Text(
-                                    item.status == SslCertStatus.issued
-                                        ? LocalizationKeys.statusIssued.tr(
-                                            context,
-                                          )
-                                        : LocalizationKeys.statusRevoked.tr(
-                                            context,
-                                          ),
-                                  ),
-                                ),
-                                onTap: () =>
-                                    provider.selectCertificate(item.id),
-                              );
-                            },
-                          ),
-                        ),
+                        flex: 5,
+                        child: _buildCertificateDataList(provider),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 16),
                       Expanded(
-                        child: Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: _buildCertificateDetail(provider),
-                          ),
-                        ),
+                        flex: 4,
+                        child: _buildCertificateDetailPanel(provider),
                       ),
                     ],
                   ),
@@ -71,60 +38,658 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
     );
   }
 
-  Widget _buildCertificateDetail(SslCertificateManagerProvider provider) {
-    final cert = provider.selectedCertificate;
-    if (cert == null) {
-      return Center(child: Text(LocalizationKeys.detail.tr(context)));
-    }
-    final revokeConfig = _resolveInputConfig(provider.revokeReasonController);
-    return ListView(
+  // ---------------------------------------------------------------------------
+  // Stats Bar
+  // ---------------------------------------------------------------------------
+
+  Widget _buildCertificateStatsBar(SslCertificateManagerProvider provider) {
+    return Row(
       children: [
-        Text(cert.domain, style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 8),
-        Text(
-          '${LocalizationKeys.serialNumber.tr(context)}: ${cert.serialNumber}',
-        ),
-        Text('${LocalizationKeys.issuer.tr(context)}: ${cert.issuer}'),
-        Text(
-          '${LocalizationKeys.issuedAt.tr(context)}: ${cert.issuedAt.toLocal()}',
-        ),
-        Text(
-          '${LocalizationKeys.expiresAt.tr(context)}: ${cert.expiresAt.toLocal()}',
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: provider.revokeReasonController,
-          keyboardType: revokeConfig.keyboardType,
-          inputFormatters: revokeConfig.inputFormatters,
-          obscureText: revokeConfig.obscureText,
-          textCapitalization: revokeConfig.textCapitalization,
-          decoration: InputDecoration(
-            labelText: LocalizationKeys.revokeReason.tr(context),
-            suffixIcon: revokeConfig.suffix,
+        Expanded(
+          child: _buildStatChip(
+            icon: Icons.folder_outlined,
+            label: LocalizationKeys.statsTotalCerts.tr(context),
+            value: '${provider.totalCertCount}',
+            color: Colors.blue,
           ),
         ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            ElevatedButton.icon(
-              onPressed: cert.status == SslCertStatus.revoked
-                  ? null
-                  : () => provider.revokeCertificate(cert.id),
-              icon: const Icon(Icons.block),
-              label: Text(LocalizationKeys.revoke.tr(context)),
-            ),
-            OutlinedButton.icon(
-              onPressed: () => provider.deleteCertificate(cert.id),
-              icon: const Icon(Icons.delete_outline),
-              label: Text(LocalizationKeys.delete.tr(context)),
-            ),
-          ],
+        const SizedBox(width: 8),
+        Expanded(
+          child: _buildStatChip(
+            icon: Icons.check_circle_outline,
+            label: LocalizationKeys.statsIssuedCount.tr(context),
+            value: '${provider.issuedCertCount}',
+            color: Colors.green,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _buildStatChip(
+            icon: Icons.block,
+            label: LocalizationKeys.statsRevokedCount.tr(context),
+            value: '${provider.revokedCertCount}',
+            color: Colors.red,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _buildStatChip(
+            icon: Icons.warning_amber,
+            label: LocalizationKeys.statsExpiringSoon.tr(context),
+            value: '${provider.expiringSoonCount}',
+            color: Colors.amber.shade700,
+          ),
         ),
       ],
     );
   }
+
+  // ---------------------------------------------------------------------------
+  // Search & Filter Bar
+  // ---------------------------------------------------------------------------
+
+  Widget _buildSearchAndFilterBar(SslCertificateManagerProvider provider) {
+    final theme = Theme.of(context);
+    final noFilterActive =
+        provider.statusFilter.isEmpty && !provider.filterExpiringSoon;
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            controller: provider.searchController,
+            onChanged: (value) => provider.updateSearchQuery(value),
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.search),
+              hintText: LocalizationKeys.searchCertificates.tr(context),
+              border: const OutlineInputBorder(),
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 10,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        FilterChip(
+          label: Text(LocalizationKeys.filterAll.tr(context)),
+          selected: noFilterActive,
+          onSelected: (_) => provider.clearFilters(),
+          selectedColor: theme.colorScheme.primary.withValues(alpha: 0.15),
+        ),
+        const SizedBox(width: 6),
+        FilterChip(
+          label: Text(LocalizationKeys.statusIssued.tr(context)),
+          selected: provider.statusFilter.contains(SslCertStatus.issued),
+          onSelected: (_) =>
+              provider.toggleStatusFilter(SslCertStatus.issued),
+          selectedColor: Colors.green.withValues(alpha: 0.15),
+        ),
+        const SizedBox(width: 6),
+        FilterChip(
+          label: Text(LocalizationKeys.statusRevoked.tr(context)),
+          selected: provider.statusFilter.contains(SslCertStatus.revoked),
+          onSelected: (_) =>
+              provider.toggleStatusFilter(SslCertStatus.revoked),
+          selectedColor: Colors.red.withValues(alpha: 0.15),
+        ),
+        const SizedBox(width: 6),
+        FilterChip(
+          label: Text(LocalizationKeys.filterExpiringSoon.tr(context)),
+          selected: provider.filterExpiringSoon,
+          onSelected: (v) => provider.setFilterExpiringSoon(v),
+          selectedColor: Colors.amber.withValues(alpha: 0.15),
+        ),
+      ],
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Empty State
+  // ---------------------------------------------------------------------------
+
+  Widget _buildEmptyState() {
+    final theme = Theme.of(context);
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.badge_outlined,
+            size: 64,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.25),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            LocalizationKeys.noData.tr(context),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Certificate Data List
+  // ---------------------------------------------------------------------------
+
+  Widget _buildCertificateDataList(SslCertificateManagerProvider provider) {
+    final theme = Theme.of(context);
+    final data = provider.filteredCertificates;
+    return Card(
+      child: ListView.separated(
+        itemCount: data.length,
+        separatorBuilder: (_, __) => const Divider(height: 1),
+        itemBuilder: (context, index) {
+          final item = data[index];
+          final isSelected = provider.selectedCertId == item.id;
+
+          Color statusDotColor;
+          if (item.status == SslCertStatus.revoked) {
+            statusDotColor = Colors.red;
+          } else if (item.isExpired) {
+            statusDotColor = Colors.red.shade800;
+          } else if (item.isExpiringSoon) {
+            statusDotColor = Colors.amber.shade700;
+          } else {
+            statusDotColor = Colors.green;
+          }
+
+          return InkWell(
+            onTap: () => provider.selectCertificate(item.id),
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? theme.colorScheme.primary.withValues(alpha: 0.06)
+                    : null,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: statusDotColor,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          item.domain,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      _buildStatusBadge(item),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16, top: 4),
+                    child: Text(
+                      'CN: ${item.commonName}  |  SN: ${item.serialNumber}  |  ${LocalizationKeys.expiresAt.tr(context)}: ${item.expiresAt.toLocal().toString().split(".").first}',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface
+                            .withValues(alpha: 0.55),
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Certificate Detail Panel
+  // ---------------------------------------------------------------------------
+
+  Widget _buildCertificateDetailPanel(SslCertificateManagerProvider provider) {
+    final cert = provider.selectedCertificate;
+    if (cert == null) {
+      return Card(
+        child: Center(
+          child: Text(
+            LocalizationKeys.selectCertificate.tr(context),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.5),
+            ),
+          ),
+        ),
+      );
+    }
+
+    final theme = Theme.of(context);
+    final revokeConfig = _resolveInputConfig(provider.revokeReasonController);
+
+    final daysColor = cert.isExpired
+        ? Colors.red
+        : (cert.daysRemaining <= 30 ? Colors.amber.shade700 : Colors.green);
+
+    return Card(
+      child: ListView(
+        padding: const EdgeInsets.all(0),
+        children: [
+          // Gradient header with domain and status badge
+          _buildDetailGradientHeader(cert, theme),
+
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Subject info section
+                _buildSectionContainer(
+                  title: LocalizationKeys.sectionSubjectInfo.tr(context),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildInfoRow(
+                        label: LocalizationKeys.commonName.tr(context),
+                        value: cert.commonName,
+                        copyable: true,
+                      ),
+                      _buildInfoRow(
+                        label: LocalizationKeys.issuer.tr(context),
+                        value: cert.issuer,
+                      ),
+                      _buildInfoRow(
+                        label: LocalizationKeys.serialNumber.tr(context),
+                        value: cert.serialNumber,
+                        copyable: true,
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Validity section
+                _buildSectionContainer(
+                  title: LocalizationKeys.sectionValidity.tr(context),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildInfoRow(
+                        label: LocalizationKeys.issuedAt.tr(context),
+                        value: cert.issuedAt
+                            .toLocal()
+                            .toString()
+                            .split('.')
+                            .first,
+                      ),
+                      _buildInfoRow(
+                        label: LocalizationKeys.expiresAt.tr(context),
+                        value: cert.expiresAt
+                            .toLocal()
+                            .toString()
+                            .split('.')
+                            .first,
+                      ),
+                      _buildDaysRemainingRow(cert.daysRemaining, daysColor),
+                    ],
+                  ),
+                ),
+
+                // Extensions section (async)
+                _buildSectionContainer(
+                  title: LocalizationKeys.sectionExtensions.tr(context),
+                  child: FutureBuilder<CertificateDetailInfo?>(
+                    future: provider.fetchCertificateDetails(
+                      cert.certFilePath,
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState != ConnectionState.done) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            LocalizationKeys.loadingDetails.tr(context),
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        );
+                      }
+                      final detail = snapshot.data;
+                      if (detail == null) {
+                        return const SizedBox.shrink();
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildInfoRow(
+                            label: LocalizationKeys.certDetailPublicKey
+                                .tr(context),
+                            value: detail.publicKeyAlgorithm,
+                          ),
+                          _buildInfoRow(
+                            label: LocalizationKeys.certDetailSignatureAlgo
+                                .tr(context),
+                            value: detail.signatureAlgorithm,
+                          ),
+                          _buildInfoRow(
+                            label: LocalizationKeys.certDetailKeyUsage
+                                .tr(context),
+                            value: detail.keyUsage.join(', '),
+                          ),
+                          _buildInfoRow(
+                            label: LocalizationKeys.certDetailExtKeyUsage
+                                .tr(context),
+                            value: detail.extendedKeyUsage.join(', '),
+                          ),
+                          _buildInfoRow(
+                            label:
+                                LocalizationKeys.certDetailSan.tr(context),
+                            value: detail.subjectAltNames.join(', '),
+                          ),
+                          if (detail.basicConstraints != null)
+                            _buildInfoRow(
+                              label: LocalizationKeys
+                                  .certDetailBasicConstraints
+                                  .tr(context),
+                              value: detail.basicConstraints!,
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+
+                // Fingerprint section
+                FutureBuilder<CertificateDetailInfo?>(
+                  future: provider.fetchCertificateDetails(
+                    cert.certFilePath,
+                  ),
+                  builder: (context, snapshot) {
+                    final detail = snapshot.data;
+                    if (detail == null || detail.sha256Fingerprint.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+                    return _buildSectionContainer(
+                      title:
+                          LocalizationKeys.sectionFingerprints.tr(context),
+                      child: _buildInfoRow(
+                        label: 'SHA-256',
+                        value: detail.sha256Fingerprint,
+                        copyable: true,
+                      ),
+                    );
+                  },
+                ),
+
+                // File paths section
+                _buildSectionContainer(
+                  title: LocalizationKeys.certDetailFilePaths.tr(context),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildInfoRow(
+                        label: LocalizationKeys.summaryCertPath.tr(context),
+                        value: cert.certFilePath,
+                        copyable: true,
+                      ),
+                      _buildInfoRow(
+                        label: LocalizationKeys.summaryKeyPath.tr(context),
+                        value: cert.keyFilePath,
+                        copyable: true,
+                      ),
+                      _buildInfoRow(
+                        label:
+                            LocalizationKeys.summaryConfigPath.tr(context),
+                        value: cert.configFilePath,
+                        copyable: true,
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Actions section
+                _buildSectionContainer(
+                  title: LocalizationKeys.sectionActions.tr(context),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextField(
+                        controller: provider.revokeReasonController,
+                        keyboardType: revokeConfig.keyboardType,
+                        inputFormatters: revokeConfig.inputFormatters,
+                        obscureText: revokeConfig.obscureText,
+                        textCapitalization: revokeConfig.textCapitalization,
+                        decoration: InputDecoration(
+                          labelText:
+                              LocalizationKeys.revokeReason.tr(context),
+                          suffixIcon: revokeConfig.suffix,
+                          border: const OutlineInputBorder(),
+                          isDense: true,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          OutlinedButton.icon(
+                            onPressed: () {
+                              provider
+                                  .prepareRenewalFromCertificate(cert.id);
+                              _resetIssueStep();
+                            },
+                            icon: const Icon(Icons.autorenew),
+                            label: Text(
+                              LocalizationKeys.renewCertificate.tr(context),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.green,
+                              side: const BorderSide(color: Colors.green),
+                            ),
+                          ),
+                          OutlinedButton.icon(
+                            onPressed: () =>
+                                _showPfxExportDialog(provider, cert.id),
+                            icon: const Icon(Icons.download),
+                            label: Text(
+                              LocalizationKeys.exportPkcs12.tr(context),
+                            ),
+                          ),
+                          OutlinedButton.icon(
+                            onPressed: () async {
+                              final result =
+                                  await provider.verifyCertificateChain(
+                                cert.id,
+                              );
+                              if (!context.mounted) return;
+                              _showInlineMessage(
+                                result.valid
+                                    ? LocalizationKeys.verifySuccess
+                                        .tr(context)
+                                    : '${LocalizationKeys.verifyFailed.tr(context)}: ${result.message}',
+                              );
+                            },
+                            icon: const Icon(Icons.verified_outlined),
+                            label: Text(
+                              LocalizationKeys.verifyCertChain.tr(context),
+                            ),
+                          ),
+                          FilledButton.icon(
+                            onPressed: cert.status == SslCertStatus.revoked
+                                ? null
+                                : () =>
+                                    provider.revokeCertificate(cert.id),
+                            icon: const Icon(Icons.block),
+                            label: Text(
+                              LocalizationKeys.revoke.tr(context),
+                            ),
+                            style: FilledButton.styleFrom(
+                              backgroundColor: Colors.red,
+                            ),
+                          ),
+                          OutlinedButton.icon(
+                            onPressed: () =>
+                                provider.deleteCertificate(cert.id),
+                            icon: const Icon(Icons.delete_outline),
+                            label: Text(
+                              LocalizationKeys.delete.tr(context),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.red,
+                              side: const BorderSide(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailGradientHeader(
+    SslCertificateRecord cert,
+    ThemeData theme,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+        gradient: LinearGradient(
+          colors: [
+            theme.colorScheme.primary.withValues(alpha: 0.16),
+            theme.colorScheme.secondary.withValues(alpha: 0.1),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.badge_outlined,
+            color: theme.colorScheme.primary,
+            size: 28,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              cert.domain,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          _buildStatusBadge(cert),
+        ],
+      ),
+    );
+  }
+
+  /// Displays days remaining with a colored value.
+  Widget _buildDaysRemainingRow(int days, Color color) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 140,
+            child: Text(
+              LocalizationKeys.daysRemaining.tr(context),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              '$days',
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // PFX Export Dialog
+  // ---------------------------------------------------------------------------
+
+  void _showPfxExportDialog(
+    SslCertificateManagerProvider provider,
+    String certId,
+  ) {
+    final pfxPasswordController = TextEditingController();
+    showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Text(LocalizationKeys.exportPkcs12.tr(context)),
+          content: SizedBox(
+            width: 400,
+            child: TextField(
+              controller: pfxPasswordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: LocalizationKeys.exportPfxPassword.tr(context),
+                border: const OutlineInputBorder(),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(LocalizationKeys.cancel.tr(context)),
+            ),
+            FilledButton(
+              onPressed: () async {
+                final password = pfxPasswordController.text;
+                Navigator.of(ctx).pop();
+                final path = await provider.exportCertificatePkcs12(
+                  certId,
+                  password,
+                );
+                if (!context.mounted) return;
+                if (path != null) {
+                  _showInlineMessage(
+                    '${LocalizationKeys.exportSuccess.tr(context)}: $path',
+                  );
+                }
+              },
+              child: Text(LocalizationKeys.exportCertificate.tr(context)),
+            ),
+          ],
+        );
+      },
+    ).then((_) => pfxPasswordController.dispose());
+  }
+
+  // ---------------------------------------------------------------------------
+  // Issue Tab
+  // ---------------------------------------------------------------------------
 
   Widget _buildIssueTab(SslCertificateManagerProvider provider) {
     final theme = Theme.of(context);
@@ -132,6 +697,14 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
     final configPreview = provider.buildDraftCnfPreview();
     final currentTitle = _issueStepTitles()[_issueStep];
     final currentSubtitle = _issueStepSubtitles()[_issueStep];
+
+    const stepIcons = [
+      Icons.badge_outlined,
+      Icons.business_outlined,
+      Icons.vpn_key_outlined,
+      Icons.link_outlined,
+      Icons.check_circle_outline,
+    ];
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -172,6 +745,13 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: 12),
+          _buildStepProgressIndicator(
+            currentStep: _issueStep,
+            totalSteps: stepIcons.length,
+            titles: _issueStepTitles(),
+            icons: stepIcons,
           ),
           const SizedBox(height: 12),
           Expanded(
@@ -259,6 +839,10 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Issue Step Titles & Subtitles
+  // ---------------------------------------------------------------------------
+
   List<String> _issueStepTitles() {
     return [
       LocalizationKeys.stepBasicIdentity.tr(context),
@@ -278,6 +862,10 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
       LocalizationKeys.stepFinalConfirmSubtitle.tr(context),
     ];
   }
+
+  // ---------------------------------------------------------------------------
+  // Issue Step Header
+  // ---------------------------------------------------------------------------
 
   Widget _buildIssueCurrentStepHeader(
     ThemeData theme,
@@ -301,6 +889,10 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
       ),
     );
   }
+
+  // ---------------------------------------------------------------------------
+  // Issue Step Progress
+  // ---------------------------------------------------------------------------
 
   double _stepCompletionRatio(
     SslCertificateManagerProvider provider,
@@ -439,6 +1031,10 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
       provider.crlDistributionUrlController,
     ]);
   }
+
+  // ---------------------------------------------------------------------------
+  // Issue Step Content
+  // ---------------------------------------------------------------------------
 
   Widget _buildIssueStepContent(
     SslCertificateManagerProvider provider,
@@ -592,7 +1188,7 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildCard(
+              _buildSectionContainer(
                 title: LocalizationKeys.issueSummary.tr(context),
                 child: SizedBox(
                   width: double.infinity,
@@ -602,7 +1198,10 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                         .map(
                           (line) => Padding(
                             padding: const EdgeInsets.only(bottom: 6),
-                            child: SelectableText(line),
+                            child: SelectableText(
+                              line,
+                              style: theme.textTheme.bodySmall,
+                            ),
                           ),
                         )
                         .toList(),
@@ -647,6 +1246,10 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
       ],
     );
   }
+
+  // ---------------------------------------------------------------------------
+  // Usage Type Panel
+  // ---------------------------------------------------------------------------
 
   Widget _buildUsageTypePanel(SslCertificateManagerProvider provider) {
     return Column(
@@ -701,6 +1304,10 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
       ],
     );
   }
+
+  // ---------------------------------------------------------------------------
+  // Key Usage Descriptions
+  // ---------------------------------------------------------------------------
 
   String _keyUsageDescription(String usage) {
     switch (usage) {
@@ -758,6 +1365,10 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Endpoint Address Panel
+  // ---------------------------------------------------------------------------
+
   Widget _buildEndpointAddressPanel(SslCertificateManagerProvider provider) {
     return Column(
       children: [
@@ -790,6 +1401,10 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Issue Summary Rows
+  // ---------------------------------------------------------------------------
+
   List<String> _buildIssueSummaryRows(SslCertificateManagerProvider provider) {
     final altLines = provider.altNames
         .where((e) => e.value.trim().isNotEmpty)
@@ -811,6 +1426,10 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
       '${LocalizationKeys.summaryOcspResponderUrl.tr(context)}: ${provider.ocspResponderUrlController.text.trim()}',
     ];
   }
+
+  // ---------------------------------------------------------------------------
+  // Validation Helpers
+  // ---------------------------------------------------------------------------
 
   bool _isCompletedIssueField(TextEditingController controller) {
     return controller.text.trim().isNotEmpty &&
@@ -957,6 +1576,10 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
     }
     return '';
   }
+
+  // ---------------------------------------------------------------------------
+  // Inline Message & Issue Dialogs
+  // ---------------------------------------------------------------------------
 
   void _showInlineMessage(String message) {
     ScaffoldMessenger.of(

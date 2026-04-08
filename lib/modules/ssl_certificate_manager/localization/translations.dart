@@ -25,6 +25,9 @@ final Map<String, Map<String, String>> translations = {
     LocalizationKeys.detail: '详情',
     LocalizationKeys.statusIssued: '已签发',
     LocalizationKeys.statusRevoked: '已撤销',
+    LocalizationKeys.statusExpired: '已过期',
+    LocalizationKeys.statusExpiringSoon: '即将过期',
+    LocalizationKeys.statusActive: '有效',
     LocalizationKeys.validDays: '有效期(天)',
     LocalizationKeys.pinField: '固定当前输入',
     LocalizationKeys.unpinField: '取消固定',
@@ -156,6 +159,82 @@ final Map<String, Map<String, String>> translations = {
     LocalizationKeys.expiresAt: '到期时间',
     LocalizationKeys.serialNumber: '序列号',
     LocalizationKeys.noData: '暂无数据',
+
+    // CRL
+    LocalizationKeys.crlManagement: 'CRL 吊销列表管理',
+    LocalizationKeys.generateCrl: '生成 CRL',
+    LocalizationKeys.crlFilePath: 'CRL 文件路径',
+    LocalizationKeys.crlLastGenerated: '上次生成时间',
+    LocalizationKeys.crlDays: 'CRL 有效天数',
+    LocalizationKeys.crlGenerateSuccess: 'CRL 吊销列表已生成。',
+    LocalizationKeys.crlGenerateFailed: 'CRL 生成失败',
+    LocalizationKeys.crlNotGenerated: '尚未生成',
+
+    // Certificate details
+    LocalizationKeys.certDetailPublicKey: '公钥算法',
+    LocalizationKeys.certDetailSignatureAlgo: '签名算法',
+    LocalizationKeys.certDetailKeyUsage: '密钥用途',
+    LocalizationKeys.certDetailExtKeyUsage: '扩展密钥用途',
+    LocalizationKeys.certDetailSan: '主体备用名称',
+    LocalizationKeys.certDetailFingerprint: 'SHA-256 指纹',
+    LocalizationKeys.certDetailSubject: '证书主体',
+    LocalizationKeys.certDetailValidity: '有效期',
+    LocalizationKeys.certDetailFilePaths: '文件路径',
+    LocalizationKeys.certDetailExtensions: 'X.509 扩展',
+    LocalizationKeys.certDetailBasicConstraints: '基本约束',
+    LocalizationKeys.certDetailAuthKeyId: '颁发机构密钥标识',
+    LocalizationKeys.certDetailSubjectKeyId: '主体密钥标识',
+    LocalizationKeys.daysRemaining: '剩余天数',
+    LocalizationKeys.loadingDetails: '正在加载详情...',
+
+    // Certificate renewal
+    LocalizationKeys.renewCertificate: '续期证书',
+    LocalizationKeys.renewAndRevoke: '续期并撤销旧证书',
+    LocalizationKeys.renewSuccess: '证书续期成功。',
+    LocalizationKeys.renewingFrom: '正在续期证书：@domain',
+
+    // Certificate export
+    LocalizationKeys.exportCertificate: '导出证书',
+    LocalizationKeys.exportPem: '导出 PEM',
+    LocalizationKeys.exportPkcs12: '导出 PKCS#12',
+    LocalizationKeys.exportPfxPassword: 'PFX 导出密码',
+    LocalizationKeys.exportSuccess: '证书已导出至：@path',
+    LocalizationKeys.copyPath: '复制路径',
+    LocalizationKeys.copiedToClipboard: '已复制到剪贴板',
+
+    // Certificate verification
+    LocalizationKeys.verifyCertChain: '验证证书链',
+    LocalizationKeys.verifySuccess: '证书链验证通过。',
+    LocalizationKeys.verifyFailed: '证书链验证失败：@message',
+
+    // Search and filter
+    LocalizationKeys.searchCertificates: '搜索证书...',
+    LocalizationKeys.filterByStatus: '按状态筛选',
+    LocalizationKeys.filterAll: '全部',
+    LocalizationKeys.filterExpiringSoon: '即将过期',
+
+    // Stats
+    LocalizationKeys.statsTotalCerts: '总数',
+    LocalizationKeys.statsIssuedCount: '有效',
+    LocalizationKeys.statsRevokedCount: '已撤销',
+    LocalizationKeys.statsExpiringSoon: '即将过期',
+
+    // UI sections
+    LocalizationKeys.sectionSubjectInfo: '证书主体',
+    LocalizationKeys.sectionValidity: '有效期信息',
+    LocalizationKeys.sectionExtensions: 'X.509 扩展信息',
+    LocalizationKeys.sectionFingerprints: '证书指纹',
+    LocalizationKeys.sectionActions: '操作',
+    LocalizationKeys.initWelcomeTitle: 'SSL 证书管理中心',
+    LocalizationKeys.initWelcomeSubtitle: '配置存储路径与根证书，开始签发和管理您的 SSL 证书。',
+    LocalizationKeys.sectionIdentity: '身份标识',
+    LocalizationKeys.sectionOrganization: '组织信息',
+    LocalizationKeys.sectionSecurity: '安全配置',
+    LocalizationKeys.sectionEndpoints: '服务端点',
+    LocalizationKeys.editorLineCount: '@count 行',
+    LocalizationKeys.editorUnsaved: '未保存',
+    LocalizationKeys.editorSaved: '已保存',
+    LocalizationKeys.selectCertificate: '选择一个证书查看详情',
   },
   'en_US': {
     LocalizationKeys.navSslManager: 'SSL Manager',
@@ -181,6 +260,9 @@ final Map<String, Map<String, String>> translations = {
     LocalizationKeys.detail: 'Details',
     LocalizationKeys.statusIssued: 'Issued',
     LocalizationKeys.statusRevoked: 'Revoked',
+    LocalizationKeys.statusExpired: 'Expired',
+    LocalizationKeys.statusExpiringSoon: 'Expiring Soon',
+    LocalizationKeys.statusActive: 'Active',
     LocalizationKeys.validDays: 'Valid Days',
     LocalizationKeys.pinField: 'Pin Current Value',
     LocalizationKeys.unpinField: 'Unpin Field',
@@ -349,5 +431,82 @@ final Map<String, Map<String, String>> translations = {
     LocalizationKeys.expiresAt: 'Expires At',
     LocalizationKeys.serialNumber: 'Serial Number',
     LocalizationKeys.noData: 'No Data',
+
+    // CRL
+    LocalizationKeys.crlManagement: 'CRL Revocation List',
+    LocalizationKeys.generateCrl: 'Generate CRL',
+    LocalizationKeys.crlFilePath: 'CRL File Path',
+    LocalizationKeys.crlLastGenerated: 'Last Generated',
+    LocalizationKeys.crlDays: 'CRL Validity Days',
+    LocalizationKeys.crlGenerateSuccess: 'CRL revocation list generated.',
+    LocalizationKeys.crlGenerateFailed: 'CRL generation failed',
+    LocalizationKeys.crlNotGenerated: 'Not generated yet',
+
+    // Certificate details
+    LocalizationKeys.certDetailPublicKey: 'Public Key Algorithm',
+    LocalizationKeys.certDetailSignatureAlgo: 'Signature Algorithm',
+    LocalizationKeys.certDetailKeyUsage: 'Key Usage',
+    LocalizationKeys.certDetailExtKeyUsage: 'Extended Key Usage',
+    LocalizationKeys.certDetailSan: 'Subject Alt Names',
+    LocalizationKeys.certDetailFingerprint: 'SHA-256 Fingerprint',
+    LocalizationKeys.certDetailSubject: 'Subject',
+    LocalizationKeys.certDetailValidity: 'Validity',
+    LocalizationKeys.certDetailFilePaths: 'File Paths',
+    LocalizationKeys.certDetailExtensions: 'X.509 Extensions',
+    LocalizationKeys.certDetailBasicConstraints: 'Basic Constraints',
+    LocalizationKeys.certDetailAuthKeyId: 'Authority Key Identifier',
+    LocalizationKeys.certDetailSubjectKeyId: 'Subject Key Identifier',
+    LocalizationKeys.daysRemaining: 'Days Remaining',
+    LocalizationKeys.loadingDetails: 'Loading details...',
+
+    // Certificate renewal
+    LocalizationKeys.renewCertificate: 'Renew Certificate',
+    LocalizationKeys.renewAndRevoke: 'Renew & Revoke Old',
+    LocalizationKeys.renewSuccess: 'Certificate renewed successfully.',
+    LocalizationKeys.renewingFrom: 'Renewing certificate: @domain',
+
+    // Certificate export
+    LocalizationKeys.exportCertificate: 'Export Certificate',
+    LocalizationKeys.exportPem: 'Export PEM',
+    LocalizationKeys.exportPkcs12: 'Export PKCS#12',
+    LocalizationKeys.exportPfxPassword: 'PFX Export Password',
+    LocalizationKeys.exportSuccess: 'Certificate exported to: @path',
+    LocalizationKeys.copyPath: 'Copy Path',
+    LocalizationKeys.copiedToClipboard: 'Copied to clipboard',
+
+    // Certificate verification
+    LocalizationKeys.verifyCertChain: 'Verify Chain',
+    LocalizationKeys.verifySuccess: 'Certificate chain verification passed.',
+    LocalizationKeys.verifyFailed: 'Chain verification failed: @message',
+
+    // Search and filter
+    LocalizationKeys.searchCertificates: 'Search certificates...',
+    LocalizationKeys.filterByStatus: 'Filter by Status',
+    LocalizationKeys.filterAll: 'All',
+    LocalizationKeys.filterExpiringSoon: 'Expiring Soon',
+
+    // Stats
+    LocalizationKeys.statsTotalCerts: 'Total',
+    LocalizationKeys.statsIssuedCount: 'Active',
+    LocalizationKeys.statsRevokedCount: 'Revoked',
+    LocalizationKeys.statsExpiringSoon: 'Expiring',
+
+    // UI sections
+    LocalizationKeys.sectionSubjectInfo: 'Subject Info',
+    LocalizationKeys.sectionValidity: 'Validity Period',
+    LocalizationKeys.sectionExtensions: 'X.509 Extensions',
+    LocalizationKeys.sectionFingerprints: 'Certificate Fingerprints',
+    LocalizationKeys.sectionActions: 'Actions',
+    LocalizationKeys.initWelcomeTitle: 'SSL Certificate Center',
+    LocalizationKeys.initWelcomeSubtitle:
+        'Configure storage path and root CA to start issuing and managing SSL certificates.',
+    LocalizationKeys.sectionIdentity: 'Identity',
+    LocalizationKeys.sectionOrganization: 'Organization',
+    LocalizationKeys.sectionSecurity: 'Security',
+    LocalizationKeys.sectionEndpoints: 'Endpoints',
+    LocalizationKeys.editorLineCount: '@count lines',
+    LocalizationKeys.editorUnsaved: 'Unsaved',
+    LocalizationKeys.editorSaved: 'Saved',
+    LocalizationKeys.selectCertificate: 'Select a certificate to view details',
   },
 };

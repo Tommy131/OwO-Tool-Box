@@ -207,6 +207,81 @@ class SslCertificateManagerProvider with ChangeNotifier {
   final Map<String, String> _pinnedIssueFieldValues = <String, String>{};
   bool _snapshotNeedsRepair = false;
 
+  // CRL state
+  CrlState _crlState = const CrlState();
+  CrlState get crlState => _crlState;
+
+  // Search/filter state
+  final searchController = TextEditingController();
+  String _searchQuery = '';
+  final Set<SslCertStatus> _statusFilter = {};
+  bool _filterExpiringSoon = false;
+
+  // Renewal tracking
+  String? renewingCertId;
+
+  // Stats
+  int get totalCertCount => _certificates.length;
+  int get issuedCertCount => _certificates
+      .where((c) => c.status == SslCertStatus.issued && !c.isExpired)
+      .length;
+  int get revokedCertCount =>
+      _certificates.where((c) => c.status == SslCertStatus.revoked).length;
+  int get expiringSoonCount =>
+      _certificates.where((c) => c.isExpiringSoon).length;
+
+  // Filtered certificates
+  List<SslCertificateRecord> get filteredCertificates {
+    var result = List<SslCertificateRecord>.from(_certificates);
+    if (_searchQuery.isNotEmpty) {
+      final query = _searchQuery.toLowerCase();
+      result = result.where((c) {
+        return c.domain.toLowerCase().contains(query) ||
+            c.commonName.toLowerCase().contains(query) ||
+            c.serialNumber.toLowerCase().contains(query);
+      }).toList();
+    }
+    if (_statusFilter.isNotEmpty) {
+      result = result.where((c) => _statusFilter.contains(c.status)).toList();
+    }
+    if (_filterExpiringSoon) {
+      result = result.where((c) => c.isExpiringSoon).toList();
+    }
+    return result;
+  }
+
+  Set<SslCertStatus> get statusFilter => Set.unmodifiable(_statusFilter);
+  bool get filterExpiringSoon => _filterExpiringSoon;
+
+  void updateSearchQuery(String query) {
+    _searchQuery = query.trim();
+    notifyListeners();
+  }
+
+  void toggleStatusFilter(SslCertStatus status) {
+    if (_statusFilter.contains(status)) {
+      _statusFilter.remove(status);
+    } else {
+      _statusFilter.add(status);
+    }
+    _filterExpiringSoon = false;
+    notifyListeners();
+  }
+
+  void setFilterExpiringSoon(bool value) {
+    _filterExpiringSoon = value;
+    _statusFilter.clear();
+    notifyListeners();
+  }
+
+  void clearFilters() {
+    _searchQuery = '';
+    _statusFilter.clear();
+    _filterExpiringSoon = false;
+    searchController.clear();
+    notifyListeners();
+  }
+
   Future<void> initialize() async {
     isLoading = true;
     notifyListeners();
@@ -718,6 +793,12 @@ class SslCertificateManagerProvider with ChangeNotifier {
       infoMessage = '证书已撤销。';
       AppLogger.info('[SSL] revokeCertificate success, id=$certificateId');
       await _persistAll();
+      // Auto-generate CRL after revocation (best-effort, don't block)
+      try {
+        await generateCrl();
+      } catch (e) {
+        AppLogger.warning('[SSL] auto CRL generation after revoke failed: $e');
+      }
     } catch (e) {
       infoMessage = '撤销失败: $e';
       AppLogger.error('[SSL] revokeCertificate failed', e);
@@ -810,6 +891,249 @@ class SslCertificateManagerProvider with ChangeNotifier {
     await _persistAll();
     AppLogger.info('[SSL] deleteCertificate success, id=$certificateId');
     notifyListeners();
+  }
+
+  // ========== CRL Generation ==========
+
+  Future<void> generateCrl({int? crlDays}) async {
+    if (!isInitialized) return;
+    if (!await _ensureStorageAvailableOrRecover()) {
+      notifyListeners();
+      return;
+    }
+    isLoading = true;
+    notifyListeners();
+    AppLogger.info('[SSL] generateCrl start');
+    try {
+      await _ensureOpenSslAvailable();
+      final days = crlDays ?? _crlState.crlDays;
+      final crlOutputPath = p.join(_config.storagePath, '_files', 'crl.pem');
+      final rootCertPath = rootCACertPathController.text.trim();
+      final rootKeyPath = rootCAKeyPathController.text.trim();
+      final cnfPath = _config.defaultCnfPath;
+      final indexPath = p.join(_config.storagePath, '_files', 'index.txt');
+
+      // Build index.txt from revoked certificates for openssl ca
+      final indexLines = <String>[];
+      for (final cert in _certificates) {
+        final serial = cert.serialNumber.toUpperCase().padLeft(2, '0');
+        final notAfter = _formatOpenSslDateCompact(cert.expiresAt);
+        if (cert.status == SslCertStatus.revoked) {
+          final revokeDate = _formatOpenSslDateCompact(DateTime.now());
+          indexLines.add(
+            'R\t$notAfter\t$revokeDate\t$serial\tunknown\t/CN=${cert.commonName}',
+          );
+        } else {
+          indexLines.add(
+            'V\t$notAfter\t\t$serial\tunknown\t/CN=${cert.commonName}',
+          );
+        }
+      }
+      await File(indexPath).writeAsString('${indexLines.join('\n')}\n');
+
+      final args = <String>[
+        'ca',
+        '-gencrl',
+        '-config',
+        cnfPath,
+        '-keyfile',
+        rootKeyPath,
+        '-cert',
+        rootCertPath,
+        '-out',
+        crlOutputPath,
+        '-crldays',
+        '$days',
+      ];
+      if (rootCAPasswordController.text.isNotEmpty) {
+        args.addAll(['-passin', 'pass:${rootCAPasswordController.text}']);
+      }
+
+      await _runOpenSslOrThrow(
+        args,
+        action: '生成 CRL',
+        workingDirectory: _config.storagePath,
+        timeout: const Duration(seconds: 15),
+      );
+
+      _crlState = _crlState.copyWith(
+        crlFilePath: crlOutputPath,
+        lastGeneratedAt: DateTime.now(),
+        crlDays: days,
+      );
+      infoMessage = 'CRL 吊销列表已生成。';
+      AppLogger.info('[SSL] generateCrl success, path=$crlOutputPath');
+      await _persistAll();
+    } catch (e) {
+      infoMessage = 'CRL 生成失败: $e';
+      AppLogger.error('[SSL] generateCrl failed', e);
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  String _formatOpenSslDateCompact(DateTime dt) {
+    final utc = dt.toUtc();
+    return '${(utc.year % 100).toString().padLeft(2, '0')}'
+        '${utc.month.toString().padLeft(2, '0')}'
+        '${utc.day.toString().padLeft(2, '0')}'
+        '${utc.hour.toString().padLeft(2, '0')}'
+        '${utc.minute.toString().padLeft(2, '0')}'
+        '${utc.second.toString().padLeft(2, '0')}Z';
+  }
+
+  // ========== Certificate Details ==========
+
+  Future<CertificateDetailInfo?> fetchCertificateDetails(
+    String certFilePath,
+  ) async {
+    try {
+      final textResult = await _runOpenSsl([
+        'x509',
+        '-text',
+        '-noout',
+        '-in',
+        certFilePath,
+      ]);
+      if (textResult == null || textResult.exitCode != 0) return null;
+
+      final fpResult = await _runOpenSsl([
+        'x509',
+        '-fingerprint',
+        '-sha256',
+        '-noout',
+        '-in',
+        certFilePath,
+      ]);
+      String? fingerprint;
+      if (fpResult != null && fpResult.exitCode == 0) {
+        final fpLine = fpResult.stdout.toString().trim();
+        final idx = fpLine.indexOf('=');
+        fingerprint = idx > 0 ? fpLine.substring(idx + 1).trim() : fpLine;
+      }
+
+      return CertificateDetailInfo.fromOpenSslText(
+        textResult.stdout.toString(),
+        fingerprint: fingerprint,
+      );
+    } catch (e) {
+      AppLogger.error('[SSL] fetchCertificateDetails failed', e);
+      return null;
+    }
+  }
+
+  // ========== Certificate Renewal ==========
+
+  void prepareRenewalFromCertificate(String certificateId) {
+    final record = _certificates.firstWhere(
+      (c) => c.id == certificateId,
+      orElse: () => throw Exception('Certificate not found'),
+    );
+    domainController.text = record.domain;
+    commonNameController.text = record.commonName;
+    _template = _template.copyWith(
+      domain: record.domain,
+      commonName: record.commonName,
+      altNames: record.altNames,
+    );
+    renewingCertId = certificateId;
+    selectNav(1);
+    notifyListeners();
+  }
+
+  Future<void> completeRenewalWithRevocation(String oldCertId) async {
+    renewingCertId = null;
+    await revokeCertificate(oldCertId);
+  }
+
+  // ========== Certificate Export ==========
+
+  Future<String?> exportCertificatePkcs12(
+    String certificateId,
+    String pfxPassword,
+  ) async {
+    if (!isInitialized) return null;
+    try {
+      await _ensureOpenSslAvailable();
+      final record = _certificates.firstWhere(
+        (c) => c.id == certificateId,
+        orElse: () => throw Exception('Certificate not found'),
+      );
+      final pfxPath = p.join(
+        _config.storagePath,
+        'pfx',
+        '${record.id}.pfx',
+      );
+      final rootCertPath = rootCACertPathController.text.trim();
+
+      final args = <String>[
+        'pkcs12',
+        '-export',
+        '-out',
+        pfxPath,
+        '-inkey',
+        record.keyFilePath,
+        '-in',
+        record.certFilePath,
+        '-passout',
+        'pass:$pfxPassword',
+      ];
+      if (rootCertPath.isNotEmpty) {
+        args.addAll(['-certfile', rootCertPath]);
+      }
+
+      await _runOpenSslOrThrow(
+        args,
+        action: '导出 PKCS#12',
+        timeout: const Duration(seconds: 15),
+      );
+
+      infoMessage = '证书已导出至 $pfxPath';
+      AppLogger.info('[SSL] exportPkcs12 success, path=$pfxPath');
+      notifyListeners();
+      return pfxPath;
+    } catch (e) {
+      infoMessage = '导出失败: $e';
+      AppLogger.error('[SSL] exportPkcs12 failed', e);
+      notifyListeners();
+      return null;
+    }
+  }
+
+  // ========== Certificate Chain Verification ==========
+
+  Future<({bool valid, String message})> verifyCertificateChain(
+    String certificateId,
+  ) async {
+    try {
+      final record = _certificates.firstWhere(
+        (c) => c.id == certificateId,
+        orElse: () => throw Exception('Certificate not found'),
+      );
+      final rootCertPath = rootCACertPathController.text.trim();
+      if (rootCertPath.isEmpty) {
+        return (valid: false, message: '未找到根证书路径');
+      }
+
+      final result = await _runOpenSsl([
+        'verify',
+        '-CAfile',
+        rootCertPath,
+        record.certFilePath,
+      ]);
+      if (result == null) {
+        return (valid: false, message: '无法调用 openssl');
+      }
+      final output = result.stdout.toString().trim();
+      final isValid = result.exitCode == 0 && output.contains(': OK');
+      return (
+        valid: isValid,
+        message: isValid ? '证书链验证通过' : output,
+      );
+    } catch (e) {
+      return (valid: false, message: '验证失败: $e');
+    }
   }
 
   Future<void> saveDefaultCnf() async {
@@ -1092,6 +1416,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
     rootCAKeyPathController.dispose();
     revokeReasonController.dispose();
     cnfEditorController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
@@ -1146,6 +1471,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
     _pinnedIssueFieldValues
       ..clear()
       ..addAll(sanitizedPinnedValues);
+    _crlState = snapshot.crlState;
     isInitialized = _config.initialized;
     importRootCA = _config.importRootCA;
     _applyTemplateToControllers(_template);
@@ -1626,6 +1952,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
         _pinnedIssueFieldValues.entries.toList()
           ..sort((left, right) => left.key.compareTo(right.key)),
       ),
+      crlState: _crlState,
     );
 
     await persistence.setModuleData(

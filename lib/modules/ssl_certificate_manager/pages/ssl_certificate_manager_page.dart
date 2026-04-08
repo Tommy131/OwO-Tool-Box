@@ -30,6 +30,7 @@ class SslCertificateManagerPage extends StatefulWidget {
 
 class _SslCertificateManagerPageState extends State<SslCertificateManagerPage> {
   final ScrollController _cnfEditorScrollController = ScrollController();
+  final TextEditingController _pfxPasswordController = TextEditingController();
   bool _isNavExpanded = false;
   static const double _compactNavWidth = 68;
   static const double _expandedNavWidth = 200;
@@ -72,6 +73,7 @@ class _SslCertificateManagerPageState extends State<SslCertificateManagerPage> {
   @override
   void dispose() {
     _cnfEditorScrollController.dispose();
+    _pfxPasswordController.dispose();
     super.dispose();
   }
 

@@ -2,6 +2,386 @@ part of '../ssl_certificate_manager_page.dart';
 
 /// 通用组件区：复用导航项、卡片、输入框与文件选择逻辑。
 extension _SslPageSharedWidgetsSection on _SslCertificateManagerPageState {
+  // ---------------------------------------------------------------------------
+  // Premium / Business UI widgets
+  // ---------------------------------------------------------------------------
+
+  Widget _buildPremiumCard({
+    required String title,
+    required IconData icon,
+    Color? accentColor,
+    required Widget child,
+    Widget? trailing,
+  }) {
+    final theme = Theme.of(context);
+    final color = accentColor ?? theme.colorScheme.primary;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.15)),
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadowColor.withValues(alpha: 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  color.withValues(alpha: 0.08),
+                  color.withValues(alpha: 0.02),
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(15)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, size: 18, color: color),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                if (trailing != null) trailing,
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: child,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGradientHeader({
+    required String title,
+    String? subtitle,
+    required IconData icon,
+    Widget? trailing,
+  }) {
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          colors: [
+            primary.withValues(alpha: 0.15),
+            theme.colorScheme.secondary.withValues(alpha: 0.08),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        border: Border.all(color: primary.withValues(alpha: 0.18)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: primary.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: primary, size: 28),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface
+                          .withValues(alpha: 0.65),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (trailing != null) trailing,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatChip({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.15)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: color),
+          const SizedBox(width: 8),
+          Text(
+            value,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(SslCertificateRecord cert) {
+    final Color color;
+    final String label;
+    final IconData icon;
+    if (cert.status == SslCertStatus.revoked) {
+      color = Colors.red;
+      label = LocalizationKeys.statusRevoked.tr(context);
+      icon = Icons.block;
+    } else if (cert.isExpired) {
+      color = Colors.grey;
+      label = LocalizationKeys.statusExpired.tr(context);
+      icon = Icons.schedule;
+    } else if (cert.isExpiringSoon) {
+      color = Colors.amber.shade700;
+      label = LocalizationKeys.statusExpiringSoon.tr(context);
+      icon = Icons.warning_amber;
+    } else {
+      color = Colors.green;
+      label = LocalizationKeys.statusActive.tr(context);
+      icon = Icons.check_circle;
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionContainer({
+    required String title,
+    required Widget child,
+  }) {
+    final theme = Theme.of(context);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color:
+            theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.dividerColor.withValues(alpha: 0.1),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.primary.withValues(alpha: 0.8),
+            ),
+          ),
+          const SizedBox(height: 10),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow({
+    required String label,
+    required String value,
+    bool copyable = false,
+  }) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 140,
+            child: Text(
+              label,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            child: SelectableText(
+              value,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          if (copyable && value.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.copy, size: 14),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: value));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content:
+                        Text(LocalizationKeys.copiedToClipboard.tr(context)),
+                    duration: const Duration(seconds: 1),
+                  ),
+                );
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStepProgressIndicator({
+    required int currentStep,
+    required int totalSteps,
+    required List<String> titles,
+    required List<IconData> icons,
+  }) {
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    return Row(
+      children: [
+        for (int i = 0; i < totalSteps; i++) ...[
+          if (i > 0)
+            Expanded(
+              child: Container(
+                height: 2,
+                color: i <= currentStep
+                    ? primary
+                    : theme.dividerColor.withValues(alpha: 0.3),
+              ),
+            ),
+          Column(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: i <= currentStep
+                      ? primary
+                      : theme.colorScheme.surfaceContainerHighest,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: i <= currentStep
+                        ? primary
+                        : theme.dividerColor.withValues(alpha: 0.3),
+                    width: 2,
+                  ),
+                ),
+                child: Center(
+                  child: i < currentStep
+                      ? Icon(Icons.check,
+                          size: 16, color: theme.colorScheme.onPrimary)
+                      : Icon(
+                          icons[i],
+                          size: 14,
+                          color: i == currentStep
+                              ? theme.colorScheme.onPrimary
+                              : theme.colorScheme.onSurface
+                                  .withValues(alpha: 0.4),
+                        ),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                titles[i],
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: i <= currentStep
+                      ? primary
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                  fontWeight:
+                      i == currentStep ? FontWeight.w700 : FontWeight.w400,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Original / existing widgets
+  // ---------------------------------------------------------------------------
+
   Widget _buildCard({required String title, required Widget child}) {
     return Column(
       children: [

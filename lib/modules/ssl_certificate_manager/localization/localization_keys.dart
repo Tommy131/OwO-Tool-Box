@@ -22,6 +22,9 @@ class LocalizationKeys {
   static const String detail = 'ssl_detail';
   static const String statusIssued = 'ssl_status_issued';
   static const String statusRevoked = 'ssl_status_revoked';
+  static const String statusExpired = 'ssl_status_expired';
+  static const String statusExpiringSoon = 'ssl_status_expiring_soon';
+  static const String statusActive = 'ssl_status_active';
   static const String validDays = 'ssl_valid_days';
   static const String pinField = 'ssl_pin_field';
   static const String unpinField = 'ssl_unpin_field';
@@ -182,4 +185,83 @@ class LocalizationKeys {
   static const String expiresAt = 'ssl_expires_at';
   static const String serialNumber = 'ssl_serial_number';
   static const String noData = 'ssl_no_data';
+
+  // CRL
+  static const String crlManagement = 'ssl_crl_management';
+  static const String generateCrl = 'ssl_generate_crl';
+  static const String crlFilePath = 'ssl_crl_file_path';
+  static const String crlLastGenerated = 'ssl_crl_last_generated';
+  static const String crlDays = 'ssl_crl_days';
+  static const String crlGenerateSuccess = 'ssl_crl_generate_success';
+  static const String crlGenerateFailed = 'ssl_crl_generate_failed';
+  static const String crlNotGenerated = 'ssl_crl_not_generated';
+
+  // Certificate details
+  static const String certDetailPublicKey = 'ssl_cert_detail_public_key';
+  static const String certDetailSignatureAlgo =
+      'ssl_cert_detail_signature_algo';
+  static const String certDetailKeyUsage = 'ssl_cert_detail_key_usage';
+  static const String certDetailExtKeyUsage = 'ssl_cert_detail_ext_key_usage';
+  static const String certDetailSan = 'ssl_cert_detail_san';
+  static const String certDetailFingerprint = 'ssl_cert_detail_fingerprint';
+  static const String certDetailSubject = 'ssl_cert_detail_subject';
+  static const String certDetailValidity = 'ssl_cert_detail_validity';
+  static const String certDetailFilePaths = 'ssl_cert_detail_file_paths';
+  static const String certDetailExtensions = 'ssl_cert_detail_extensions';
+  static const String certDetailBasicConstraints =
+      'ssl_cert_detail_basic_constraints';
+  static const String certDetailAuthKeyId = 'ssl_cert_detail_auth_key_id';
+  static const String certDetailSubjectKeyId =
+      'ssl_cert_detail_subject_key_id';
+  static const String daysRemaining = 'ssl_days_remaining';
+  static const String loadingDetails = 'ssl_loading_details';
+
+  // Certificate renewal
+  static const String renewCertificate = 'ssl_renew_certificate';
+  static const String renewAndRevoke = 'ssl_renew_and_revoke';
+  static const String renewSuccess = 'ssl_renew_success';
+  static const String renewingFrom = 'ssl_renewing_from';
+
+  // Certificate export
+  static const String exportCertificate = 'ssl_export_certificate';
+  static const String exportPem = 'ssl_export_pem';
+  static const String exportPkcs12 = 'ssl_export_pkcs12';
+  static const String exportPfxPassword = 'ssl_export_pfx_password';
+  static const String exportSuccess = 'ssl_export_success';
+  static const String copyPath = 'ssl_copy_path';
+  static const String copiedToClipboard = 'ssl_copied_to_clipboard';
+
+  // Certificate verification
+  static const String verifyCertChain = 'ssl_verify_cert_chain';
+  static const String verifySuccess = 'ssl_verify_success';
+  static const String verifyFailed = 'ssl_verify_failed';
+
+  // Search and filter
+  static const String searchCertificates = 'ssl_search_certificates';
+  static const String filterByStatus = 'ssl_filter_by_status';
+  static const String filterAll = 'ssl_filter_all';
+  static const String filterExpiringSoon = 'ssl_filter_expiring_soon';
+
+  // Stats
+  static const String statsTotalCerts = 'ssl_stats_total_certs';
+  static const String statsIssuedCount = 'ssl_stats_issued_count';
+  static const String statsRevokedCount = 'ssl_stats_revoked_count';
+  static const String statsExpiringSoon = 'ssl_stats_expiring_soon';
+
+  // UI sections
+  static const String sectionSubjectInfo = 'ssl_section_subject_info';
+  static const String sectionValidity = 'ssl_section_validity';
+  static const String sectionExtensions = 'ssl_section_extensions';
+  static const String sectionFingerprints = 'ssl_section_fingerprints';
+  static const String sectionActions = 'ssl_section_actions';
+  static const String initWelcomeTitle = 'ssl_init_welcome_title';
+  static const String initWelcomeSubtitle = 'ssl_init_welcome_subtitle';
+  static const String sectionIdentity = 'ssl_section_identity';
+  static const String sectionOrganization = 'ssl_section_organization';
+  static const String sectionSecurity = 'ssl_section_security';
+  static const String sectionEndpoints = 'ssl_section_endpoints';
+  static const String editorLineCount = 'ssl_editor_line_count';
+  static const String editorUnsaved = 'ssl_editor_unsaved';
+  static const String editorSaved = 'ssl_editor_saved';
+  static const String selectCertificate = 'ssl_select_certificate';
 }

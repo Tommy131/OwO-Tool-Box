@@ -3,187 +3,294 @@ part of '../ssl_certificate_manager_page.dart';
 /// OpenSSL 模板编辑区：包含行号、高亮编辑与对比弹窗。
 extension _SslPageOpenSslTemplateSection on _SslCertificateManagerPageState {
   Widget _buildOpenSslTemplateTab(SslCertificateManagerProvider provider) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           Expanded(
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      LocalizationKeys.defaultOpenSslCnf.tr(context),
-                      style: Theme.of(context).textTheme.titleMedium,
+            child: _buildPremiumCard(
+              title: LocalizationKeys.defaultOpenSslCnf.tr(context),
+              icon: Icons.code_outlined,
+              trailing: ValueListenableBuilder<TextEditingValue>(
+                valueListenable: provider.cnfEditorController,
+                builder: (context, value, _) {
+                  final isModified =
+                      value.text != provider.savedCnfContent;
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
                     ),
-                    const SizedBox(height: 8),
-                    Expanded(
-                      child: PrimaryScrollController.none(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Theme.of(
-                                context,
-                              ).dividerColor.withValues(alpha: 0.2),
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 56,
-                                padding: const EdgeInsets.only(right: 6),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .surfaceContainerHighest
-                                      .withValues(alpha: 0.15),
-                                  border: Border(
-                                    right: BorderSide(
-                                      color: Theme.of(
-                                        context,
-                                      ).dividerColor.withValues(alpha: 0.2),
-                                    ),
-                                  ),
-                                ),
-                                child: ClipRect(
-                                  child: AnimatedBuilder(
-                                    animation: _cnfEditorScrollController,
-                                    builder: (context, child) {
-                                      final offset =
-                                          _cnfEditorScrollController.hasClients
-                                          ? _cnfEditorScrollController.offset
-                                          : 0.0;
-                                      return Transform.translate(
-                                        offset: Offset(0, -offset),
-                                        child: child,
-                                      );
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 8.5,
-                                      ),
-                                      child:
-                                          ValueListenableBuilder<
-                                            TextEditingValue
-                                          >(
-                                            valueListenable:
-                                                provider.cnfEditorController,
-                                            builder: (context, _, __) {
-                                              final lines = provider
-                                                  .cnfEditorController
-                                                  .text
-                                                  .split('\n')
-                                                  .length;
-                                              return OverflowBox(
-                                                alignment: Alignment.topRight,
-                                                minHeight: 0,
-                                                maxHeight: double.infinity,
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    for (
-                                                      int i = 1;
-                                                      i <= lines;
-                                                      i++
-                                                    )
-                                                      Text(
-                                                        '$i',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodySmall
-                                                            ?.copyWith(
-                                                              fontFamily:
-                                                                  'monospace',
-                                                              color:
-                                                                  Theme.of(
-                                                                        context,
-                                                                      )
-                                                                      .colorScheme
-                                                                      .onSurface
-                                                                      .withValues(
-                                                                        alpha:
-                                                                            0.45,
-                                                                      ),
-                                                              height: 1.4,
-                                                            ),
-                                                      ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Scrollbar(
-                                  controller: _cnfEditorScrollController,
-                                  thumbVisibility: true,
-                                  child: TextField(
-                                    controller: provider.cnfEditorController,
-                                    scrollController:
-                                        _cnfEditorScrollController,
-                                    scrollPhysics:
-                                        const ClampingScrollPhysics(),
-                                    maxLines: null,
-                                    expands: true,
-                                    style: const TextStyle(
-                                      fontFamily: 'monospace',
-                                      fontSize: 12,
-                                      height: 1.4,
-                                    ),
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 12,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                    decoration: BoxDecoration(
+                      color: isModified
+                          ? Colors.orange.withValues(alpha: 0.1)
+                          : Colors.green.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: isModified
+                            ? Colors.orange.withValues(alpha: 0.3)
+                            : Colors.green.withValues(alpha: 0.3),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        ElevatedButton.icon(
-                          onPressed: provider.saveDefaultCnf,
-                          icon: const Icon(Icons.save_outlined),
-                          label: Text(LocalizationKeys.saveCnf.tr(context)),
+                        Icon(
+                          isModified
+                              ? Icons.edit_outlined
+                              : Icons.check_circle_outline,
+                          size: 14,
+                          color: isModified ? Colors.orange : Colors.green,
                         ),
-                        OutlinedButton.icon(
-                          onPressed: provider.regenerateDefaultCnf,
-                          icon: const Icon(Icons.auto_fix_high_outlined),
-                          label: Text(
-                            LocalizationKeys.regenerateCnf.tr(context),
-                          ),
-                        ),
-                        FilledButton.tonalIcon(
-                          onPressed: () => _showCnfDiffDialog(provider),
-                          icon: const Icon(Icons.compare_arrows_outlined),
-                          label: Text(
-                            LocalizationKeys.compareChanges.tr(context),
+                        const SizedBox(width: 4),
+                        Text(
+                          isModified
+                              ? LocalizationKeys.editorUnsaved.tr(context)
+                              : LocalizationKeys.editorSaved.tr(context),
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: isModified ? Colors.orange : Colors.green,
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  );
+                },
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Toolbar row
+                  Row(
+                    children: [
+                      // Line count badge
+                      ValueListenableBuilder<TextEditingValue>(
+                        valueListenable: provider.cnfEditorController,
+                        builder: (context, value, _) {
+                          final lineCount = value.text.split('\n').length;
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surfaceContainerHighest
+                                  .withValues(alpha: 0.3),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              LocalizationKeys.editorLineCount
+                                  .tr(context)
+                                  .replaceAll('@count', '$lineCount'),
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                fontFamily: 'monospace',
+                                color: theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.6),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const Spacer(),
+                      // Action buttons
+                      _buildToolbarButton(
+                        icon: Icons.save_outlined,
+                        label: LocalizationKeys.saveCnf.tr(context),
+                        onPressed: provider.saveDefaultCnf,
+                        theme: theme,
+                      ),
+                      const SizedBox(width: 6),
+                      _buildToolbarButton(
+                        icon: Icons.auto_fix_high_outlined,
+                        label: LocalizationKeys.regenerateCnf.tr(context),
+                        onPressed: provider.regenerateDefaultCnf,
+                        theme: theme,
+                        outlined: true,
+                      ),
+                      const SizedBox(width: 6),
+                      _buildToolbarButton(
+                        icon: Icons.compare_arrows_outlined,
+                        label: LocalizationKeys.compareChanges.tr(context),
+                        onPressed: () => _showCnfDiffDialog(provider),
+                        theme: theme,
+                        tonal: true,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  // Editor area
+                  Expanded(
+                    child: PrimaryScrollController.none(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: theme.dividerColor.withValues(alpha: 0.2),
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 56,
+                              padding: const EdgeInsets.only(right: 6),
+                              decoration: BoxDecoration(
+                                color: theme
+                                    .colorScheme.surfaceContainerHighest
+                                    .withValues(alpha: 0.15),
+                                border: Border(
+                                  right: BorderSide(
+                                    color: theme.dividerColor
+                                        .withValues(alpha: 0.2),
+                                  ),
+                                ),
+                              ),
+                              child: ClipRect(
+                                child: AnimatedBuilder(
+                                  animation: _cnfEditorScrollController,
+                                  builder: (context, child) {
+                                    final offset =
+                                        _cnfEditorScrollController.hasClients
+                                        ? _cnfEditorScrollController.offset
+                                        : 0.0;
+                                    return Transform.translate(
+                                      offset: Offset(0, -offset),
+                                      child: child,
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8.5,
+                                    ),
+                                    child:
+                                        ValueListenableBuilder<
+                                          TextEditingValue
+                                        >(
+                                          valueListenable:
+                                              provider.cnfEditorController,
+                                          builder: (context, _, __) {
+                                            final lines = provider
+                                                .cnfEditorController
+                                                .text
+                                                .split('\n')
+                                                .length;
+                                            return OverflowBox(
+                                              alignment: Alignment.topRight,
+                                              minHeight: 0,
+                                              maxHeight: double.infinity,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                children: [
+                                                  for (
+                                                    int i = 1;
+                                                    i <= lines;
+                                                    i++
+                                                  )
+                                                    Text(
+                                                      '$i',
+                                                      style: theme
+                                                          .textTheme.bodySmall
+                                                          ?.copyWith(
+                                                            fontFamily:
+                                                                'monospace',
+                                                            color: theme
+                                                                .colorScheme
+                                                                .onSurface
+                                                                .withValues(
+                                                                  alpha: 0.45,
+                                                                ),
+                                                            height: 1.4,
+                                                          ),
+                                                    ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Scrollbar(
+                                controller: _cnfEditorScrollController,
+                                thumbVisibility: true,
+                                child: TextField(
+                                  controller: provider.cnfEditorController,
+                                  scrollController:
+                                      _cnfEditorScrollController,
+                                  scrollPhysics:
+                                      const ClampingScrollPhysics(),
+                                  maxLines: null,
+                                  expands: true,
+                                  style: const TextStyle(
+                                    fontFamily: 'monospace',
+                                    fontSize: 12,
+                                    height: 1.4,
+                                  ),
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildToolbarButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+    required ThemeData theme,
+    bool outlined = false,
+    bool tonal = false,
+  }) {
+    if (tonal) {
+      return FilledButton.tonalIcon(
+        onPressed: onPressed,
+        icon: Icon(icon, size: 16),
+        label: Text(label, style: const TextStyle(fontSize: 12)),
+        style: FilledButton.styleFrom(
+          visualDensity: VisualDensity.compact,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        ),
+      );
+    }
+    if (outlined) {
+      return OutlinedButton.icon(
+        onPressed: onPressed,
+        icon: Icon(icon, size: 16),
+        label: Text(label, style: const TextStyle(fontSize: 12)),
+        style: OutlinedButton.styleFrom(
+          visualDensity: VisualDensity.compact,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        ),
+      );
+    }
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, size: 16),
+      label: Text(label, style: const TextStyle(fontSize: 12)),
+      style: ElevatedButton.styleFrom(
+        visualDensity: VisualDensity.compact,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       ),
     );
   }
