@@ -113,21 +113,18 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
               label: Text(LocalizationKeys.filterAll.tr(context)),
               selected: noFilterActive,
               onSelected: (_) => provider.clearFilters(),
-              selectedColor:
-                  theme.colorScheme.primary.withValues(alpha: 0.15),
+              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.15),
             ),
             FilterChip(
               label: Text(LocalizationKeys.statusIssued.tr(context)),
-              selected:
-                  provider.statusFilter.contains(SslCertStatus.issued),
+              selected: provider.statusFilter.contains(SslCertStatus.issued),
               onSelected: (_) =>
                   provider.toggleStatusFilter(SslCertStatus.issued),
               selectedColor: Colors.green.withValues(alpha: 0.15),
             ),
             FilterChip(
               label: Text(LocalizationKeys.statusRevoked.tr(context)),
-              selected:
-                  provider.statusFilter.contains(SslCertStatus.revoked),
+              selected: provider.statusFilter.contains(SslCertStatus.revoked),
               onSelected: (_) =>
                   provider.toggleStatusFilter(SslCertStatus.revoked),
               selectedColor: Colors.red.withValues(alpha: 0.15),
@@ -171,8 +168,13 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
               Text(
                 LocalizationKeys.batchSelectedCount
                     .tr(context)
-                    .replaceAll('@count', '${provider.batchSelectedIds.length}'),
-                style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+                    .replaceAll(
+                      '@count',
+                      '${provider.batchSelectedIds.length}',
+                    ),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const SizedBox(width: 12),
               FilledButton.icon(
@@ -279,7 +281,8 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                           value: provider.batchSelectedIds.contains(item.id),
                           onChanged: (_) => provider.toggleBatchSelect(item.id),
                           visualDensity: VisualDensity.compact,
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
                         ),
                       ],
                       Container(
@@ -308,8 +311,9 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                     child: Text(
                       'CN: ${item.commonName}  |  SN: ${item.serialNumber}  |  ${LocalizationKeys.expiresAt.tr(context)}: ${item.expiresAt.toLocal().toString().split(".").first}',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface
-                            .withValues(alpha: 0.55),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.55,
+                        ),
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -335,10 +339,9 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
           child: Text(
             LocalizationKeys.selectCertificate.tr(context),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.5),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.5),
             ),
           ),
         ),
@@ -419,9 +422,7 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                 _buildSectionContainer(
                   title: LocalizationKeys.sectionExtensions.tr(context),
                   child: FutureBuilder<CertificateDetailInfo?>(
-                    future: provider.fetchCertificateDetails(
-                      cert.certFilePath,
-                    ),
+                    future: provider.fetchCertificateDetails(cert.certFilePath),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState != ConnectionState.done) {
                         return Padding(
@@ -440,34 +441,36 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildInfoRow(
-                            label: LocalizationKeys.certDetailPublicKey
-                                .tr(context),
+                            label: LocalizationKeys.certDetailPublicKey.tr(
+                              context,
+                            ),
                             value: detail.publicKeyAlgorithm,
                           ),
                           _buildInfoRow(
-                            label: LocalizationKeys.certDetailSignatureAlgo
-                                .tr(context),
+                            label: LocalizationKeys.certDetailSignatureAlgo.tr(
+                              context,
+                            ),
                             value: detail.signatureAlgorithm,
                           ),
                           _buildInfoRow(
-                            label: LocalizationKeys.certDetailKeyUsage
-                                .tr(context),
+                            label: LocalizationKeys.certDetailKeyUsage.tr(
+                              context,
+                            ),
                             value: detail.keyUsage.join(', '),
                           ),
                           _buildInfoRow(
-                            label: LocalizationKeys.certDetailExtKeyUsage
-                                .tr(context),
+                            label: LocalizationKeys.certDetailExtKeyUsage.tr(
+                              context,
+                            ),
                             value: detail.extendedKeyUsage.join(', '),
                           ),
                           _buildInfoRow(
-                            label:
-                                LocalizationKeys.certDetailSan.tr(context),
+                            label: LocalizationKeys.certDetailSan.tr(context),
                             value: detail.subjectAltNames.join(', '),
                           ),
                           if (detail.basicConstraints != null)
                             _buildInfoRow(
-                              label: LocalizationKeys
-                                  .certDetailBasicConstraints
+                              label: LocalizationKeys.certDetailBasicConstraints
                                   .tr(context),
                               value: detail.basicConstraints!,
                             ),
@@ -479,17 +482,14 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
 
                 // Fingerprint section
                 FutureBuilder<CertificateDetailInfo?>(
-                  future: provider.fetchCertificateDetails(
-                    cert.certFilePath,
-                  ),
+                  future: provider.fetchCertificateDetails(cert.certFilePath),
                   builder: (context, snapshot) {
                     final detail = snapshot.data;
                     if (detail == null || detail.sha256Fingerprint.isEmpty) {
                       return const SizedBox.shrink();
                     }
                     return _buildSectionContainer(
-                      title:
-                          LocalizationKeys.sectionFingerprints.tr(context),
+                      title: LocalizationKeys.sectionFingerprints.tr(context),
                       child: _buildInfoRow(
                         label: 'SHA-256',
                         value: detail.sha256Fingerprint,
@@ -516,8 +516,7 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                         copyable: true,
                       ),
                       _buildInfoRow(
-                        label:
-                            LocalizationKeys.summaryConfigPath.tr(context),
+                        label: LocalizationKeys.summaryConfigPath.tr(context),
                         value: cert.configFilePath,
                         copyable: true,
                       ),
@@ -538,8 +537,7 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                         obscureText: revokeConfig.obscureText,
                         textCapitalization: revokeConfig.textCapitalization,
                         decoration: InputDecoration(
-                          labelText:
-                              LocalizationKeys.revokeReason.tr(context),
+                          labelText: LocalizationKeys.revokeReason.tr(context),
                           suffixIcon: revokeConfig.suffix,
                           border: const OutlineInputBorder(),
                           isDense: true,
@@ -552,8 +550,7 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                         children: [
                           OutlinedButton.icon(
                             onPressed: () {
-                              provider
-                                  .prepareRenewalFromCertificate(cert.id);
+                              provider.prepareRenewalFromCertificate(cert.id);
                               _resetIssueStep();
                             },
                             icon: const Icon(Icons.autorenew),
@@ -575,15 +572,12 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                           ),
                           OutlinedButton.icon(
                             onPressed: () async {
-                              final result =
-                                  await provider.verifyCertificateChain(
-                                cert.id,
-                              );
+                              final result = await provider
+                                  .verifyCertificateChain(cert.id);
                               if (!context.mounted) return;
                               _showInlineMessage(
                                 result.valid
-                                    ? LocalizationKeys.verifySuccess
-                                        .tr(context)
+                                    ? LocalizationKeys.verifySuccess.tr(context)
                                     : '${LocalizationKeys.verifyFailed.tr(context)}: ${result.message}',
                               );
                             },
@@ -595,12 +589,9 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                           FilledButton.icon(
                             onPressed: cert.status == SslCertStatus.revoked
                                 ? null
-                                : () =>
-                                    provider.revokeCertificate(cert.id),
+                                : () => provider.revokeCertificate(cert.id),
                             icon: const Icon(Icons.block),
-                            label: Text(
-                              LocalizationKeys.revoke.tr(context),
-                            ),
+                            label: Text(LocalizationKeys.revoke.tr(context)),
                             style: FilledButton.styleFrom(
                               backgroundColor: Colors.red,
                             ),
@@ -609,9 +600,7 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                             onPressed: () =>
                                 provider.deleteCertificate(cert.id),
                             icon: const Icon(Icons.delete_outline),
-                            label: Text(
-                              LocalizationKeys.delete.tr(context),
-                            ),
+                            label: Text(LocalizationKeys.delete.tr(context)),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.red,
                               side: const BorderSide(color: Colors.red),
@@ -800,8 +789,9 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primary
-                                .withValues(alpha: 0.1),
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.1,
+                            ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Icon(
@@ -825,8 +815,9 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                               Text(
                                 currentSubtitle,
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurface
-                                      .withValues(alpha: 0.6),
+                                  color: theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.6,
+                                  ),
                                 ),
                               ),
                             ],
@@ -836,8 +827,10 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                         ListenableBuilder(
                           listenable: _issueProgressListenable(provider),
                           builder: (context, _) {
-                            final ratio =
-                                _stepCompletionRatio(provider, _issueStep);
+                            final ratio = _stepCompletionRatio(
+                              provider,
+                              _issueStep,
+                            );
                             final percent = (ratio * 100).round();
                             return Container(
                               padding: const EdgeInsets.symmetric(
@@ -847,8 +840,9 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                               decoration: BoxDecoration(
                                 color: ratio >= 1.0
                                     ? Colors.green.withValues(alpha: 0.1)
-                                    : theme.colorScheme.primary
-                                        .withValues(alpha: 0.08),
+                                    : theme.colorScheme.primary.withValues(
+                                        alpha: 0.08,
+                                      ),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
@@ -1150,11 +1144,11 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
     String configPreview,
   ) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (_issueStep == 0)
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildSectionContainer(
                 title: LocalizationKeys.sectionIdentity.tr(context),
@@ -1198,7 +1192,7 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
           ),
         if (_issueStep == 1)
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildSectionContainer(
                 title: LocalizationKeys.summaryLocation.tr(context),
@@ -1274,7 +1268,7 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
         if (_issueStep == 3) _buildEndpointAddressPanel(provider),
         if (_issueStep == 4)
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildIssueSummarySection(provider, theme),
               _buildCard(
@@ -1421,7 +1415,7 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
 
   Widget _buildUsageTypePanel(SslCertificateManagerProvider provider) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _buildSectionContainer(
           title: LocalizationKeys.keyUsageLabel.tr(context),
@@ -1434,10 +1428,8 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                     message: _keyUsageDescription(usage),
                     child: FilterChip(
                       label: Text(usage),
-                      selected:
-                          provider.selectedKeyUsageTypes.contains(usage),
-                      onSelected: (v) =>
-                          provider.toggleKeyUsageType(usage, v),
+                      selected: provider.selectedKeyUsageTypes.contains(usage),
+                      onSelected: (v) => provider.toggleKeyUsageType(usage, v),
                     ),
                   ),
                 )
@@ -1456,8 +1448,9 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
                     message: _extendedKeyUsageDescription(usage),
                     child: FilterChip(
                       label: Text(usage),
-                      selected: provider.selectedExtendedKeyUsageTypes
-                          .contains(usage),
+                      selected: provider.selectedExtendedKeyUsageTypes.contains(
+                        usage,
+                      ),
                       onSelected: (v) =>
                           provider.toggleExtendedKeyUsageType(usage, v),
                     ),
@@ -1843,7 +1836,11 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
       ),
       child: Row(
         children: [
-          Icon(Icons.warning_amber_rounded, color: Colors.amber.shade700, size: 20),
+          Icon(
+            Icons.warning_amber_rounded,
+            color: Colors.amber.shade700,
+            size: 20,
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -1865,7 +1862,9 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
   // Batch Action Handlers
   // ---------------------------------------------------------------------------
 
-  Future<void> _handleBatchRevoke(SslCertificateManagerProvider provider) async {
+  Future<void> _handleBatchRevoke(
+    SslCertificateManagerProvider provider,
+  ) async {
     final count = provider.batchSelectedIds.length;
     final confirmed = await showAdvancedConfirmDialog(
       context: context,
@@ -1889,7 +1888,9 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
     );
   }
 
-  Future<void> _handleBatchDelete(SslCertificateManagerProvider provider) async {
+  Future<void> _handleBatchDelete(
+    SslCertificateManagerProvider provider,
+  ) async {
     final count = provider.batchSelectedIds.length;
     final confirmed = await showAdvancedConfirmDialog(
       context: context,
