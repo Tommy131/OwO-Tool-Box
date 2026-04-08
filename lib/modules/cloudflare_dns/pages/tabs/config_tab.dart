@@ -17,6 +17,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/services/localization_service.dart';
@@ -38,6 +39,7 @@ class _CloudflareConfigTabState extends State<CloudflareConfigTab> {
   final _formKey = GlobalKey<FormState>();
   final _tokenController = TextEditingController();
   bool _isSaving = false;
+  bool _showToken = false;
 
   @override
   void initState() {
@@ -229,10 +231,50 @@ class _CloudflareConfigTabState extends State<CloudflareConfigTab> {
       ),
       child: TextFormField(
         controller: _tokenController,
-        obscureText: true,
+        obscureText: !_showToken,
         decoration: InputDecoration(
           hintText: LocalizationKeys.apiTokenHint.tr(context),
           prefixIcon: Icon(Icons.vpn_key, color: colorScheme.primary),
+          suffixIcon: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                tooltip: _showToken ? 'Hide' : 'Show',
+                icon: Icon(
+                  _showToken ? Icons.visibility_off : Icons.visibility,
+                  color: colorScheme.primary,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _showToken = !_showToken;
+                  });
+                },
+              ),
+              IconButton(
+                tooltip: 'Copy',
+                icon: Icon(
+                  Icons.copy,
+                  color: _showToken
+                      ? colorScheme.primary
+                      : colorScheme.onSurface.withValues(alpha: 0.38),
+                ),
+                onPressed: _showToken && _tokenController.text.trim().isNotEmpty
+                    ? () async {
+                        await Clipboard.setData(
+                          ClipboardData(text: _tokenController.text.trim()),
+                        );
+                        if (!mounted) return;
+                        CustomSnackBar(
+                          context,
+                          message: LocalizationKeys.copySuccess.tr(context),
+                          backgroundColor: Colors.green,
+                          icon: Icons.check_circle_outline,
+                        ).showModern();
+                      }
+                    : null,
+              ),
+            ],
+          ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,

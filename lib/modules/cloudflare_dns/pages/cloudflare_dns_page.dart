@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/services/localization_service.dart';
+import '../../../core/widgets/common/overflow_marquee_text.dart';
 
 import '../localization/localization_keys.dart';
 import '../providers/cloudflare_provider.dart';
@@ -76,8 +77,21 @@ class _CloudflareDnsPageState extends State<CloudflareDnsPage>
               text: LocalizationKeys.ddnsSettings.tr(context),
             ),
             Tab(
-              icon: const Icon(Icons.settings),
-              text: LocalizationKeys.cloudflareApiSettings.tr(context),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.settings),
+                  const SizedBox(height: 2),
+                  SizedBox(
+                    height: 20,
+                    child: OverflowMarqueeText(
+                      text: LocalizationKeys.cloudflareApiSettings.tr(context),
+                      textAlign: TextAlign.center,
+                      alignment: Alignment.center,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

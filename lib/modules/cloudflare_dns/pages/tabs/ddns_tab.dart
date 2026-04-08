@@ -53,7 +53,7 @@ class CloudflareDdnsTab extends StatelessWidget {
                     ),
                   ),
                   ElevatedButton.icon(
-                    onPressed: provider.isLoading
+                    onPressed: !provider.canRunDdnsSync
                         ? null
                         : () => provider.runDdnsSync(),
                     icon: const Icon(Icons.sync),

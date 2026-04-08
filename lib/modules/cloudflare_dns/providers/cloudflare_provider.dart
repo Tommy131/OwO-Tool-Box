@@ -49,16 +49,24 @@ class CloudflareProvider with ChangeNotifier {
   String? get publicIp => _publicIp;
 
   bool get isConfigured => _config != null && _config!.isValid;
+  bool get canRunDdnsSync =>
+      !_isLoading &&
+      isConfigured &&
+      _isTokenValid == true &&
+      _ddnsConfigs.isNotEmpty;
 
   Future<void> initialize() async {
     _config = await CloudflareStorageService.getConfig();
     _ddnsConfigs = await CloudflareStorageService.getDdnsConfigs();
     notifyListeners();
+    await refreshPublicIp();
 
     if (isConfigured) {
       await verifyAndSetStatus(_config!);
       await refreshData();
-      startDdnsTask();
+      if (_isTokenValid == true) {
+        startDdnsTask();
+      }
     }
   }
 
@@ -69,7 +77,11 @@ class CloudflareProvider with ChangeNotifier {
     notifyListeners();
     if (isConfigured) {
       await refreshData();
-      startDdnsTask();
+      if (_isTokenValid == true) {
+        startDdnsTask();
+      } else {
+        _ddnsTimer?.cancel();
+      }
     }
   }
 
@@ -94,16 +106,16 @@ class CloudflareProvider with ChangeNotifier {
   }
 
   Future<void> refreshData() async {
-    if (!isConfigured) return;
-
     _isLoading = true;
     notifyListeners();
 
     try {
-      final zones = await _apiService.getZones(_config!);
-      _zones.clear();
-      _zones.addAll(zones);
-      _publicIp = await _ipService.getPublicIP();
+      if (isConfigured && _isTokenValid == true) {
+        final zones = await _apiService.getZones(_config!);
+        _zones.clear();
+        _zones.addAll(zones);
+      }
+      await refreshPublicIp(notify: false);
     } catch (e) {
       AppLogger.debug('Refresh Cloudflare data failed: $e');
     } finally {
@@ -139,6 +151,10 @@ class CloudflareProvider with ChangeNotifier {
 
   // DDNS Logic
   void startDdnsTask() {
+    if (!canRunDdnsSync) {
+      _ddnsTimer?.cancel();
+      return;
+    }
     _ddnsTimer?.cancel();
     _ddnsTimer = Timer.periodic(const Duration(minutes: 10), (timer) {
       runDdnsSync();
@@ -148,7 +164,7 @@ class CloudflareProvider with ChangeNotifier {
   }
 
   Future<void> runDdnsSync() async {
-    if (!isConfigured || _ddnsConfigs.isEmpty) return;
+    if (!canRunDdnsSync) return;
 
     final currentIp = await _ipService.getPublicIP();
     if (currentIp == null) return;
@@ -185,6 +201,17 @@ class CloudflareProvider with ChangeNotifier {
 
     if (changed) {
       await CloudflareStorageService.saveDdnsConfigs(_ddnsConfigs);
+      notifyListeners();
+    }
+  }
+
+  Future<void> refreshPublicIp({bool notify = true}) async {
+    final currentIp = await _ipService.getPublicIP();
+    if (currentIp == null || currentIp == _publicIp) {
+      return;
+    }
+    _publicIp = currentIp;
+    if (notify) {
       notifyListeners();
     }
   }
