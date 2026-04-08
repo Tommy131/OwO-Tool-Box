@@ -43,42 +43,33 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
   // ---------------------------------------------------------------------------
 
   Widget _buildCertificateStatsBar(SslCertificateManagerProvider provider) {
-    return Row(
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
       children: [
-        Expanded(
-          child: _buildStatChip(
-            icon: Icons.folder_outlined,
-            label: LocalizationKeys.statsTotalCerts.tr(context),
-            value: '${provider.totalCertCount}',
-            color: Colors.blue,
-          ),
+        _buildStatChip(
+          icon: Icons.folder_outlined,
+          label: LocalizationKeys.statsTotalCerts.tr(context),
+          value: '${provider.totalCertCount}',
+          color: Colors.blue,
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _buildStatChip(
-            icon: Icons.check_circle_outline,
-            label: LocalizationKeys.statsIssuedCount.tr(context),
-            value: '${provider.issuedCertCount}',
-            color: Colors.green,
-          ),
+        _buildStatChip(
+          icon: Icons.check_circle_outline,
+          label: LocalizationKeys.statsIssuedCount.tr(context),
+          value: '${provider.issuedCertCount}',
+          color: Colors.green,
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _buildStatChip(
-            icon: Icons.block,
-            label: LocalizationKeys.statsRevokedCount.tr(context),
-            value: '${provider.revokedCertCount}',
-            color: Colors.red,
-          ),
+        _buildStatChip(
+          icon: Icons.block,
+          label: LocalizationKeys.statsRevokedCount.tr(context),
+          value: '${provider.revokedCertCount}',
+          color: Colors.red,
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _buildStatChip(
-            icon: Icons.warning_amber,
-            label: LocalizationKeys.statsExpiringSoon.tr(context),
-            value: '${provider.expiringSoonCount}',
-            color: Colors.amber.shade700,
-          ),
+        _buildStatChip(
+          icon: Icons.warning_amber,
+          label: LocalizationKeys.statsExpiringSoon.tr(context),
+          value: '${provider.expiringSoonCount}',
+          color: Colors.amber.shade700,
         ),
       ],
     );
@@ -92,53 +83,58 @@ extension _SslPageCertificateSection on _SslCertificateManagerPageState {
     final theme = Theme.of(context);
     final noFilterActive =
         provider.statusFilter.isEmpty && !provider.filterExpiringSoon;
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: TextField(
-            controller: provider.searchController,
-            onChanged: (value) => provider.updateSearchQuery(value),
-            decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.search),
-              hintText: LocalizationKeys.searchCertificates.tr(context),
-              border: const OutlineInputBorder(),
-              isDense: true,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 10,
-              ),
+        TextField(
+          controller: provider.searchController,
+          onChanged: (value) => provider.updateSearchQuery(value),
+          decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.search),
+            hintText: LocalizationKeys.searchCertificates.tr(context),
+            border: const OutlineInputBorder(),
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 10,
             ),
           ),
         ),
-        const SizedBox(width: 12),
-        FilterChip(
-          label: Text(LocalizationKeys.filterAll.tr(context)),
-          selected: noFilterActive,
-          onSelected: (_) => provider.clearFilters(),
-          selectedColor: theme.colorScheme.primary.withValues(alpha: 0.15),
-        ),
-        const SizedBox(width: 6),
-        FilterChip(
-          label: Text(LocalizationKeys.statusIssued.tr(context)),
-          selected: provider.statusFilter.contains(SslCertStatus.issued),
-          onSelected: (_) =>
-              provider.toggleStatusFilter(SslCertStatus.issued),
-          selectedColor: Colors.green.withValues(alpha: 0.15),
-        ),
-        const SizedBox(width: 6),
-        FilterChip(
-          label: Text(LocalizationKeys.statusRevoked.tr(context)),
-          selected: provider.statusFilter.contains(SslCertStatus.revoked),
-          onSelected: (_) =>
-              provider.toggleStatusFilter(SslCertStatus.revoked),
-          selectedColor: Colors.red.withValues(alpha: 0.15),
-        ),
-        const SizedBox(width: 6),
-        FilterChip(
-          label: Text(LocalizationKeys.filterExpiringSoon.tr(context)),
-          selected: provider.filterExpiringSoon,
-          onSelected: (v) => provider.setFilterExpiringSoon(v),
-          selectedColor: Colors.amber.withValues(alpha: 0.15),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            FilterChip(
+              label: Text(LocalizationKeys.filterAll.tr(context)),
+              selected: noFilterActive,
+              onSelected: (_) => provider.clearFilters(),
+              selectedColor:
+                  theme.colorScheme.primary.withValues(alpha: 0.15),
+            ),
+            FilterChip(
+              label: Text(LocalizationKeys.statusIssued.tr(context)),
+              selected:
+                  provider.statusFilter.contains(SslCertStatus.issued),
+              onSelected: (_) =>
+                  provider.toggleStatusFilter(SslCertStatus.issued),
+              selectedColor: Colors.green.withValues(alpha: 0.15),
+            ),
+            FilterChip(
+              label: Text(LocalizationKeys.statusRevoked.tr(context)),
+              selected:
+                  provider.statusFilter.contains(SslCertStatus.revoked),
+              onSelected: (_) =>
+                  provider.toggleStatusFilter(SslCertStatus.revoked),
+              selectedColor: Colors.red.withValues(alpha: 0.15),
+            ),
+            FilterChip(
+              label: Text(LocalizationKeys.filterExpiringSoon.tr(context)),
+              selected: provider.filterExpiringSoon,
+              onSelected: (v) => provider.setFilterExpiringSoon(v),
+              selectedColor: Colors.amber.withValues(alpha: 0.15),
+            ),
+          ],
         ),
       ],
     );
