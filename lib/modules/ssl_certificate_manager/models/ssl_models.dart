@@ -313,6 +313,9 @@ class CertificateDetailInfo {
     this.basicConstraints,
     this.authorityKeyIdentifier,
     this.subjectKeyIdentifier,
+    this.crlDistributionUrl,
+    this.ocspResponderUrl,
+    this.caIssuersUrl,
     this.rawFields = const {},
   });
 
@@ -325,6 +328,9 @@ class CertificateDetailInfo {
   final String? basicConstraints;
   final String? authorityKeyIdentifier;
   final String? subjectKeyIdentifier;
+  final String? crlDistributionUrl;
+  final String? ocspResponderUrl;
+  final String? caIssuersUrl;
   final Map<String, String> rawFields;
 
   factory CertificateDetailInfo.fromOpenSslText(
@@ -340,6 +346,9 @@ class CertificateDetailInfo {
     String? basicConstraints;
     String? authKeyId;
     String? subjectKeyId;
+    String? crlDistributionUrl;
+    String? ocspResponderUrl;
+    String? caIssuersUrl;
 
     final lines = text.split('\n');
     for (int i = 0; i < lines.length; i++) {
@@ -368,14 +377,18 @@ class CertificateDetailInfo {
       } else if (line.startsWith('Not After :')) {
         rawFields['Not After'] = line.substring('Not After :'.length).trim();
       } else if (line.startsWith('Serial Number:')) {
-        rawFields['Serial Number'] =
-            line.substring('Serial Number:'.length).trim();
+        rawFields['Serial Number'] = line
+            .substring('Serial Number:'.length)
+            .trim();
       } else if (line == 'X509v3 Key Usage: critical' ||
           line == 'X509v3 Key Usage:') {
         if (i + 1 < lines.length) {
           final usageLine = lines[i + 1].trim();
           keyUsageList.addAll(
-            usageLine.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty),
+            usageLine
+                .split(',')
+                .map((e) => e.trim())
+                .where((e) => e.isNotEmpty),
           );
           rawFields['Key Usage'] = usageLine;
         }
@@ -383,7 +396,10 @@ class CertificateDetailInfo {
         if (i + 1 < lines.length) {
           final usageLine = lines[i + 1].trim();
           extKeyUsageList.addAll(
-            usageLine.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty),
+            usageLine
+                .split(',')
+                .map((e) => e.trim())
+                .where((e) => e.isNotEmpty),
           );
           rawFields['Extended Key Usage'] = usageLine;
         }
@@ -413,6 +429,59 @@ class CertificateDetailInfo {
       }
     }
 
+    final aiaBlock = _extractExtensionBlock(text, const <String>[
+      'X509v3 Authority Information Access',
+      'Authority Information Access',
+    ]);
+    if (aiaBlock.isNotEmpty) {
+      ocspResponderUrl = _extractFirstUri(
+        aiaBlock,
+        RegExp(r'OCSP\s*-\s*URI:\s*([^\s,]+)', caseSensitive: false),
+      );
+      caIssuersUrl = _extractFirstUri(
+        aiaBlock,
+        RegExp(r'CA\s+Issuers\s*-\s*URI:\s*([^\s,]+)', caseSensitive: false),
+      );
+    }
+
+    final cdpBlock = _extractExtensionBlock(text, const <String>[
+      'X509v3 CRL Distribution Points',
+      'CRL Distribution Points',
+    ]);
+    if (cdpBlock.isNotEmpty) {
+      crlDistributionUrl = _extractFirstUri(
+        cdpBlock,
+        RegExp(r'URI:\s*([^\s,]+)', caseSensitive: false),
+      );
+    }
+
+    // Fallback: parse whole text directly to handle different openssl formats.
+    ocspResponderUrl ??= _extractFirstUri(
+      text,
+      RegExp(r'OCSP\s*-\s*URI:\s*([^\s,]+)', caseSensitive: false),
+    );
+    caIssuersUrl ??= _extractFirstUri(
+      text,
+      RegExp(r'CA\s+Issuers\s*-\s*URI:\s*([^\s,]+)', caseSensitive: false),
+    );
+    crlDistributionUrl ??= _extractFirstUri(
+      text,
+      RegExp(
+        r'CRL\s+Distribution\s+Points[\s\S]*?URI:\s*([^\s,]+)',
+        caseSensitive: false,
+      ),
+    );
+
+    if (ocspResponderUrl != null && ocspResponderUrl.isNotEmpty) {
+      rawFields['OCSP Responder URL'] = ocspResponderUrl;
+    }
+    if (caIssuersUrl != null && caIssuersUrl.isNotEmpty) {
+      rawFields['CA Issuers URL'] = caIssuersUrl;
+    }
+    if (crlDistributionUrl != null && crlDistributionUrl.isNotEmpty) {
+      rawFields['CRL Distribution URL'] = crlDistributionUrl;
+    }
+
     return CertificateDetailInfo(
       publicKeyAlgorithm: publicKeyAlgo,
       signatureAlgorithm: signatureAlgo,
@@ -423,17 +492,42 @@ class CertificateDetailInfo {
       basicConstraints: basicConstraints,
       authorityKeyIdentifier: authKeyId,
       subjectKeyIdentifier: subjectKeyId,
+      crlDistributionUrl: crlDistributionUrl,
+      ocspResponderUrl: ocspResponderUrl,
+      caIssuersUrl: caIssuersUrl,
       rawFields: rawFields,
     );
+  }
+
+  static String _extractExtensionBlock(String text, List<String> titles) {
+    for (final title in titles) {
+      final escapedTitle = RegExp.escape(title);
+      final match = RegExp(
+        '$escapedTitle:[\\s\\S]*?(?=\\n\\s*X509v3\\s+|\\n\\s*Signature Algorithm:|\\Z)',
+        caseSensitive: false,
+        multiLine: true,
+      ).firstMatch(text);
+      if (match != null) {
+        return match.group(0) ?? '';
+      }
+    }
+    return '';
+  }
+
+  static String? _extractFirstUri(String source, RegExp pattern) {
+    final match = pattern.firstMatch(source);
+    final raw = match?.group(1)?.trim();
+    if (raw == null || raw.isEmpty) return null;
+    return _cleanUri(raw);
+  }
+
+  static String _cleanUri(String raw) {
+    return raw.replaceAll(RegExp(r'[\s,;]+$'), '').trim();
   }
 }
 
 class CrlState {
-  const CrlState({
-    this.crlFilePath,
-    this.lastGeneratedAt,
-    this.crlDays = 30,
-  });
+  const CrlState({this.crlFilePath, this.lastGeneratedAt, this.crlDays = 30});
 
   final String? crlFilePath;
   final DateTime? lastGeneratedAt;
@@ -484,6 +578,7 @@ class SslCertificateRecord {
     required this.keyFilePath,
     required this.csrFilePath,
     this.revokeReason,
+    this.revokedAt,
   });
 
   final String id;
@@ -500,6 +595,7 @@ class SslCertificateRecord {
   final String keyFilePath;
   final String csrFilePath;
   final String? revokeReason;
+  final DateTime? revokedAt;
 
   bool get isExpired =>
       status == SslCertStatus.issued && expiresAt.isBefore(DateTime.now());
@@ -526,6 +622,7 @@ class SslCertificateRecord {
     String? keyFilePath,
     String? csrFilePath,
     String? revokeReason,
+    DateTime? revokedAt,
   }) {
     return SslCertificateRecord(
       id: id ?? this.id,
@@ -542,6 +639,7 @@ class SslCertificateRecord {
       keyFilePath: keyFilePath ?? this.keyFilePath,
       csrFilePath: csrFilePath ?? this.csrFilePath,
       revokeReason: revokeReason ?? this.revokeReason,
+      revokedAt: revokedAt ?? this.revokedAt,
     );
   }
 
@@ -560,6 +658,7 @@ class SslCertificateRecord {
     'keyFilePath': keyFilePath,
     'csrFilePath': csrFilePath,
     'revokeReason': revokeReason,
+    'revokedAt': revokedAt?.toIso8601String(),
   };
 
   factory SslCertificateRecord.fromJson(Map<String, dynamic> json) {
@@ -587,6 +686,9 @@ class SslCertificateRecord {
       keyFilePath: (json['keyFilePath'] ?? '').toString(),
       csrFilePath: (json['csrFilePath'] ?? '').toString(),
       revokeReason: json['revokeReason']?.toString(),
+      revokedAt: json['revokedAt'] != null
+          ? DateTime.tryParse(json['revokedAt'].toString())
+          : null,
     );
   }
 }
@@ -676,12 +778,12 @@ class SslManagerStateSnapshot {
             (key, value) => MapEntry(key.toString(), value?.toString() ?? ''),
           ),
       crlState: json['crlState'] is Map
-          ? CrlState.fromJson(Map<String, dynamic>.from(json['crlState'] as Map))
+          ? CrlState.fromJson(
+              Map<String, dynamic>.from(json['crlState'] as Map),
+            )
           : const CrlState(),
       auditLog: ((json['auditLog'] as List?) ?? [])
-          .map(
-            (e) => AuditLogEntry.fromJson(Map<String, dynamic>.from(e)),
-          )
+          .map((e) => AuditLogEntry.fromJson(Map<String, dynamic>.from(e)))
           .toList(),
     );
   }

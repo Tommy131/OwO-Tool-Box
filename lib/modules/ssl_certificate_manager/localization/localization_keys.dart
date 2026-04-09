@@ -176,6 +176,7 @@ class LocalizationKeys {
   static const String unstructuredName = 'ssl_unstructured_name';
   static const String ocspDomain = 'ssl_ocsp_domain';
   static const String revokeReason = 'ssl_revoke_reason';
+  static const String revokedAt = 'ssl_revoked_at';
   static const String defaultOpenSslCnf = 'ssl_default_openssl_cnf';
   static const String compareChanges = 'ssl_compare_changes';
   static const String noChangesDetected = 'ssl_no_changes_detected';
@@ -211,8 +212,7 @@ class LocalizationKeys {
   static const String certDetailBasicConstraints =
       'ssl_cert_detail_basic_constraints';
   static const String certDetailAuthKeyId = 'ssl_cert_detail_auth_key_id';
-  static const String certDetailSubjectKeyId =
-      'ssl_cert_detail_subject_key_id';
+  static const String certDetailSubjectKeyId = 'ssl_cert_detail_subject_key_id';
   static const String daysRemaining = 'ssl_days_remaining';
   static const String loadingDetails = 'ssl_loading_details';
 

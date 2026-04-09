@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 
 import '../../../core/services/persistence_service.dart';
 import '../../../core/utils/logger.dart';
+import '../../../core/widgets/common/dialog.dart';
 import '../models/ssl_models.dart';
 import '../services/default_openssl_template.dart';
 import '../services/openssl_command_service.dart';
@@ -535,10 +536,11 @@ class SslCertificateManagerProvider with ChangeNotifier {
       return RootCaValidationResult.invalid('无法识别根私钥内容，请确认是 PEM 格式私钥。');
     }
 
-    final keyCheck = await OpenSslCommandService.verifyImportedPrivateKeyPassword(
-      keySource,
-      keyPassword,
-    );
+    final keyCheck =
+        await OpenSslCommandService.verifyImportedPrivateKeyPassword(
+          keySource,
+          keyPassword,
+        );
     if (!keyCheck.isValid) {
       AppLogger.warning(
         '[SSL] root key password verify failed: ${keyCheck.message}',
@@ -549,7 +551,8 @@ class SslCertificateManagerProvider with ChangeNotifier {
       '[SSL] root key password verify passed, encrypted=${keyCheck.isEncrypted}',
     );
 
-    final opensslInfo = await OpenSslCommandService.readCertificateMetaByOpenSsl(certSource);
+    final opensslInfo =
+        await OpenSslCommandService.readCertificateMetaByOpenSsl(certSource);
     if (opensslInfo == null || opensslInfo.isEmpty) {
       AppLogger.warning('[SSL] root cert metadata parse failed');
       return RootCaValidationResult.invalid(
@@ -620,6 +623,12 @@ class SslCertificateManagerProvider with ChangeNotifier {
       final domain = _template.domain.trim();
       if (domain.isEmpty) {
         throw Exception('域名不能为空');
+      }
+      final duplicatedDomainCert = _findBlockingCertificateByDomain(domain);
+      if (duplicatedDomainCert != null) {
+        throw Exception(
+          '域名 "$domain" 已存在未过期的已签发证书（序列号：${duplicatedDomainCert.serialNumber}），禁止重复签发。',
+        );
       }
       AppLogger.info('[SSL] issueCertificate start, domain=$domain');
 
@@ -725,7 +734,9 @@ class SslCertificateManagerProvider with ChangeNotifier {
         timeout: const Duration(seconds: 20),
       );
 
-      final certMeta = await OpenSslCommandService.readIssuedCertificateMeta(certPath);
+      final certMeta = await OpenSslCommandService.readIssuedCertificateMeta(
+        certPath,
+      );
       if (certMeta == null) {
         throw Exception('证书已生成，但无法读取签发结果，请检查 openssl 输出。');
       }
@@ -788,13 +799,15 @@ class SslCertificateManagerProvider with ChangeNotifier {
       final reason = revokeReasonController.text.trim().isEmpty
           ? '用户手动撤销'
           : revokeReasonController.text.trim();
+      final revokedAt = DateTime.now();
       _certificates[index] = _certificates[index].copyWith(
         status: SslCertStatus.revoked,
         revokeReason: reason,
+        revokedAt: revokedAt,
       );
       final revokeLog = File(p.join(_config.storagePath, 'revoke.log'));
       await revokeLog.writeAsString(
-        '[${DateTime.now().toIso8601String()}] revoke serial=${_certificates[index].serialNumber}, reason=$reason\n',
+        '[${revokedAt.toIso8601String()}] revoke serial=${_certificates[index].serialNumber}, reason=$reason\n',
         mode: FileMode.append,
       );
       infoMessage = '证书已撤销。';
@@ -806,7 +819,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
       await _persistAll();
       // Auto-generate CRL after revocation (best-effort, don't block)
       try {
-        await generateCrl();
+        await generateCrl(force: true);
       } catch (e) {
         AppLogger.warning('[SSL] auto CRL generation after revoke failed: $e');
       }
@@ -910,11 +923,36 @@ class SslCertificateManagerProvider with ChangeNotifier {
 
   // ========== CRL Generation ==========
 
-  Future<void> generateCrl({int? crlDays}) async {
-    if (!isInitialized) return;
+  Future<bool> requestGenerateCrlWithPrompt(
+    BuildContext context, {
+    int? crlDays,
+  }) async {
+    final existingValid = await _findFirstValidUnexpiredCrlPath([
+      p.join(_config.storagePath, '_files', 'root.crl'),
+      p.join(_config.storagePath, '_files', 'crl.pem'),
+      _crlState.crlFilePath ?? '',
+    ]);
+    if (existingValid != null) {
+      infoMessage = '当前 CRL 尚未过期（$existingValid），按规则不允许重复生成。';
+      notifyListeners();
+      await showAdvancedConfirmDialog(
+        context: context,
+        title: 'CRL 生成提示',
+        content: infoMessage,
+        icon: Icons.info_outline,
+        confirmText: '确定',
+        cancelText: '',
+      );
+      return false;
+    }
+    return generateCrl(crlDays: crlDays, force: true);
+  }
+
+  Future<bool> generateCrl({int? crlDays, bool force = false}) async {
+    if (!isInitialized) return false;
     if (!await _ensureStorageAvailableOrRecover()) {
       notifyListeners();
-      return;
+      return false;
     }
     isLoading = true;
     notifyListeners();
@@ -922,29 +960,72 @@ class SslCertificateManagerProvider with ChangeNotifier {
     try {
       await OpenSslCommandService.ensureOpenSslAvailable();
       final days = crlDays ?? _crlState.crlDays;
-      final crlOutputPath = p.join(_config.storagePath, '_files', 'crl.pem');
+      final crlOutputPath = p.join(_config.storagePath, '_files', 'root.crl');
+      final legacyCrlPath = p.join(_config.storagePath, '_files', 'crl.pem');
       final rootCertPath = rootCACertPathController.text.trim();
       final rootKeyPath = rootCAKeyPathController.text.trim();
       final cnfPath = _config.defaultCnfPath;
       final indexPath = p.join(_config.storagePath, '_files', 'index.txt');
 
-      // Build index.txt from revoked certificates for openssl ca
-      final indexLines = <String>[];
-      for (final cert in _certificates) {
-        final serial = cert.serialNumber.toUpperCase().padLeft(2, '0');
-        final notAfter = _formatOpenSslDateCompact(cert.expiresAt);
-        if (cert.status == SslCertStatus.revoked) {
-          final revokeDate = _formatOpenSslDateCompact(DateTime.now());
-          indexLines.add(
-            'R\t$notAfter\t$revokeDate\t$serial\tunknown\t/CN=${cert.commonName}',
-          );
-        } else {
-          indexLines.add(
-            'V\t$notAfter\t\t$serial\tunknown\t/CN=${cert.commonName}',
-          );
+      if (rootCertPath.isEmpty || rootKeyPath.isEmpty) {
+        throw Exception('未找到可用的根证书或根私钥，请检查存储配置。');
+      }
+      if (!await File(rootCertPath).exists()) {
+        throw Exception('根证书文件不存在: $rootCertPath');
+      }
+      if (!await File(rootKeyPath).exists()) {
+        throw Exception('根私钥文件不存在: $rootKeyPath');
+      }
+      if (cnfPath.trim().isEmpty || !await File(cnfPath).exists()) {
+        throw Exception('未找到 OpenSSL 配置文件: $cnfPath');
+      }
+
+      if (!force) {
+        final existingValid = await _findFirstValidUnexpiredCrlPath([
+          crlOutputPath,
+          legacyCrlPath,
+          _crlState.crlFilePath ?? '',
+        ]);
+        if (existingValid != null) {
+          infoMessage = '当前 CRL 尚未过期（$existingValid），按规则不允许重复生成。';
+          AppLogger.info('[SSL] generateCrl skipped: $infoMessage');
+          return false;
         }
       }
-      await File(indexPath).writeAsString('${indexLines.join('\n')}\n');
+
+      // Build index.txt for openssl ca. CRL only needs revoked entries.
+      final indexLines = <String>[];
+      final revokedCerts = _certificates.where(
+        (c) => c.status == SslCertStatus.revoked,
+      );
+      for (final cert in revokedCerts) {
+        final serial = _normalizeOpenSslIndexSerial(cert.serialNumber);
+        if (serial.isEmpty) {
+          AppLogger.warning(
+            '[SSL] skip revoked cert with invalid serial for CRL index: ${cert.serialNumber}',
+          );
+          continue;
+        }
+        final notAfter = _formatOpenSslDateCompact(cert.expiresAt);
+        final revokeDate = _formatOpenSslDateCompact(
+          cert.revokedAt ?? DateTime.now(),
+        );
+        final commonName = cert.commonName.trim().isEmpty
+            ? cert.domain
+            : cert.commonName;
+        indexLines.add(
+          'R\t$notAfter\t$revokeDate\t$serial\tunknown\t/CN=${_escapeOpenSslDnValue(commonName)}',
+        );
+      }
+      final revokedCount = revokedCerts.length;
+      if (revokedCount > 0 && indexLines.isEmpty) {
+        throw Exception('存在已吊销证书，但序列号无效，无法生成 CRL。');
+      }
+      // OpenSSL text DB cannot contain a standalone blank line.
+      final indexContent = indexLines.isEmpty
+          ? ''
+          : '${indexLines.join('\n')}\n';
+      await File(indexPath).writeAsString(indexContent);
 
       final args = <String>[
         'ca',
@@ -970,19 +1051,32 @@ class SslCertificateManagerProvider with ChangeNotifier {
         workingDirectory: _config.storagePath,
         timeout: const Duration(seconds: 15),
       );
+      if (crlOutputPath != legacyCrlPath) {
+        await File(crlOutputPath).copy(legacyCrlPath);
+      }
+      final generatedNextUpdate = await _readCrlNextUpdate(crlOutputPath);
+      if (generatedNextUpdate == null) {
+        throw Exception('CRL 已生成，但无法解析有效期，请检查 CRL 内容。');
+      }
+      if (!generatedNextUpdate.toUtc().isAfter(DateTime.now().toUtc())) {
+        throw Exception('CRL 已生成，但已处于过期状态，请检查 crlDays 配置。');
+      }
 
       _crlState = _crlState.copyWith(
         crlFilePath: crlOutputPath,
         lastGeneratedAt: DateTime.now(),
         crlDays: days,
       );
-      infoMessage = 'CRL 吊销列表已生成。';
+      infoMessage =
+          'CRL 吊销列表已生成（有效至 ${generatedNextUpdate.toLocal().toString().split('.').first}）。';
       _addAuditEntry(AuditAction.crl, '生成 CRL: $crlOutputPath');
       AppLogger.info('[SSL] generateCrl success, path=$crlOutputPath');
       await _persistAll();
+      return true;
     } catch (e) {
       infoMessage = 'CRL 生成失败: $e';
       AppLogger.error('[SSL] generateCrl failed', e);
+      return false;
     } finally {
       isLoading = false;
       notifyListeners();
@@ -997,6 +1091,74 @@ class SslCertificateManagerProvider with ChangeNotifier {
         '${utc.hour.toString().padLeft(2, '0')}'
         '${utc.minute.toString().padLeft(2, '0')}'
         '${utc.second.toString().padLeft(2, '0')}Z';
+  }
+
+  String _normalizeOpenSslIndexSerial(String rawSerial) {
+    final normalized = rawSerial.trim().toUpperCase().replaceAll(
+      RegExp(r'[^0-9A-F]'),
+      '',
+    );
+    if (normalized.isEmpty) {
+      return '';
+    }
+    return normalized.length.isOdd ? '0$normalized' : normalized;
+  }
+
+  String _escapeOpenSslDnValue(String raw) {
+    return raw
+        .replaceAll(r'\', r'\\')
+        .replaceAll('/', r'\/')
+        .replaceAll('\t', ' ')
+        .replaceAll('\r', ' ')
+        .replaceAll('\n', ' ');
+  }
+
+  Future<String?> _findFirstValidUnexpiredCrlPath(
+    List<String> candidatePaths,
+  ) async {
+    final unique = <String>{};
+    for (final rawPath in candidatePaths) {
+      final path = rawPath.trim();
+      if (path.isEmpty || !unique.add(path)) {
+        continue;
+      }
+      final file = File(path);
+      if (!await file.exists()) {
+        continue;
+      }
+      final nextUpdate = await _readCrlNextUpdate(path);
+      if (nextUpdate == null) {
+        continue;
+      }
+      if (nextUpdate.toUtc().isAfter(DateTime.now().toUtc())) {
+        return path;
+      }
+    }
+    return null;
+  }
+
+  Future<DateTime?> _readCrlNextUpdate(String crlPath) async {
+    final result = await OpenSslCommandService.runOpenSsl([
+      'crl',
+      '-in',
+      crlPath,
+      '-noout',
+      '-nextupdate',
+    ], timeout: const Duration(seconds: 8));
+    if (result == null || result.exitCode != 0) {
+      return null;
+    }
+    final line = result.stdout
+        .toString()
+        .split('\n')
+        .map((e) => e.trim())
+        .firstWhere((e) => e.startsWith('nextUpdate='), orElse: () => '');
+    if (line.isEmpty) {
+      return null;
+    }
+    return OpenSslCommandService.parseOpenSslDate(
+      line.substring('nextUpdate='.length).trim(),
+    );
   }
 
   // ========== Certificate Details ==========
@@ -1076,11 +1238,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
         (c) => c.id == certificateId,
         orElse: () => throw Exception('Certificate not found'),
       );
-      final pfxPath = p.join(
-        _config.storagePath,
-        'pfx',
-        '${record.id}.pfx',
-      );
+      final pfxPath = p.join(_config.storagePath, 'pfx', '${record.id}.pfx');
       final rootCertPath = rootCACertPathController.text.trim();
 
       final args = <String>[
@@ -1106,10 +1264,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
       );
 
       infoMessage = '证书已导出至 $pfxPath';
-      _addAuditEntry(
-        AuditAction.export,
-        '导出 PFX: ${record.domain} → $pfxPath',
-      );
+      _addAuditEntry(AuditAction.export, '导出 PFX: ${record.domain} → $pfxPath');
       AppLogger.info('[SSL] exportPkcs12 success, path=$pfxPath');
       notifyListeners();
       return pfxPath;
@@ -1147,10 +1302,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
       }
       final output = result.stdout.toString().trim();
       final isValid = result.exitCode == 0 && output.contains(': OK');
-      return (
-        valid: isValid,
-        message: isValid ? '证书链验证通过' : output,
-      );
+      return (valid: isValid, message: isValid ? '证书链验证通过' : output);
     } catch (e) {
       return (valid: false, message: '验证失败: $e');
     }
@@ -1196,6 +1348,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
       _certificates[index] = _certificates[index].copyWith(
         status: SslCertStatus.revoked,
         revokeReason: reason.isEmpty ? '批量撤销' : reason,
+        revokedAt: DateTime.now(),
       );
       count++;
     }
@@ -1205,7 +1358,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
       _batchMode = false;
       await _persistAll();
       try {
-        await generateCrl();
+        await generateCrl(force: true);
       } catch (_) {}
     }
     notifyListeners();
@@ -1243,16 +1396,29 @@ class SslCertificateManagerProvider with ChangeNotifier {
   void _addAuditEntry(AuditAction action, String detail) {
     _auditLog.insert(
       0,
-      AuditLogEntry(
-        timestamp: DateTime.now(),
-        action: action,
-        detail: detail,
-      ),
+      AuditLogEntry(timestamp: DateTime.now(), action: action, detail: detail),
     );
     // Keep max 200 entries
     if (_auditLog.length > 200) {
       _auditLog.removeRange(200, _auditLog.length);
     }
+  }
+
+  String _normalizeDomainKey(String raw) => raw.trim().toLowerCase();
+
+  SslCertificateRecord? _findBlockingCertificateByDomain(String domain) {
+    final normalized = _normalizeDomainKey(domain);
+    if (normalized.isEmpty) {
+      return null;
+    }
+    for (final cert in _certificates) {
+      final sameDomain = _normalizeDomainKey(cert.domain) == normalized;
+      final isBlocking = cert.status == SslCertStatus.issued && !cert.isExpired;
+      if (sameDomain && isBlocking) {
+        return cert;
+      }
+    }
+    return null;
   }
 
   void clearAuditLog() {
@@ -1268,10 +1434,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
     required int validDays,
   }) async {
     if (!isInitialized) {
-      return const SslIssueExecutionResult(
-        success: false,
-        message: '请先完成初始化。',
-      );
+      return const SslIssueExecutionResult(success: false, message: '请先完成初始化。');
     }
     if (!await _ensureStorageAvailableOrRecover()) {
       notifyListeners();
@@ -1299,7 +1462,15 @@ class SslCertificateManagerProvider with ChangeNotifier {
         throw Exception('无法读取 CSR 信息，请检查文件格式。');
       }
       final subjectLine = csrInfo.stdout.toString().trim();
-      final cn = OpenSslCommandService.extractCommonName(subjectLine) ?? 'external-csr';
+      final cn =
+          OpenSslCommandService.extractCommonName(subjectLine) ??
+          'external-csr';
+      final duplicatedDomainCert = _findBlockingCertificateByDomain(cn);
+      if (duplicatedDomainCert != null) {
+        throw Exception(
+          '域名 "$cn" 已存在未过期的已签发证书（序列号：${duplicatedDomainCert.serialNumber}），禁止重复签发。',
+        );
+      }
 
       final now = DateTime.now();
       final safeName = _sanitizeFileStem(cn);
@@ -1350,7 +1521,9 @@ class SslCertificateManagerProvider with ChangeNotifier {
         timeout: const Duration(seconds: 20),
       );
 
-      final certMeta = await OpenSslCommandService.readIssuedCertificateMeta(certPath);
+      final certMeta = await OpenSslCommandService.readIssuedCertificateMeta(
+        certPath,
+      );
       if (certMeta == null) {
         throw Exception('证书已生成，但无法读取签发结果。');
       }
@@ -1584,6 +1757,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
           .where((e) => e.value.trim().isNotEmpty)
           .toList(growable: false),
     );
+    final hasAltNames = templateForRender.altNames.isNotEmpty;
 
     var content = DefaultOpenSslTemplate.buildTemplate(templateForRender);
     content = content.replaceFirst(
@@ -1597,6 +1771,12 @@ class SslCertificateManagerProvider with ChangeNotifier {
       extendedLine.isEmpty
           ? '# extendedKeyUsage omitted'
           : 'extendedKeyUsage      = $extendedLine',
+    );
+    content = content.replaceFirst(
+      RegExp(r'^\s*subjectAltName\s*=.*$', multiLine: true),
+      hasAltNames
+          ? 'subjectAltName        = @alt_names'
+          : '# subjectAltName omitted',
     );
     content = content.replaceFirst(
       RegExp(r'^\s*caIssuers;URI\.0\s*=.*$', multiLine: true),
@@ -2499,5 +2679,4 @@ class SslCertificateManagerProvider with ChangeNotifier {
         .replaceAll('>', r'\>')
         .replaceAll('=', r'\=');
   }
-
 }

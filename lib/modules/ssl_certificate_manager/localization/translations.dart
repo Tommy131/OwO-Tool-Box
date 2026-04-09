@@ -150,6 +150,7 @@ final Map<String, Map<String, String>> translations = {
     LocalizationKeys.unstructuredName: '非结构化名称',
     LocalizationKeys.ocspDomain: 'OCSP域名',
     LocalizationKeys.revokeReason: '撤销原因',
+    LocalizationKeys.revokedAt: '吊销时间',
     LocalizationKeys.defaultOpenSslCnf: '默认 openssl.cnf',
     LocalizationKeys.compareChanges: '对比修改',
     LocalizationKeys.noChangesDetected: '当前内容与已保存版本一致',
@@ -460,6 +461,7 @@ final Map<String, Map<String, String>> translations = {
     LocalizationKeys.unstructuredName: 'Unstructured Name',
     LocalizationKeys.ocspDomain: 'OCSP Domain',
     LocalizationKeys.revokeReason: 'Revoke Reason',
+    LocalizationKeys.revokedAt: 'Revoked At',
     LocalizationKeys.defaultOpenSslCnf: 'Default openssl.cnf',
     LocalizationKeys.compareChanges: 'Compare Changes',
     LocalizationKeys.noChangesDetected: 'Current content matches saved version',
@@ -572,7 +574,8 @@ final Map<String, Map<String, String>> translations = {
     LocalizationKeys.importCsrSubtitle:
         'Select an external CSR file and sign it with the current Root CA.',
     LocalizationKeys.csrFilePath: 'CSR File Path',
-    LocalizationKeys.csrFileAllowedOnly: 'CSR only supports .csr or .pem files.',
+    LocalizationKeys.csrFileAllowedOnly:
+        'CSR only supports .csr or .pem files.',
     LocalizationKeys.signCsr: 'Sign Certificate',
     LocalizationKeys.signCsrSuccess: 'External CSR signed successfully.',
     LocalizationKeys.signCsrFailed: 'External CSR signing failed',
