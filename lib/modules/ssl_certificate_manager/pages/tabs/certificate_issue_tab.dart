@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/services/localization_service.dart';
 import '../../../../core/widgets/common/dialog.dart';
 import '../../localization/localization_keys.dart';
+import '../../models/ssl_models.dart';
 import '../../providers/ssl_certificate_manager_provider.dart';
 import '../../widgets/form/ssl_validators.dart';
 import '../../widgets/issue/issue_step_content.dart';
@@ -11,10 +12,7 @@ import '../../widgets/shared/step_progress_indicator.dart';
 
 /// Helper class for tracking issue step completion.
 class _IssueStepProgressStats {
-  const _IssueStepProgressStats({
-    required this.completed,
-    required this.total,
-  });
+  const _IssueStepProgressStats({required this.completed, required this.total});
 
   final int completed;
   final int total;
@@ -102,8 +100,9 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primary
-                                .withValues(alpha: 0.1),
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.1,
+                            ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Icon(
@@ -119,29 +118,29 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
                             children: [
                               Text(
                                 currentTitle,
-                                style:
-                                    theme.textTheme.titleSmall?.copyWith(
+                                style: theme.textTheme.titleSmall?.copyWith(
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 currentSubtitle,
-                                style:
-                                    theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurface
-                                      .withValues(alpha: 0.6),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.6,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
                         ListenableBuilder(
-                          listenable:
-                              _issueProgressListenable(provider),
+                          listenable: _issueProgressListenable(provider),
                           builder: (context, _) {
                             final ratio = _stepCompletionRatio(
-                                provider, _issueStep);
+                              provider,
+                              _issueStep,
+                            );
                             final percent = (ratio * 100).round();
                             return Container(
                               padding: const EdgeInsets.symmetric(
@@ -150,16 +149,15 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
                               ),
                               decoration: BoxDecoration(
                                 color: ratio >= 1.0
-                                    ? Colors.green
-                                        .withValues(alpha: 0.1)
-                                    : theme.colorScheme.primary
-                                        .withValues(alpha: 0.08),
+                                    ? Colors.green.withValues(alpha: 0.1)
+                                    : theme.colorScheme.primary.withValues(
+                                        alpha: 0.08,
+                                      ),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
                                 '$percent%',
-                                style: theme.textTheme.labelMedium
-                                    ?.copyWith(
+                                style: theme.textTheme.labelMedium?.copyWith(
                                   fontWeight: FontWeight.w700,
                                   color: ratio >= 1.0
                                       ? Colors.green
@@ -174,8 +172,7 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
                     const SizedBox(height: 14),
                     Divider(
                       height: 1,
-                      color:
-                          theme.dividerColor.withValues(alpha: 0.12),
+                      color: theme.dividerColor.withValues(alpha: 0.12),
                     ),
                     const SizedBox(height: 14),
                     // Form content
@@ -186,8 +183,7 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
                           provider: provider,
                           onShowInlineMessage: _showInlineMessage,
                           obscureRootCaPassword: !_showRootCaPassword,
-                          obscureChallengePassword:
-                              !_showChallengePassword,
+                          obscureChallengePassword: !_showChallengePassword,
                           onToggleRootCaPassword:
                               _toggleRootCaPasswordVisibility,
                           onToggleChallengePassword:
@@ -207,11 +203,9 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
                                     if (_issueStep == 0) return;
                                     _changeIssueStep(-1);
                                   },
-                            icon: const Icon(Icons.arrow_back,
-                                size: 18),
+                            icon: const Icon(Icons.arrow_back, size: 18),
                             label: Text(
-                              LocalizationKeys.previousStep
-                                  .tr(context),
+                              LocalizationKeys.previousStep.tr(context),
                             ),
                           ),
                         const Spacer(),
@@ -226,8 +220,7 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
                                     return;
                                   }
                                   if (_issueStep == 4) {
-                                    await _handleIssueWithDialogs(
-                                        provider);
+                                    await _handleIssueWithSystemDialogs(provider);
                                     return;
                                   }
                                   _changeIssueStep(1);
@@ -239,10 +232,8 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
                           ),
                           label: Text(
                             _issueStep == 4
-                                ? LocalizationKeys.confirmIssue
-                                    .tr(context)
-                                : LocalizationKeys.nextStep
-                                    .tr(context),
+                                ? LocalizationKeys.confirmIssue.tr(context)
+                                : LocalizationKeys.nextStep.tr(context),
                           ),
                         ),
                       ],
@@ -350,26 +341,26 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
       return _IssueStepProgressStats(
         completed: [
           _isCompletedIssueField(
-              provider, provider.crlDistributionUrlController),
-          _isCompletedIssueField(
-              provider, provider.ocspCaIssuersUrlController),
-          _isCompletedIssueField(
-              provider, provider.ocspResponderUrlController),
+            provider,
+            provider.crlDistributionUrlController,
+          ),
+          _isCompletedIssueField(provider, provider.ocspCaIssuersUrlController),
+          _isCompletedIssueField(provider, provider.ocspResponderUrlController),
         ].where((v) => v).length,
         total: 3,
       );
     }
     if (step == 4) {
-      final completed = List<int>.generate(4, (i) => i)
-          .where((i) => _stepProgressStats(provider, i).isCompleted)
-          .length;
+      final completed = List<int>.generate(
+        4,
+        (i) => i,
+      ).where((i) => _stepProgressStats(provider, i).isCompleted).length;
       return _IssueStepProgressStats(completed: completed, total: 4);
     }
     return const _IssueStepProgressStats(completed: 0, total: 1);
   }
 
-  Listenable _issueProgressListenable(
-      SslCertificateManagerProvider provider) {
+  Listenable _issueProgressListenable(SslCertificateManagerProvider provider) {
     return Listenable.merge([
       provider,
       provider.domainController,
@@ -465,10 +456,8 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
     return null;
   }
 
-  bool _validateBeforeNext(
-      SslCertificateManagerProvider provider, int step) {
-    final requiredFieldsError =
-        _missingRequiredFieldsMessage(provider, step);
+  bool _validateBeforeNext(SslCertificateManagerProvider provider, int step) {
+    final requiredFieldsError = _missingRequiredFieldsMessage(provider, step);
     if (requiredFieldsError != null) {
       _showInlineMessage(requiredFieldsError);
       return false;
@@ -481,8 +470,7 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
     if (step == 2 &&
         provider.selectedKeyUsageTypes.isEmpty &&
         provider.selectedExtendedKeyUsageTypes.isEmpty) {
-      _showInlineMessage(
-          LocalizationKeys.validationSelectUsage.tr(context));
+      _showInlineMessage(LocalizationKeys.validationSelectUsage.tr(context));
       return false;
     }
     return true;
@@ -563,17 +551,16 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
   // ---------------------------------------------------------------------------
 
   void _showInlineMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Future<void> _handleIssueWithDialogs(
+  Future<void> _handleIssueWithSystemDialogs(
     SslCertificateManagerProvider provider,
   ) async {
     final confirmed = await showAdvancedConfirmDialog(
       context: context,
-      style: ConfirmDialogStyle.darkNeon,
       title: LocalizationKeys.dialogIssueConfirmTitle.tr(context),
       content: LocalizationKeys.dialogIssueConfirmContent.tr(context),
       icon: Icons.verified_outlined,
@@ -582,46 +569,14 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
     );
     if (!mounted || confirmed != true) return;
 
-    showLoadingDialog(
-      context: context,
-      style: ConfirmDialogStyle.darkNeon,
-      title: LocalizationKeys.dialogIssuingTitle.tr(context),
-      content: LocalizationKeys.dialogIssuingContent.tr(context),
-    );
-
     final result = await provider.issueCertificate();
     if (!mounted) return;
-    Navigator.of(context, rootNavigator: true).pop();
 
     if (result.success && result.record != null) {
       final record = result.record!;
       await provider.resetUnpinnedIssueFields();
       if (!mounted) return;
-      await showAdvancedConfirmDialog(
-        context: context,
-        style: ConfirmDialogStyle.darkNeon,
-        title: LocalizationKeys.dialogIssueSuccessTitle.tr(context),
-        content:
-            '${LocalizationKeys.summaryDomain.tr(context)}: ${record.domain}\n'
-            '${LocalizationKeys.summaryCn.tr(context)}: ${record.commonName}\n'
-            '${LocalizationKeys.serialNumber.tr(context)}: ${record.serialNumber}\n'
-            '${LocalizationKeys.issuer.tr(context)}: ${record.issuer}\n'
-            '${LocalizationKeys.expiresAt.tr(context)}: ${record.expiresAt.toLocal()}\n'
-            '${LocalizationKeys.summaryCertPath.tr(context)}: ${record.certFilePath}\n'
-            '${LocalizationKeys.summaryKeyPath.tr(context)}: ${record.keyFilePath}\n'
-            '${LocalizationKeys.summaryConfigPath.tr(context)}: ${record.configFilePath}',
-        icon: Icons.check_circle_outline,
-        confirmText: LocalizationKeys.confirm.tr(context),
-        cancelText: '',
-        dialogWidth: 860,
-        contentTextAlign: TextAlign.left,
-        contentTextStyle:
-            Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: Colors.white70,
-          fontWeight: FontWeight.w400,
-          height: 1.5,
-        ),
-      );
+      await _showIssueSuccessDialog(record);
       if (!mounted) return;
       _resetIssueStep();
       return;
@@ -629,21 +584,109 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
 
     await showAdvancedConfirmDialog(
       context: context,
-      style: ConfirmDialogStyle.darkNeon,
       title: LocalizationKeys.dialogIssueFailedTitle.tr(context),
       content: result.message,
       icon: Icons.error_outline,
       confirmColor: Colors.redAccent,
       confirmText: LocalizationKeys.dialogAcknowledge.tr(context),
       cancelText: '',
-      dialogWidth: 860,
-      contentTextAlign: TextAlign.left,
-      contentTextStyle:
-          Theme.of(context).textTheme.bodyMedium?.copyWith(
-        color: Colors.white70,
-        fontWeight: FontWeight.w400,
-        height: 1.5,
+    );
+  }
+
+  Future<void> _showIssueSuccessDialog(SslCertificateRecord record) {
+    final expiresText = record.expiresAt.toLocal().toString().split('.').first;
+    final rows = <({String label, String value})>[
+      (
+        label: '${LocalizationKeys.summaryDomain.tr(context)}：',
+        value: record.domain,
       ),
+      (
+        label: '${LocalizationKeys.summaryCn.tr(context)}：',
+        value: record.commonName,
+      ),
+      (
+        label: '${LocalizationKeys.serialNumber.tr(context)}：',
+        value: record.serialNumber,
+      ),
+      (
+        label: '${LocalizationKeys.issuer.tr(context)}：',
+        value: record.issuer,
+      ),
+      (
+        label: '${LocalizationKeys.expiresAt.tr(context)}：',
+        value: expiresText,
+      ),
+      (
+        label: '${LocalizationKeys.summaryCertPath.tr(context)}：',
+        value: record.certFilePath,
+      ),
+      (
+        label: '${LocalizationKeys.summaryKeyPath.tr(context)}：',
+        value: record.keyFilePath,
+      ),
+      (
+        label: '${LocalizationKeys.summaryConfigPath.tr(context)}：',
+        value: record.configFilePath,
+      ),
+    ];
+
+    return showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        final theme = Theme.of(dialogContext);
+        final maxWidth = MediaQuery.sizeOf(dialogContext).width - 48;
+        final dialogWidth = maxWidth.clamp(520.0, 900.0);
+        const labelWidth = 92.0;
+
+        return AlertDialog(
+          icon: const Icon(Icons.check_circle_outline),
+          title: Text(LocalizationKeys.dialogIssueSuccessTitle.tr(dialogContext)),
+          contentPadding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+          content: SizedBox(
+            width: dialogWidth,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: rows
+                  .map(
+                    (row) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 3),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: labelWidth,
+                            child: Text(
+                              row.label,
+                              textAlign: TextAlign.left,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              row.value,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.left,
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+          actions: [
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(LocalizationKeys.confirm.tr(dialogContext)),
+            ),
+          ],
+        );
+      },
     );
   }
 }

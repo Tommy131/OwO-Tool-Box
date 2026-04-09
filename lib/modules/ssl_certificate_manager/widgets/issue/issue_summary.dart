@@ -100,8 +100,7 @@ class IssueSummarySection extends StatelessWidget {
                 value: provider.ocspCaIssuersUrlController.text.trim(),
               ),
               SslInfoRow(
-                label:
-                    LocalizationKeys.summaryOcspResponderUrl.tr(context),
+                label: LocalizationKeys.summaryOcspResponderUrl.tr(context),
                 value: provider.ocspResponderUrlController.text.trim(),
               ),
             ],

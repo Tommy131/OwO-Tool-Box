@@ -111,8 +111,8 @@ class _AltNameRow extends StatelessWidget {
                   color: isPinned
                       ? Theme.of(context).colorScheme.primary
                       : Theme.of(context).iconTheme.color?.withValues(
-                            alpha: canToggle ? 0.78 : 0.5,
-                          ),
+                          alpha: canToggle ? 0.78 : 0.5,
+                        ),
                 ),
               ),
               errorText: SslValidators.validationErrorForAltName(

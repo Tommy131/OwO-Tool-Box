@@ -27,10 +27,8 @@ class UsageTypePanel extends StatelessWidget {
                     message: _keyUsageDescription(context, usage),
                     child: FilterChip(
                       label: Text(usage),
-                      selected:
-                          provider.selectedKeyUsageTypes.contains(usage),
-                      onSelected: (v) =>
-                          provider.toggleKeyUsageType(usage, v),
+                      selected: provider.selectedKeyUsageTypes.contains(usage),
+                      onSelected: (v) => provider.toggleKeyUsageType(usage, v),
                     ),
                   ),
                 )
@@ -46,12 +44,12 @@ class UsageTypePanel extends StatelessWidget {
                 .availableExtendedKeyUsageTypes
                 .map(
                   (usage) => Tooltip(
-                    message:
-                        _extendedKeyUsageDescription(context, usage),
+                    message: _extendedKeyUsageDescription(context, usage),
                     child: FilterChip(
                       label: Text(usage),
-                      selected: provider.selectedExtendedKeyUsageTypes
-                          .contains(usage),
+                      selected: provider.selectedExtendedKeyUsageTypes.contains(
+                        usage,
+                      ),
                       onSelected: (v) =>
                           provider.toggleExtendedKeyUsageType(usage, v),
                     ),

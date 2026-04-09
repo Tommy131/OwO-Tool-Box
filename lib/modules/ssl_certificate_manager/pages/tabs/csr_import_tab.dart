@@ -107,15 +107,15 @@ class CsrImportTab extends StatelessWidget {
   ) async {
     final csrPath = provider.csrFilePathController.text.trim();
     if (csrPath.isEmpty) {
-      _showInlineMessage(
-          context, LocalizationKeys.csrFilePath.tr(context));
+      _showInlineMessage(context, LocalizationKeys.csrFilePath.tr(context));
       return;
     }
-    final days =
-        int.tryParse(provider.csrValidDaysController.text.trim());
+    final days = int.tryParse(provider.csrValidDaysController.text.trim());
     if (days == null || days <= 0) {
       _showInlineMessage(
-          context, LocalizationKeys.validationValidDays.tr(context));
+        context,
+        LocalizationKeys.validationValidDays.tr(context),
+      );
       return;
     }
 
@@ -194,8 +194,8 @@ class CsrImportTab extends StatelessWidget {
   }
 
   void _showInlineMessage(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 }
