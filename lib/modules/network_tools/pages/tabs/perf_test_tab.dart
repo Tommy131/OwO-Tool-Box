@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import '../../../../core/services/localization_service.dart';
 import '../../localization/localization_keys.dart';
+import '../../network_input_rules.dart';
 import '../../providers/perf_test_provider.dart';
 import '../shared/network_tool_widgets.dart';
 
@@ -17,7 +19,16 @@ class PerfTestTab extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final compact = constraints.maxWidth < 900;
+        final useStandardDesktopLayout = constraints.maxWidth >= 780;
+        if (useStandardDesktopLayout) {
+          return _buildStandardDesktopLayout(
+            context: context,
+            provider: provider,
+            theme: theme,
+          );
+        }
+
+        final compact = constraints.maxWidth < 780;
         final chartColumns = constraints.maxWidth < 1050 ? 1 : 2;
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -152,9 +163,124 @@ class PerfTestTab extends StatelessWidget {
     );
   }
 
+  Widget _buildStandardDesktopLayout({
+    required BuildContext context,
+    required PerfTestProvider provider,
+    required ThemeData theme,
+  }) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  LocalizationKeys.networkPerformanceTest.tr(context),
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 16),
+              DropdownButton<String>(
+                value: provider.testMode,
+                items: [
+                  DropdownMenuItem(
+                    value: 'Client',
+                    child: Text(LocalizationKeys.modeClient.tr(context)),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Server',
+                    child: Text(LocalizationKeys.modeServer.tr(context)),
+                  ),
+                ].toList(),
+                onChanged: (v) {
+                  if (v != null) provider.testMode = v;
+                },
+                underline: const SizedBox(),
+              ),
+              const SizedBox(width: 12),
+              _buildActionButton(
+                onPressed: provider.isPerfRunning
+                    ? provider.stopPerfTest
+                    : provider.runPerfTest,
+                icon: provider.isPerfRunning
+                    ? Icons.stop_rounded
+                    : Icons.play_arrow_rounded,
+                label: provider.isPerfRunning
+                    ? LocalizationKeys.stopTest.tr(context)
+                    : (provider.testMode == 'Server'
+                          ? LocalizationKeys.startMonitor.tr(context)
+                          : LocalizationKeys.startSend.tr(context)),
+                color: provider.isPerfRunning
+                    ? Colors.redAccent.withValues(alpha: 0.9)
+                    : Colors.green.withValues(alpha: 0.8),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          _buildControlBar(context, provider),
+          const SizedBox(height: 24),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(flex: 3, child: _buildLogArea(context, provider)),
+              const SizedBox(width: 16),
+              Expanded(flex: 2, child: _buildStatsHierarchy(context, provider)),
+            ],
+          ),
+          const SizedBox(height: 24),
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            childAspectRatio: 1.8,
+            children: [
+              _buildChartCard(
+                context,
+                LocalizationKeys.socketSend.tr(context),
+                provider.socketSendHistory,
+                Colors.blue,
+                ' Pkt/s',
+              ),
+              _buildChartCard(
+                context,
+                LocalizationKeys.socketReceive.tr(context),
+                provider.socketReceiveHistory,
+                Colors.green,
+                ' Pkt/s',
+              ),
+              _buildChartCard(
+                context,
+                LocalizationKeys.sendSpeed.tr(context),
+                provider.sendBytesHistory,
+                Colors.orange,
+                ' MB/s',
+              ),
+              _buildChartCard(
+                context,
+                LocalizationKeys.receiveSpeed.tr(context),
+                provider.receiveBytesHistory,
+                Colors.cyan,
+                ' MB/s',
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildControlBar(BuildContext context, PerfTestProvider provider) {
     final theme = Theme.of(context);
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: theme.cardColor.withValues(alpha: 0.7),
@@ -190,12 +316,21 @@ class PerfTestTab extends StatelessWidget {
           CompactInput(
             controller: provider.perfHostController,
             label: provider.testMode == 'Client' ? 'Target' : 'Listen',
-            width: 110,
+            width: 130,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(
+                NetworkInputRules.hostAllowedCharsRegExp,
+              ),
+            ],
           ),
           CompactInput(
             controller: provider.perfPortController,
             label: 'Port',
             width: 40,
+            keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly,
+            ],
           ),
           if (provider.testMode == 'Client') ...[
             NumericStepper(

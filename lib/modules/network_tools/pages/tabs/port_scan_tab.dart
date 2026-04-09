@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/services/localization_service.dart';
 import '../../localization/localization_keys.dart';
+import '../../network_input_rules.dart';
 import '../../providers/port_scan_provider.dart';
 import '../shared/network_tool_widgets.dart';
 
@@ -19,7 +20,13 @@ class PortScanTab extends StatelessWidget {
       topContent: Column(
         children: [
           TextField(
+            groupId: provider.portHostController,
             controller: provider.portHostController,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(
+                NetworkInputRules.hostAllowedCharsRegExp,
+              ),
+            ],
             decoration: InputDecoration(
               labelText: LocalizationKeys.targetHost.tr(context),
               isDense: true,
@@ -27,7 +34,14 @@ class PortScanTab extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           TextField(
+            groupId: provider.portRangeController,
             controller: provider.portRangeController,
+            keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(
+                NetworkInputRules.portRangeAllowedCharsRegExp,
+              ),
+            ],
             decoration: InputDecoration(
               labelText: LocalizationKeys.portRange.tr(context),
               hintText: '80, 443',

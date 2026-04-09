@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../core/services/localization_service.dart';
 import '../../localization/localization_keys.dart';
@@ -140,17 +141,20 @@ class NumericStepper extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final double width;
+  final List<TextInputFormatter>? inputFormatters;
 
   const NumericStepper({
     super.key,
     required this.controller,
     required this.label,
     required this.width,
+    this.inputFormatters,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           "$label: ",
@@ -168,8 +172,14 @@ class NumericStepper extends StatelessWidget {
             children: [
               Expanded(
                 child: TextField(
+                  groupId: controller,
                   controller: controller,
                   keyboardType: TextInputType.number,
+                  inputFormatters:
+                      inputFormatters ??
+                      <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
                   decoration: const InputDecoration(
                     isDense: true,
                     contentPadding: EdgeInsets.symmetric(vertical: 8),
@@ -187,7 +197,11 @@ class NumericStepper extends StatelessWidget {
                   InkWell(
                     onTap: () {
                       int val = int.tryParse(controller.text) ?? 0;
-                      controller.text = (val + 1).toString();
+                      final next = (val + 1).toString();
+                      controller.value = TextEditingValue(
+                        text: next,
+                        selection: TextSelection.collapsed(offset: next.length),
+                      );
                     },
                     child: const Icon(Icons.arrow_drop_up, size: 18),
                   ),
@@ -195,7 +209,13 @@ class NumericStepper extends StatelessWidget {
                     onTap: () {
                       int val = int.tryParse(controller.text) ?? 0;
                       if (val > 1) {
-                        controller.text = (val - 1).toString();
+                        final next = (val - 1).toString();
+                        controller.value = TextEditingValue(
+                          text: next,
+                          selection: TextSelection.collapsed(
+                            offset: next.length,
+                          ),
+                        );
                       }
                     },
                     child: const Icon(Icons.arrow_drop_down, size: 18),
@@ -215,17 +235,22 @@ class CompactInput extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final double width;
+  final TextInputType keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CompactInput({
     super.key,
     required this.controller,
     required this.label,
     required this.width,
+    this.keyboardType = TextInputType.text,
+    this.inputFormatters,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           "$label: ",
@@ -235,7 +260,10 @@ class CompactInput extends StatelessWidget {
         SizedBox(
           width: width,
           child: TextField(
+            groupId: controller,
             controller: controller,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             decoration: InputDecoration(
               isDense: true,
               contentPadding: const EdgeInsets.symmetric(vertical: 8),

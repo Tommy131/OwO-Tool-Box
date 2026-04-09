@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 
+import '../network_input_rules.dart';
+
 class PortScanProvider with ChangeNotifier {
   final TextEditingController portHostController = TextEditingController(
     text: '127.0.0.1',
@@ -21,14 +23,29 @@ class PortScanProvider with ChangeNotifier {
 
   Future<void> runPortScan() async {
     if (isPortScanning) return;
+    final host = portHostController.text.trim();
+    final hostError = NetworkInputRules.validateHostTarget(
+      host,
+      fieldLabel: '目标主机',
+    );
+    if (hostError != null) {
+      portOutputController.text = '参数校验失败：$hostError';
+      notifyListeners();
+      return;
+    }
+
+    final portListError = NetworkInputRules.validatePortList(
+      portRangeController.text,
+    );
+    if (portListError != null) {
+      portOutputController.text = '参数校验失败：$portListError';
+      notifyListeners();
+      return;
+    }
+
+    final ports = NetworkInputRules.parsePortList(portRangeController.text);
     isPortScanning = true;
     portOutputController.clear();
-    final host = portHostController.text.trim();
-    final ports = portRangeController.text
-        .split(',')
-        .map((e) => int.tryParse(e.trim()))
-        .whereType<int>()
-        .toList();
 
     _log('Starting port scan for host: $host');
     _log('Targeting ${ports.length} ports...\n', addTimestamp: false);

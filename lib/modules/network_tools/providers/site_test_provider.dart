@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../network_input_rules.dart';
+
 class SiteTestProvider with ChangeNotifier {
   final TextEditingController siteUrlController = TextEditingController(
     text: 'https://google.com',
@@ -17,9 +19,16 @@ class SiteTestProvider with ChangeNotifier {
 
   Future<void> runSiteTest() async {
     if (isSiteTesting) return;
+    final urlStr = siteUrlController.text.trim();
+    final urlError = NetworkInputRules.validateSiteUrl(urlStr);
+    if (urlError != null) {
+      siteOutputController.text = '参数校验失败：$urlError';
+      notifyListeners();
+      return;
+    }
+
     isSiteTesting = true;
     siteOutputController.clear();
-    final urlStr = siteUrlController.text.trim();
 
     _log('Initializing security scan for: $urlStr');
 

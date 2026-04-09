@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/services/localization_service.dart';
 import '../../localization/localization_keys.dart';
+import '../../network_input_rules.dart';
 import '../../providers/site_test_provider.dart';
 import '../shared/network_tool_widgets.dart';
 
@@ -17,7 +18,14 @@ class SiteTestTab extends StatelessWidget {
       title: LocalizationKeys.networkSiteTest.tr(context),
       onClear: provider.clearSite,
       topContent: TextField(
+        groupId: provider.siteUrlController,
         controller: provider.siteUrlController,
+        keyboardType: TextInputType.url,
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.allow(
+            NetworkInputRules.siteUrlAllowedCharsRegExp,
+          ),
+        ],
         decoration: const InputDecoration(
           labelText: 'Site URL',
           hintText: 'https://example.com',

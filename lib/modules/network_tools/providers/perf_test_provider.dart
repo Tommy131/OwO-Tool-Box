@@ -4,6 +4,8 @@ import 'dart:isolate';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
+import '../network_input_rules.dart';
+
 class PerfTestProvider with ChangeNotifier {
   final TextEditingController perfHostController = TextEditingController(
     text: '0.0.0.0',
@@ -62,16 +64,22 @@ class PerfTestProvider with ChangeNotifier {
 
   Future<void> runPerfTest() async {
     if (isPerfRunning) return;
+    final hostText = perfHostController.text.trim();
+    final error = _validatePerfInputs(hostText);
+    if (error != null) {
+      _log('参数校验失败：$error');
+      return;
+    }
+
+    final port = int.parse(perfPortController.text.trim());
+    final connCount = int.parse(perfConnectionsController.text.trim());
+    final interval = int.parse(perfIntervalController.text.trim());
+    final size = int.parse(perfDataSizeController.text.trim());
+
     isPerfRunning = true;
     perfOutputController.clear();
     _resetMetrics();
     notifyListeners();
-
-    final hostText = perfHostController.text.trim();
-    final port = int.tryParse(perfPortController.text.trim()) ?? 8088;
-    final connCount = int.tryParse(perfConnectionsController.text.trim()) ?? 1;
-    final interval = int.tryParse(perfIntervalController.text.trim()) ?? 50;
-    final size = int.tryParse(perfDataSizeController.text.trim()) ?? 1024;
 
     _log('Starting $testMode mode ($protocol) in background isolate...');
 
@@ -191,6 +199,34 @@ class PerfTestProvider with ChangeNotifier {
     perfOutputController.clear();
     stopPerfTest();
     notifyListeners();
+  }
+
+  String? _validatePerfInputs(String hostText) {
+    return NetworkInputRules.validateHostTarget(
+          hostText,
+          fieldLabel: 'Target/Listen',
+        ) ??
+        NetworkInputRules.validatePositiveInt(
+          perfPortController.text,
+          'Port',
+          min: 1,
+          max: 65535,
+        ) ??
+        NetworkInputRules.validatePositiveInt(
+          perfConnectionsController.text,
+          '并发连接',
+          min: 1,
+        ) ??
+        NetworkInputRules.validatePositiveInt(
+          perfIntervalController.text,
+          '发送间隔',
+          min: 1,
+        ) ??
+        NetworkInputRules.validatePositiveInt(
+          perfDataSizeController.text,
+          '数据包大小',
+          min: 1,
+        );
   }
 }
 

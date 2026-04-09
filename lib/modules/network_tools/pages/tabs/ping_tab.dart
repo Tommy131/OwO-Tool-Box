@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/services/localization_service.dart';
 import '../../localization/localization_keys.dart';
+import '../../network_input_rules.dart';
 import '../../providers/ping_provider.dart';
 import '../shared/network_tool_widgets.dart';
 
@@ -16,22 +17,61 @@ class PingTab extends StatelessWidget {
     return NetworkToolLayout(
       title: LocalizationKeys.networkPing.tr(context),
       onClear: provider.clearPing,
-      topContent: Column(
-        children: [
-          TextField(
-            controller: provider.pingHostController,
-            decoration: InputDecoration(
-              labelText: LocalizationKeys.targetHost.tr(context),
-              isDense: true,
-            ),
-          ),
-          const SizedBox(height: 12),
-          NumericStepper(
-            controller: provider.pingCountController,
-            label: LocalizationKeys.pingCount.tr(context),
-            width: 80,
-          ),
-        ],
+      topContent: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 700) {
+            return Column(
+              children: [
+                TextField(
+                  groupId: provider.pingHostController,
+                  controller: provider.pingHostController,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(
+                      NetworkInputRules.hostAllowedCharsRegExp,
+                    ),
+                  ],
+                  decoration: InputDecoration(
+                    labelText: LocalizationKeys.targetHost.tr(context),
+                    isDense: true,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                NumericStepper(
+                  controller: provider.pingCountController,
+                  label: LocalizationKeys.pingCount.tr(context),
+                  width: 80,
+                ),
+              ],
+            );
+          }
+
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: TextField(
+                  groupId: provider.pingHostController,
+                  controller: provider.pingHostController,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.allow(
+                      NetworkInputRules.hostAllowedCharsRegExp,
+                    ),
+                  ],
+                  decoration: InputDecoration(
+                    labelText: LocalizationKeys.targetHost.tr(context),
+                    isDense: true,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 24),
+              NumericStepper(
+                controller: provider.pingCountController,
+                label: LocalizationKeys.pingCount.tr(context),
+                width: 80,
+              ),
+            ],
+          );
+        },
       ),
       actions: [
         ElevatedButton.icon(
