@@ -79,8 +79,7 @@ class CnfDiffDialog extends StatelessWidget {
                               vertical: 1,
                             ),
                             child: Row(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
                                   width: 54,
@@ -95,11 +94,9 @@ class CnfDiffDialog extends StatelessWidget {
                                   width: 14,
                                   child: Text(
                                     line.marker,
-                                    style: theme.textTheme.bodySmall
-                                        ?.copyWith(
+                                    style: theme.textTheme.bodySmall?.copyWith(
                                       fontFamily: 'monospace',
-                                      color:
-                                          _diffMarkerColor(line.type),
+                                      color: _diffMarkerColor(line.type),
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
@@ -169,55 +166,65 @@ class CnfDiffDialog extends StatelessWidget {
 
     while (i < m && j < n) {
       if (beforeLines[i] == afterLines[j]) {
-        result.add(DiffLine(
-          type: DiffLineType.same,
-          text: beforeLines[i],
-          oldLine: oldLine,
-          newLine: newLine,
-        ));
+        result.add(
+          DiffLine(
+            type: DiffLineType.same,
+            text: beforeLines[i],
+            oldLine: oldLine,
+            newLine: newLine,
+          ),
+        );
         i++;
         j++;
         oldLine++;
         newLine++;
       } else if (dp[i + 1][j] >= dp[i][j + 1]) {
-        result.add(DiffLine(
-          type: DiffLineType.removed,
-          text: beforeLines[i],
-          oldLine: oldLine,
-          newLine: null,
-        ));
+        result.add(
+          DiffLine(
+            type: DiffLineType.removed,
+            text: beforeLines[i],
+            oldLine: oldLine,
+            newLine: null,
+          ),
+        );
         i++;
         oldLine++;
       } else {
-        result.add(DiffLine(
-          type: DiffLineType.added,
-          text: afterLines[j],
-          oldLine: null,
-          newLine: newLine,
-        ));
+        result.add(
+          DiffLine(
+            type: DiffLineType.added,
+            text: afterLines[j],
+            oldLine: null,
+            newLine: newLine,
+          ),
+        );
         j++;
         newLine++;
       }
     }
 
     while (i < m) {
-      result.add(DiffLine(
-        type: DiffLineType.removed,
-        text: beforeLines[i],
-        oldLine: oldLine,
-        newLine: null,
-      ));
+      result.add(
+        DiffLine(
+          type: DiffLineType.removed,
+          text: beforeLines[i],
+          oldLine: oldLine,
+          newLine: null,
+        ),
+      );
       i++;
       oldLine++;
     }
 
     while (j < n) {
-      result.add(DiffLine(
-        type: DiffLineType.added,
-        text: afterLines[j],
-        oldLine: null,
-        newLine: newLine,
-      ));
+      result.add(
+        DiffLine(
+          type: DiffLineType.added,
+          text: afterLines[j],
+          oldLine: null,
+          newLine: newLine,
+        ),
+      );
       j++;
       newLine++;
     }
@@ -253,25 +260,35 @@ class CnfDiffDialog extends StatelessWidget {
     if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
       return TextSpan(
         text: line,
-        style:
-            mono?.copyWith(color: sectionColor, fontWeight: FontWeight.w600),
+        style: mono?.copyWith(color: sectionColor, fontWeight: FontWeight.w600),
       );
     }
     final eqIndex = line.indexOf('=');
     if (eqIndex > 0) {
       final keyArea = line.substring(0, eqIndex);
-      final keyTextEnd =
-          keyArea.replaceFirst(RegExp(r'[\t ]+$'), '').length;
+      final keyTextEnd = keyArea.replaceFirst(RegExp(r'[\t ]+$'), '').length;
       final key = keyArea.substring(0, keyTextEnd);
       final gap = keyArea.substring(keyTextEnd);
       final sep = line.substring(eqIndex, eqIndex + 1);
       final value = line.substring(eqIndex + 1);
       return TextSpan(
         children: [
-          TextSpan(text: key, style: mono?.copyWith(color: keyColor)),
-          TextSpan(text: gap, style: mono?.copyWith(color: baseColor)),
-          TextSpan(text: sep, style: mono?.copyWith(color: baseColor)),
-          TextSpan(text: value, style: mono?.copyWith(color: valueColor)),
+          TextSpan(
+            text: key,
+            style: mono?.copyWith(color: keyColor),
+          ),
+          TextSpan(
+            text: gap,
+            style: mono?.copyWith(color: baseColor),
+          ),
+          TextSpan(
+            text: sep,
+            style: mono?.copyWith(color: baseColor),
+          ),
+          TextSpan(
+            text: value,
+            style: mono?.copyWith(color: valueColor),
+          ),
         ],
       );
     }

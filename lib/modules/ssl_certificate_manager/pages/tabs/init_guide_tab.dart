@@ -33,8 +33,7 @@ class _InitGuideTabState extends State<InitGuideTab> {
         children: [
           SslGradientHeader(
             title: LocalizationKeys.initWelcomeTitle.tr(context),
-            subtitle:
-                LocalizationKeys.initWelcomeSubtitle.tr(context),
+            subtitle: LocalizationKeys.initWelcomeSubtitle.tr(context),
             icon: Icons.verified_user,
           ),
           const SizedBox(height: 20),
@@ -64,16 +63,12 @@ class _InitGuideTabState extends State<InitGuideTab> {
                   segments: [
                     ButtonSegment<bool>(
                       value: false,
-                      label: Text(
-                        LocalizationKeys.generateRootCA.tr(context),
-                      ),
+                      label: Text(LocalizationKeys.generateRootCA.tr(context)),
                       icon: const Icon(Icons.auto_fix_high_outlined),
                     ),
                     ButtonSegment<bool>(
                       value: true,
-                      label: Text(
-                        LocalizationKeys.importRootCA.tr(context),
-                      ),
+                      label: Text(LocalizationKeys.importRootCA.tr(context)),
                       icon: const Icon(Icons.upload_file_outlined),
                     ),
                   ],
@@ -110,37 +105,31 @@ class _InitGuideTabState extends State<InitGuideTab> {
                       ? Column(
                           children: [
                             SslTextField(
-                              controller:
-                                  provider.rootCACertPathController,
-                              label: LocalizationKeys.rootCaCertPath
-                                  .tr(context),
+                              controller: provider.rootCACertPathController,
+                              label: LocalizationKeys.rootCaCertPath.tr(
+                                context,
+                              ),
                               suffix: IconButton(
                                 icon: const Icon(Icons.upload_file),
                                 onPressed: () async {
-                                  final path =
-                                      await _pickCertFile();
+                                  final path = await _pickCertFile();
                                   if (path != null) {
-                                    provider
-                                        .rootCACertPathController
-                                        .text = path;
+                                    provider.rootCACertPathController.text =
+                                        path;
                                   }
                                 },
                               ),
                             ),
                             SslTextField(
-                              controller:
-                                  provider.rootCAKeyPathController,
-                              label: LocalizationKeys.rootCaKeyPath
-                                  .tr(context),
+                              controller: provider.rootCAKeyPathController,
+                              label: LocalizationKeys.rootCaKeyPath.tr(context),
                               suffix: IconButton(
                                 icon: const Icon(Icons.upload_file),
                                 onPressed: () async {
-                                  final path =
-                                      await _pickKeyFile();
+                                  final path = await _pickKeyFile();
                                   if (path != null) {
-                                    provider
-                                        .rootCAKeyPathController
-                                        .text = path;
+                                    provider.rootCAKeyPathController.text =
+                                        path;
                                   }
                                 },
                               ),
@@ -180,15 +169,12 @@ class _InitGuideTabState extends State<InitGuideTab> {
           const SizedBox(height: 16),
           if (provider.infoMessage.trim().isNotEmpty)
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary
-                    .withValues(alpha: 0.06),
+                color: theme.colorScheme.primary.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: theme.colorScheme.primary
-                      .withValues(alpha: 0.15),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.15),
                 ),
               ),
               child: Row(
@@ -276,13 +262,11 @@ class _InitGuideTabState extends State<InitGuideTab> {
         );
         return;
       }
-      final confirmed =
-          await _showRootCaConfirmDialog(validation);
+      final confirmed = await _showRootCaConfirmDialog(validation);
       if (!mounted || !confirmed) return;
       await provider.completeInitialization();
       if (!mounted) return;
-      if (!provider.isInitialized &&
-          provider.infoMessage.trim().isNotEmpty) {
+      if (!provider.isInitialized && provider.infoMessage.trim().isNotEmpty) {
         await _showSimpleDialog(
           LocalizationKeys.initFailed.tr(context),
           provider.infoMessage,
@@ -292,14 +276,12 @@ class _InitGuideTabState extends State<InitGuideTab> {
     }
 
     if (provider.isRootPasswordEmpty) {
-      final acceptedRisk =
-          await _showEmptyPasswordRiskDialog();
+      final acceptedRisk = await _showEmptyPasswordRiskDialog();
       if (!mounted || !acceptedRisk) return;
     }
     await provider.completeInitialization();
     if (!mounted) return;
-    if (!provider.isInitialized &&
-        provider.infoMessage.trim().isNotEmpty) {
+    if (!provider.isInitialized && provider.infoMessage.trim().isNotEmpty) {
       await _showSimpleDialog(
         LocalizationKeys.initFailed.tr(context),
         provider.infoMessage,
@@ -307,8 +289,7 @@ class _InitGuideTabState extends State<InitGuideTab> {
     }
   }
 
-  Future<void> _showSimpleDialog(
-      String title, String message) async {
+  Future<void> _showSimpleDialog(String title, String message) async {
     await showDialog<void>(
       context: context,
       builder: (ctx) {
@@ -334,8 +315,7 @@ class _InitGuideTabState extends State<InitGuideTab> {
       barrierDismissible: false,
       builder: (ctx) {
         return AlertDialog(
-          title: Text(
-              LocalizationKeys.importRootCaConfirmTitle.tr(context)),
+          title: Text(LocalizationKeys.importRootCaConfirmTitle.tr(context)),
           content: SizedBox(
             width: 640,
             child: SingleChildScrollView(
@@ -345,8 +325,7 @@ class _InitGuideTabState extends State<InitGuideTab> {
                     .map(
                       (entry) => Padding(
                         padding: const EdgeInsets.only(bottom: 8),
-                        child: SelectableText(
-                            '${entry.key}: ${entry.value}'),
+                        child: SelectableText('${entry.key}: ${entry.value}'),
                       ),
                     )
                     .toList(),
@@ -360,8 +339,7 @@ class _InitGuideTabState extends State<InitGuideTab> {
             ),
             FilledButton(
               onPressed: () => Navigator.of(ctx).pop(true),
-              child: Text(
-                  LocalizationKeys.confirmAndContinue.tr(context)),
+              child: Text(LocalizationKeys.confirmAndContinue.tr(context)),
             ),
           ],
         );
@@ -375,20 +353,16 @@ class _InitGuideTabState extends State<InitGuideTab> {
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          title: Text(
-              LocalizationKeys.emptyPasswordRiskTitle.tr(context)),
-          content: Text(
-              LocalizationKeys.emptyPasswordRiskContent.tr(context)),
+          title: Text(LocalizationKeys.emptyPasswordRiskTitle.tr(context)),
+          content: Text(LocalizationKeys.emptyPasswordRiskContent.tr(context)),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text(
-                  LocalizationKeys.backToFillPassword.tr(context)),
+              child: Text(LocalizationKeys.backToFillPassword.tr(context)),
             ),
             FilledButton(
               onPressed: () => Navigator.of(ctx).pop(true),
-              child: Text(
-                  LocalizationKeys.continueWithRisk.tr(context)),
+              child: Text(LocalizationKeys.continueWithRisk.tr(context)),
             ),
           ],
         );

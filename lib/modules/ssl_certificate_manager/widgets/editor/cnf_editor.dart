@@ -17,9 +17,7 @@ class CnfEditor extends StatelessWidget {
     return PrimaryScrollController.none(
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(
-            color: theme.dividerColor.withValues(alpha: 0.2),
-          ),
+          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.2)),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -29,8 +27,9 @@ class CnfEditor extends StatelessWidget {
               width: 56,
               padding: const EdgeInsets.only(right: 6),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest
-                    .withValues(alpha: 0.15),
+                color: theme.colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.15,
+                ),
                 border: Border(
                   right: BorderSide(
                     color: theme.dividerColor.withValues(alpha: 0.2),
@@ -65,13 +64,12 @@ class CnfEditor extends StatelessWidget {
                               for (int i = 1; i <= lines; i++)
                                 Text(
                                   '$i',
-                                  style: theme.textTheme.bodySmall
-                                      ?.copyWith(
-                                        fontFamily: 'monospace',
-                                        color: theme.colorScheme.onSurface
-                                            .withValues(alpha: 0.45),
-                                        height: 1.4,
-                                      ),
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    fontFamily: 'monospace',
+                                    color: theme.colorScheme.onSurface
+                                        .withValues(alpha: 0.45),
+                                    height: 1.4,
+                                  ),
                                 ),
                             ],
                           ),

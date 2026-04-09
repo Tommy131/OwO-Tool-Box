@@ -22,12 +22,11 @@ class SslSectionContainer extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color:
-            theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.1),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(
+          alpha: 0.15,
         ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,11 +54,13 @@ class SslInfoRow extends StatelessWidget {
     required this.label,
     required this.value,
     this.copyable = false,
+    this.valueColor,
   });
 
   final String label;
   final String value;
   final bool copyable;
+  final Color? valueColor;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +85,7 @@ class SslInfoRow extends StatelessWidget {
               value,
               style: theme.textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w500,
+                color: valueColor,
               ),
             ),
           ),
@@ -96,8 +98,9 @@ class SslInfoRow extends StatelessWidget {
                 Clipboard.setData(ClipboardData(text: value));
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content:
-                        Text(LocalizationKeys.copiedToClipboard.tr(context)),
+                    content: Text(
+                      LocalizationKeys.copiedToClipboard.tr(context),
+                    ),
                     duration: const Duration(seconds: 1),
                   ),
                 );

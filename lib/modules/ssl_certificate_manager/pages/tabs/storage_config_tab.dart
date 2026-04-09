@@ -57,11 +57,9 @@ class StorageConfigTab extends StatelessWidget {
                 FilledButton.icon(
                   onPressed: provider.isLoading
                       ? null
-                      : () =>
-                          _handleCompleteInitialization(context, provider),
+                      : () => _handleCompleteInitialization(context, provider),
                   icon: const Icon(Icons.settings_backup_restore),
-                  label:
-                      Text(LocalizationKeys.setupComplete.tr(context)),
+                  label: Text(LocalizationKeys.setupComplete.tr(context)),
                 ),
               ],
             ),
@@ -96,8 +94,8 @@ class StorageConfigTab extends StatelessWidget {
         children: [
           SslInfoRow(
             label: LocalizationKeys.crlFilePath.tr(context),
-            value: crl.crlFilePath ??
-                LocalizationKeys.crlNotGenerated.tr(context),
+            value:
+                crl.crlFilePath ?? LocalizationKeys.crlNotGenerated.tr(context),
             copyable: crl.crlFilePath != null,
           ),
           SslInfoRow(
@@ -131,36 +129,35 @@ class StorageConfigTab extends StatelessWidget {
                         final days = int.tryParse(
                           crlDaysController.text.trim(),
                         );
-                        try {
-                          await provider.generateCrl(crlDays: days);
-                          if (!context.mounted) return;
+                        final success = await provider
+                            .requestGenerateCrlWithPrompt(
+                              context,
+                              crlDays: days,
+                            );
+                        if (!context.mounted) return;
+                        if (success) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                LocalizationKeys.crlGenerateSuccess
-                                    .tr(context),
+                                LocalizationKeys.crlGenerateSuccess.tr(context),
                               ),
                               duration: const Duration(seconds: 2),
                             ),
                           );
-                        } catch (_) {
-                          if (!context.mounted) return;
+                        } else if (provider.infoMessage.startsWith('CRL 生成失败')) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                LocalizationKeys.crlGenerateFailed
-                                    .tr(context),
+                                LocalizationKeys.crlGenerateFailed.tr(context),
                               ),
-                              backgroundColor:
-                                  theme.colorScheme.error,
+                              backgroundColor: theme.colorScheme.error,
                               duration: const Duration(seconds: 3),
                             ),
                           );
                         }
                       },
                 icon: const Icon(Icons.refresh_outlined),
-                label:
-                    Text(LocalizationKeys.generateCrl.tr(context)),
+                label: Text(LocalizationKeys.generateCrl.tr(context)),
                 style: FilledButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
@@ -195,13 +192,11 @@ class StorageConfigTab extends StatelessWidget {
         );
         return;
       }
-      final confirmed =
-          await _showRootCaConfirmDialog(context, validation);
+      final confirmed = await _showRootCaConfirmDialog(context, validation);
       if (!context.mounted || !confirmed) return;
       await provider.completeInitialization();
       if (!context.mounted) return;
-      if (!provider.isInitialized &&
-          provider.infoMessage.trim().isNotEmpty) {
+      if (!provider.isInitialized && provider.infoMessage.trim().isNotEmpty) {
         await _showSimpleDialog(
           context,
           LocalizationKeys.initFailed.tr(context),
@@ -212,14 +207,12 @@ class StorageConfigTab extends StatelessWidget {
     }
 
     if (provider.isRootPasswordEmpty) {
-      final acceptedRisk =
-          await _showEmptyPasswordRiskDialog(context);
+      final acceptedRisk = await _showEmptyPasswordRiskDialog(context);
       if (!context.mounted || !acceptedRisk) return;
     }
     await provider.completeInitialization();
     if (!context.mounted) return;
-    if (!provider.isInitialized &&
-        provider.infoMessage.trim().isNotEmpty) {
+    if (!provider.isInitialized && provider.infoMessage.trim().isNotEmpty) {
       await _showSimpleDialog(
         context,
         LocalizationKeys.initFailed.tr(context),
@@ -259,8 +252,7 @@ class StorageConfigTab extends StatelessWidget {
       barrierDismissible: false,
       builder: (ctx) {
         return AlertDialog(
-          title: Text(
-              LocalizationKeys.importRootCaConfirmTitle.tr(context)),
+          title: Text(LocalizationKeys.importRootCaConfirmTitle.tr(context)),
           content: SizedBox(
             width: 640,
             child: SingleChildScrollView(
@@ -270,8 +262,7 @@ class StorageConfigTab extends StatelessWidget {
                     .map(
                       (entry) => Padding(
                         padding: const EdgeInsets.only(bottom: 8),
-                        child: SelectableText(
-                            '${entry.key}: ${entry.value}'),
+                        child: SelectableText('${entry.key}: ${entry.value}'),
                       ),
                     )
                     .toList(),
@@ -285,8 +276,7 @@ class StorageConfigTab extends StatelessWidget {
             ),
             FilledButton(
               onPressed: () => Navigator.of(ctx).pop(true),
-              child: Text(
-                  LocalizationKeys.confirmAndContinue.tr(context)),
+              child: Text(LocalizationKeys.confirmAndContinue.tr(context)),
             ),
           ],
         );
@@ -295,26 +285,21 @@ class StorageConfigTab extends StatelessWidget {
     return result == true;
   }
 
-  Future<bool> _showEmptyPasswordRiskDialog(
-      BuildContext context) async {
+  Future<bool> _showEmptyPasswordRiskDialog(BuildContext context) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          title: Text(
-              LocalizationKeys.emptyPasswordRiskTitle.tr(context)),
-          content: Text(
-              LocalizationKeys.emptyPasswordRiskContent.tr(context)),
+          title: Text(LocalizationKeys.emptyPasswordRiskTitle.tr(context)),
+          content: Text(LocalizationKeys.emptyPasswordRiskContent.tr(context)),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text(
-                  LocalizationKeys.backToFillPassword.tr(context)),
+              child: Text(LocalizationKeys.backToFillPassword.tr(context)),
             ),
             FilledButton(
               onPressed: () => Navigator.of(ctx).pop(true),
-              child: Text(
-                  LocalizationKeys.continueWithRisk.tr(context)),
+              child: Text(LocalizationKeys.continueWithRisk.tr(context)),
             ),
           ],
         );

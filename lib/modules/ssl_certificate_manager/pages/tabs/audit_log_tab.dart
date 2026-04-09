@@ -28,12 +28,9 @@ class AuditLogTab extends StatelessWidget {
             trailing: logs.isEmpty
                 ? null
                 : OutlinedButton.icon(
-                    onPressed: () =>
-                        _handleClearAuditLog(context, provider),
-                    icon: const Icon(Icons.delete_sweep_outlined,
-                        size: 16),
-                    label:
-                        Text(LocalizationKeys.auditClearLog.tr(context)),
+                    onPressed: () => _handleClearAuditLog(context, provider),
+                    icon: const Icon(Icons.delete_sweep_outlined, size: 16),
+                    label: Text(LocalizationKeys.auditClearLog.tr(context)),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.red,
                       side: const BorderSide(color: Colors.red),
@@ -51,15 +48,17 @@ class AuditLogTab extends StatelessWidget {
                         Icon(
                           Icons.history_outlined,
                           size: 48,
-                          color: theme.colorScheme.onSurface
-                              .withValues(alpha: 0.2),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.2,
+                          ),
                         ),
                         const SizedBox(height: 12),
                         Text(
                           LocalizationKeys.auditLogEmpty.tr(context),
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface
-                                .withValues(alpha: 0.4),
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.4,
+                            ),
                           ),
                         ),
                       ],
@@ -68,12 +67,10 @@ class AuditLogTab extends StatelessWidget {
                 : Card(
                     child: ListView.separated(
                       itemCount: logs.length,
-                      separatorBuilder: (_, __) =>
-                          const Divider(height: 1),
+                      separatorBuilder: (_, __) => const Divider(height: 1),
                       itemBuilder: (context, index) {
                         final entry = logs[index];
-                        return _buildAuditLogItem(
-                            context, entry, theme);
+                        return _buildAuditLogItem(context, entry, theme);
                       },
                     ),
                   ),
@@ -115,8 +112,7 @@ class AuditLogTab extends StatelessWidget {
       case AuditAction.importCsr:
         icon = Icons.upload_file;
         color = Colors.teal;
-        actionLabel =
-            LocalizationKeys.auditActionImportCsr.tr(context);
+        actionLabel = LocalizationKeys.auditActionImportCsr.tr(context);
     }
 
     return ListTile(
@@ -138,8 +134,7 @@ class AuditLogTab extends StatelessWidget {
       subtitle: Text(
         entry.detail,
         style: theme.textTheme.bodySmall?.copyWith(
-          color:
-              theme.colorScheme.onSurface.withValues(alpha: 0.6),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
         ),
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
@@ -147,8 +142,7 @@ class AuditLogTab extends StatelessWidget {
       trailing: Text(
         _formatAuditTimestamp(entry.timestamp),
         style: theme.textTheme.labelSmall?.copyWith(
-          color:
-              theme.colorScheme.onSurface.withValues(alpha: 0.45),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
         ),
       ),
     );

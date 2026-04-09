@@ -24,9 +24,7 @@ class SslStepProgressIndicator extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.1),
-        ),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [
@@ -50,9 +48,7 @@ class SslStepProgressIndicator extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: i < currentStep
                           ? primary
-                          : (i == currentStep
-                              ? primary
-                              : Colors.transparent),
+                          : (i == currentStep ? primary : Colors.transparent),
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: i <= currentStep
@@ -63,15 +59,19 @@ class SslStepProgressIndicator extends StatelessWidget {
                     ),
                     child: Center(
                       child: i < currentStep
-                          ? Icon(Icons.check,
-                              size: 15, color: theme.colorScheme.onPrimary)
+                          ? Icon(
+                              Icons.check,
+                              size: 15,
+                              color: theme.colorScheme.onPrimary,
+                            )
                           : Icon(
                               icons[i],
                               size: 13,
                               color: i == currentStep
                                   ? theme.colorScheme.onPrimary
-                                  : theme.colorScheme.onSurface
-                                      .withValues(alpha: 0.35),
+                                  : theme.colorScheme.onSurface.withValues(
+                                      alpha: 0.35,
+                                    ),
                             ),
                     ),
                   ),
@@ -82,8 +82,7 @@ class SslStepProgressIndicator extends StatelessWidget {
                       fontSize: 10,
                       color: i <= currentStep
                           ? primary
-                          : theme.colorScheme.onSurface
-                              .withValues(alpha: 0.4),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.4),
                       fontWeight: i == currentStep
                           ? FontWeight.w700
                           : FontWeight.w400,

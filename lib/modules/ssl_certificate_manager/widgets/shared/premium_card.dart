@@ -49,8 +49,9 @@ class SslPremiumCard extends StatelessWidget {
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
               ),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(15)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(15),
+              ),
             ),
             child: Row(
               children: [
@@ -75,10 +76,7 @@ class SslPremiumCard extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: child,
-          ),
+          Padding(padding: const EdgeInsets.all(16), child: child),
         ],
       ),
     );
@@ -145,8 +143,9 @@ class SslGradientHeader extends StatelessWidget {
                   Text(
                     subtitle!,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface
-                          .withValues(alpha: 0.65),
+                      color: theme.colorScheme.onSurface.withValues(
+                        alpha: 0.65,
+                      ),
                     ),
                   ),
                 ],

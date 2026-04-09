@@ -36,8 +36,7 @@ class _OpenSslTemplateTabState extends State<OpenSslTemplateTab> {
         decoration: BoxDecoration(
           color: theme.cardColor,
           borderRadius: BorderRadius.circular(16),
-          border:
-              Border.all(color: primaryColor.withValues(alpha: 0.15)),
+          border: Border.all(color: primaryColor.withValues(alpha: 0.15)),
           boxShadow: [
             BoxShadow(
               color: theme.shadowColor.withValues(alpha: 0.06),
@@ -50,8 +49,7 @@ class _OpenSslTemplateTabState extends State<OpenSslTemplateTab> {
           children: [
             // Header
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
@@ -62,7 +60,8 @@ class _OpenSslTemplateTabState extends State<OpenSslTemplateTab> {
                   end: Alignment.centerRight,
                 ),
                 borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(15)),
+                  top: Radius.circular(15),
+                ),
               ),
               child: Row(
                 children: [
@@ -72,8 +71,11 @@ class _OpenSslTemplateTabState extends State<OpenSslTemplateTab> {
                       color: primaryColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(Icons.code_outlined,
-                        size: 18, color: primaryColor),
+                    child: Icon(
+                      Icons.code_outlined,
+                      size: 18,
+                      color: primaryColor,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -87,8 +89,7 @@ class _OpenSslTemplateTabState extends State<OpenSslTemplateTab> {
                   ValueListenableBuilder<TextEditingValue>(
                     valueListenable: provider.cnfEditorController,
                     builder: (context, value, _) {
-                      final isModified =
-                          value.text != provider.savedCnfContent;
+                      final isModified = value.text != provider.savedCnfContent;
                       return Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
@@ -101,10 +102,8 @@ class _OpenSslTemplateTabState extends State<OpenSslTemplateTab> {
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: isModified
-                                ? Colors.orange
-                                    .withValues(alpha: 0.3)
-                                : Colors.green
-                                    .withValues(alpha: 0.3),
+                                ? Colors.orange.withValues(alpha: 0.3)
+                                : Colors.green.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -115,17 +114,13 @@ class _OpenSslTemplateTabState extends State<OpenSslTemplateTab> {
                                   ? Icons.edit_outlined
                                   : Icons.check_circle_outline,
                               size: 14,
-                              color: isModified
-                                  ? Colors.orange
-                                  : Colors.green,
+                              color: isModified ? Colors.orange : Colors.green,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               isModified
-                                  ? LocalizationKeys.editorUnsaved
-                                      .tr(context)
-                                  : LocalizationKeys.editorSaved
-                                      .tr(context),
+                                  ? LocalizationKeys.editorUnsaved.tr(context)
+                                  : LocalizationKeys.editorSaved.tr(context),
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -150,29 +145,26 @@ class _OpenSslTemplateTabState extends State<OpenSslTemplateTab> {
                   ValueListenableBuilder<TextEditingValue>(
                     valueListenable: provider.cnfEditorController,
                     builder: (context, value, _) {
-                      final lineCount =
-                          value.text.split('\n').length;
+                      final lineCount = value.text.split('\n').length;
                       return Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: theme
-                              .colorScheme.surfaceContainerHighest
+                          color: theme.colorScheme.surfaceContainerHighest
                               .withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           LocalizationKeys.editorLineCount
                               .tr(context)
-                              .replaceAll(
-                                  '@count', '$lineCount'),
-                          style: theme.textTheme.labelSmall
-                              ?.copyWith(
+                              .replaceAll('@count', '$lineCount'),
+                          style: theme.textTheme.labelSmall?.copyWith(
                             fontFamily: 'monospace',
-                            color: theme.colorScheme.onSurface
-                                .withValues(alpha: 0.6),
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.6,
+                            ),
                           ),
                         ),
                       );
@@ -188,8 +180,7 @@ class _OpenSslTemplateTabState extends State<OpenSslTemplateTab> {
                   const SizedBox(width: 6),
                   buildToolbarButton(
                     icon: Icons.auto_fix_high_outlined,
-                    label:
-                        LocalizationKeys.regenerateCnf.tr(context),
+                    label: LocalizationKeys.regenerateCnf.tr(context),
                     onPressed: provider.regenerateDefaultCnf,
                     theme: theme,
                     outlined: true,
@@ -197,10 +188,8 @@ class _OpenSslTemplateTabState extends State<OpenSslTemplateTab> {
                   const SizedBox(width: 6),
                   buildToolbarButton(
                     icon: Icons.compare_arrows_outlined,
-                    label: LocalizationKeys.compareChanges
-                        .tr(context),
-                    onPressed: () =>
-                        CnfDiffDialog.show(context, provider),
+                    label: LocalizationKeys.compareChanges.tr(context),
+                    onPressed: () => CnfDiffDialog.show(context, provider),
                     theme: theme,
                     tonal: true,
                   ),
