@@ -220,7 +220,9 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
                                     return;
                                   }
                                   if (_issueStep == 4) {
-                                    await _handleIssueWithSystemDialogs(provider);
+                                    await _handleIssueWithSystemDialogs(
+                                      provider,
+                                    );
                                     return;
                                   }
                                   _changeIssueStep(1);
@@ -608,14 +610,8 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
         label: '${LocalizationKeys.serialNumber.tr(context)}：',
         value: record.serialNumber,
       ),
-      (
-        label: '${LocalizationKeys.issuer.tr(context)}：',
-        value: record.issuer,
-      ),
-      (
-        label: '${LocalizationKeys.expiresAt.tr(context)}：',
-        value: expiresText,
-      ),
+      (label: '${LocalizationKeys.issuer.tr(context)}：', value: record.issuer),
+      (label: '${LocalizationKeys.expiresAt.tr(context)}：', value: expiresText),
       (
         label: '${LocalizationKeys.summaryCertPath.tr(context)}：',
         value: record.certFilePath,
@@ -640,7 +636,9 @@ class _CertificateIssueTabState extends State<CertificateIssueTab> {
 
         return AlertDialog(
           icon: const Icon(Icons.check_circle_outline),
-          title: Text(LocalizationKeys.dialogIssueSuccessTitle.tr(dialogContext)),
+          title: Text(
+            LocalizationKeys.dialogIssueSuccessTitle.tr(dialogContext),
+          ),
           contentPadding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
           content: SizedBox(
             width: dialogWidth,

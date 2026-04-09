@@ -55,7 +55,8 @@ class PingTab extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         IconButton(
-          onPressed: () => _copyToClipboard(context, provider.pingOutputController.text),
+          onPressed: () =>
+              _copyToClipboard(context, provider.pingOutputController.text),
           icon: const Icon(Icons.copy_rounded),
           tooltip: LocalizationKeys.copySuccess.tr(context),
         ),

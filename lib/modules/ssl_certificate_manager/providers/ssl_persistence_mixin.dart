@@ -270,9 +270,7 @@ mixin SslPersistenceMixin on SslProviderBase, SslIssueMixin {
 
     final storagePath = configData.storagePath.trim();
     if (storagePath.isNotEmpty && await Directory(storagePath).exists()) {
-      final file = File(
-        p.join(storagePath, SslProviderBase.snapshotFileName),
-      );
+      final file = File(p.join(storagePath, SslProviderBase.snapshotFileName));
       await file.parent.create(recursive: true);
       await file.writeAsString(snapshot.toPrettyJson());
       AppLogger.debug('[SSL] snapshot persisted to disk');
@@ -499,8 +497,7 @@ mixin SslPersistenceMixin on SslProviderBase, SslIssueMixin {
       organizationName: tpl.organizationName == 'OwOTeam'
           ? ''
           : tpl.organizationName,
-      organizationalUnitName:
-          tpl.organizationalUnitName == 'Server Management'
+      organizationalUnitName: tpl.organizationalUnitName == 'Server Management'
           ? ''
           : tpl.organizationalUnitName,
       emailAddress: tpl.emailAddress == 'support@owoblog.com'
@@ -515,9 +512,7 @@ mixin SslPersistenceMixin on SslProviderBase, SslIssueMixin {
       unstructuredName: tpl.unstructuredName == 'OwOTeam'
           ? ''
           : tpl.unstructuredName,
-      ocspDomain: tpl.ocspDomain == 'ssl.your-domain.com'
-          ? ''
-          : tpl.ocspDomain,
+      ocspDomain: tpl.ocspDomain == 'ssl.your-domain.com' ? '' : tpl.ocspDomain,
       rootCAFileName: tpl.rootCAFileName == 'YourDomain_Root_CA'
           ? ''
           : tpl.rootCAFileName,

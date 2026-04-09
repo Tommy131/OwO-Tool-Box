@@ -32,7 +32,8 @@ class SiteTestTab extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         IconButton(
-          onPressed: () => _copyToClipboard(context, provider.siteOutputController.text),
+          onPressed: () =>
+              _copyToClipboard(context, provider.siteOutputController.text),
           icon: const Icon(Icons.copy_rounded),
           tooltip: LocalizationKeys.copySuccess.tr(context),
         ),

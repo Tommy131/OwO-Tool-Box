@@ -144,7 +144,9 @@ class StorageConfigTab extends StatelessWidget {
                               duration: const Duration(seconds: 2),
                             ),
                           );
-                        } else if (provider.infoMessage.startsWith('CRL 生成失败')) {
+                        } else if (provider.infoMessage.startsWith(
+                          'CRL 生成失败',
+                        )) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(

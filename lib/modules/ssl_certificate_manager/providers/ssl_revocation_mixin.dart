@@ -131,7 +131,11 @@ mixin SslRevocationMixin on SslProviderBase {
     try {
       await OpenSslCommandService.ensureOpenSslAvailable();
       final days = crlDays ?? crlStateInternal.crlDays;
-      final crlOutputPath = p.join(configData.storagePath, '_files', 'root.crl');
+      final crlOutputPath = p.join(
+        configData.storagePath,
+        '_files',
+        'root.crl',
+      );
       final legacyCrlPath = p.join(configData.storagePath, '_files', 'crl.pem');
       final rootCertPath = rootCACertPathController.text.trim();
       final rootKeyPath = rootCAKeyPathController.text.trim();
@@ -288,7 +292,8 @@ mixin SslRevocationMixin on SslProviderBase {
     int count = 0;
     for (final certId in [...batchSelectedIdsInternal]) {
       final index = certificateRecords.indexWhere((e) => e.id == certId);
-      if (index < 0 || certificateRecords[index].status == SslCertStatus.revoked) {
+      if (index < 0 ||
+          certificateRecords[index].status == SslCertStatus.revoked) {
         continue;
       }
       certificateRecords[index] = certificateRecords[index].copyWith(

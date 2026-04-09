@@ -52,7 +52,8 @@ class PortScanTab extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         IconButton(
-          onPressed: () => _copyToClipboard(context, provider.portOutputController.text),
+          onPressed: () =>
+              _copyToClipboard(context, provider.portOutputController.text),
           icon: const Icon(Icons.copy_rounded),
           tooltip: LocalizationKeys.copySuccess.tr(context),
         ),

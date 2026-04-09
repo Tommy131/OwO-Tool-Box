@@ -183,9 +183,7 @@ mixin SslIssueMixin on SslProviderBase {
     if (isPinned) {
       pinnedIssueFieldValues.remove(fieldKey);
     } else {
-      pinnedIssueFieldValues[fieldKey] = _currentDraftIssueFieldValue(
-        fieldKey,
-      );
+      pinnedIssueFieldValues[fieldKey] = _currentDraftIssueFieldValue(fieldKey);
       _applyPinnedDraftValue(fieldKey);
     }
     syncControllersToTemplate();
@@ -331,7 +329,11 @@ mixin SslIssueMixin on SslProviderBase {
         'openssl_config',
         '$fileToken.cnf',
       );
-      final keyPath = p.join(configData.storagePath, 'private', '$fileToken.key');
+      final keyPath = p.join(
+        configData.storagePath,
+        'private',
+        '$fileToken.key',
+      );
       final csrPath = p.join(configData.storagePath, 'csr', '$fileToken.csr');
       final certPath = p.join(
         configData.storagePath,
@@ -927,28 +929,26 @@ mixin SslIssueMixin on SslProviderBase {
       countryName: (source['countryName'] ?? tpl.countryName).trim(),
       stateName: (source['stateName'] ?? tpl.stateName).trim(),
       localityName: (source['localityName'] ?? tpl.localityName).trim(),
-      organizationName:
-          (source['organizationName'] ?? tpl.organizationName).trim(),
+      organizationName: (source['organizationName'] ?? tpl.organizationName)
+          .trim(),
       organizationalUnitName:
           (source['organizationalUnitName'] ?? tpl.organizationalUnitName)
               .trim(),
       emailAddress: (source['emailAddress'] ?? tpl.emailAddress).trim(),
       explicitText: (source['explicitText'] ?? tpl.explicitText).trim(),
-      challengePassword:
-          (source['challengePassword'] ?? tpl.challengePassword).trim(),
-      unstructuredName:
-          (source['unstructuredName'] ?? tpl.unstructuredName).trim(),
+      challengePassword: (source['challengePassword'] ?? tpl.challengePassword)
+          .trim(),
+      unstructuredName: (source['unstructuredName'] ?? tpl.unstructuredName)
+          .trim(),
       ocspDomain: (source['ocspDomain'] ?? tpl.ocspDomain).trim(),
       crlDistributionUrl:
           (source['crlDistributionUrl'] ?? tpl.crlDistributionUrl).trim(),
-      ocspCaIssuersUrl:
-          (source['ocspCaIssuersUrl'] ?? tpl.ocspCaIssuersUrl).trim(),
-      ocspResponderUrl:
-          (source['ocspResponderUrl'] ?? tpl.ocspResponderUrl).trim(),
+      ocspCaIssuersUrl: (source['ocspCaIssuersUrl'] ?? tpl.ocspCaIssuersUrl)
+          .trim(),
+      ocspResponderUrl: (source['ocspResponderUrl'] ?? tpl.ocspResponderUrl)
+          .trim(),
       validDays:
-          int.tryParse(
-            (source['validDays'] ?? '${tpl.validDays}').trim(),
-          ) ??
+          int.tryParse((source['validDays'] ?? '${tpl.validDays}').trim()) ??
           tpl.validDays,
       altNames: nextAltNames,
     );

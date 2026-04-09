@@ -46,12 +46,7 @@ class _NetworkToolsPageState extends State<NetworkToolsPage>
     final content = TabBarView(
       controller: _tabController,
       physics: const NeverScrollableScrollPhysics(),
-      children: const [
-        PingTab(),
-        PerfTestTab(),
-        SiteTestTab(),
-        PortScanTab(),
-      ],
+      children: const [PingTab(), PerfTestTab(), SiteTestTab(), PortScanTab()],
     );
 
     return Scaffold(

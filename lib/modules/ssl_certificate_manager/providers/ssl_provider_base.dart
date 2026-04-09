@@ -150,7 +150,8 @@ abstract class SslProviderBase with ChangeNotifier {
   @protected
   final Set<String> batchSelectedIdsInternal = {};
   bool get batchMode => batchModeInternal;
-  Set<String> get batchSelectedIds => Set.unmodifiable(batchSelectedIdsInternal);
+  Set<String> get batchSelectedIds =>
+      Set.unmodifiable(batchSelectedIdsInternal);
 
   // ────────────────── audit log ──────────────────
 
@@ -202,8 +203,7 @@ abstract class SslProviderBase with ChangeNotifier {
       }).toList();
     }
     if (statusFilterSet.isNotEmpty) {
-      result =
-          result.where((c) => statusFilterSet.contains(c.status)).toList();
+      result = result.where((c) => statusFilterSet.contains(c.status)).toList();
     }
     if (filterExpiringSoonFlag) {
       result = result.where((c) => c.isExpiringSoon).toList();
@@ -323,8 +323,7 @@ abstract class SslProviderBase with ChangeNotifier {
         (c) => c.id == certificateId,
         orElse: () => throw Exception('Certificate not found'),
       );
-      final pfxPath =
-          p.join(configData.storagePath, 'pfx', '${record.id}.pfx');
+      final pfxPath = p.join(configData.storagePath, 'pfx', '${record.id}.pfx');
       final rootCertPath = rootCACertPathController.text.trim();
 
       final args = <String>[
@@ -431,9 +430,7 @@ abstract class SslProviderBase with ChangeNotifier {
   /// Ensure storage directory is available, auto-recover if missing.
   /// Implemented by [SslPersistenceMixin].
   @protected
-  Future<bool> ensureStorageAvailableOrRecover({
-    bool allowAutoRecover = true,
-  });
+  Future<bool> ensureStorageAvailableOrRecover({bool allowAutoRecover = true});
 
   /// Build rendered CNF content from current template state.
   /// Implemented by [SslIssueMixin].

@@ -517,7 +517,9 @@ class _CertificateListTabState extends State<CertificateListTab> {
                                 content:
                                     '将撤销证书：${cert.domain}\n序列号：${cert.serialNumber}\n该操作具有风险，是否继续？',
                                 icon: Icons.warning_amber_rounded,
-                                confirmText: LocalizationKeys.revoke.tr(context),
+                                confirmText: LocalizationKeys.revoke.tr(
+                                  context,
+                                ),
                                 cancelText: LocalizationKeys.cancel.tr(context),
                                 confirmColor: Colors.red,
                               );
