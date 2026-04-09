@@ -1,7 +1,8 @@
 import '../core/module_registry/module_registry.dart';
+import '../core/settings_pages/about_page.dart';
 
 // 导入所有业务模块
-import '../core/settings_pages/about_page.dart';
+import 'log_viewer/log_viewer_module.dart';
 import 'cloudflare_dns/cloudflare_dns.dart';
 import 'common_pages/common_pages.dart';
 import 'host_monitor/host_monitor.dart';
@@ -21,6 +22,7 @@ class ModulesRegisterEntry {
     AboutPage.registerDefaults();
 
     // 1. 注册核心业务模块
+    registry.registerModule(LogViewerModule());
     registry.registerModule(CommonPages());
     registry.registerModule(HostMonitor());
     registry.registerModule(CloudflareDns());
