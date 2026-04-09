@@ -11,7 +11,10 @@ import 'localization/translations.dart';
 import 'localization/localization_keys.dart';
 
 // providers
-import 'providers/network_tools_provider.dart';
+import 'providers/ping_provider.dart';
+import 'providers/perf_test_provider.dart';
+import 'providers/site_test_provider.dart';
+import 'providers/port_scan_provider.dart';
 
 // pages
 import 'pages/network_tools_page.dart';
@@ -27,9 +30,18 @@ class NetworkTools implements ModuleRegistrar {
     // 1. 注册国际化翻译
     LocalizationService().registerModuleTranslations(translations);
 
-    // 2. 注册 NetWorkTools 提供器
+    // 2. 注册工具提供器
     registry.providers.register(
-      ChangeNotifierProvider(create: (_) => NetworkToolsProvider()),
+      ChangeNotifierProvider(create: (_) => PingProvider()),
+    );
+    registry.providers.register(
+      ChangeNotifierProvider(create: (_) => PerfTestProvider()),
+    );
+    registry.providers.register(
+      ChangeNotifierProvider(create: (_) => SiteTestProvider()),
+    );
+    registry.providers.register(
+      ChangeNotifierProvider(create: (_) => PortScanProvider()),
     );
 
     // 3. 注册导航页面

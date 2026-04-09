@@ -3,21 +3,8 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
-class NetworkToolsProvider with ChangeNotifier {
-  // --- Global Controllers & State ---
-  final TextEditingController pingHostController = TextEditingController(
-    text: '8.8.8.8',
-  );
-  final TextEditingController pingOutputController = TextEditingController();
-  final TextEditingController pingCountController = TextEditingController(
-    text: '4',
-  );
-  bool isPingRunning = false;
-  Process? _pingProcess;
-
-  // --- Performance Test State ---
+class PerfTestProvider with ChangeNotifier {
   final TextEditingController perfHostController = TextEditingController(
     text: '0.0.0.0',
   );
@@ -35,8 +22,8 @@ class NetworkToolsProvider with ChangeNotifier {
     text: '1024',
   );
 
-  String protocol = 'TCP'; // or 'UDP'
-  String testMode = 'Client'; // Client or Server
+  String protocol = 'TCP';
+  String testMode = 'Client';
 
   bool isPerfRunning = false;
 
@@ -61,76 +48,18 @@ class NetworkToolsProvider with ChangeNotifier {
   Isolate? _perfIsolate;
   ReceivePort? _perfReceivePort;
 
-  // --- Site Test & Port Scan ---
-  final TextEditingController siteUrlController = TextEditingController(
-    text: 'https://google.com',
-  );
-  final TextEditingController siteOutputController = TextEditingController();
-  bool isSiteTesting = false;
-
-  final TextEditingController portHostController = TextEditingController(
-    text: '127.0.0.1',
-  );
-  final TextEditingController portRangeController = TextEditingController(
-    text: '80,443,3389,8080',
-  );
-  final TextEditingController portOutputController = TextEditingController();
-  bool isPortScanning = false;
-
   @override
   void dispose() {
     stopPerfTest();
-    pingHostController.dispose();
-    pingOutputController.dispose();
-    pingCountController.dispose();
     perfHostController.dispose();
     perfPortController.dispose();
     perfOutputController.dispose();
     perfConnectionsController.dispose();
     perfIntervalController.dispose();
     perfDataSizeController.dispose();
-    siteUrlController.dispose();
-    siteOutputController.dispose();
-    portHostController.dispose();
-    portRangeController.dispose();
-    portOutputController.dispose();
-    _pingProcess?.kill();
     super.dispose();
   }
 
-  // --- Ping Logic ---
-  Future<void> runPing() async {
-    if (isPingRunning) return;
-    isPingRunning = true;
-    pingOutputController.clear();
-    notifyListeners();
-    final host = pingHostController.text.trim();
-    try {
-      final countArg = Platform.isWindows ? '-n' : '-c';
-      _pingProcess = await Process.start('ping', [
-        countArg,
-        pingCountController.text.trim(),
-        host,
-      ]);
-      _pingProcess!.stdout.transform(const SystemEncoding().decoder).listen((
-        data,
-      ) {
-        pingOutputController.text += data;
-        notifyListeners();
-      });
-      await _pingProcess!.exitCode;
-    } catch (e) {
-      pingOutputController.text = 'Error: $e';
-    } finally {
-      isPingRunning = false;
-      _pingProcess = null;
-      notifyListeners();
-    }
-  }
-
-  void stopPing() => _pingProcess?.kill();
-
-  // --- Performance Test Logic ---
   Future<void> runPerfTest() async {
     if (isPerfRunning) return;
     isPerfRunning = true;
@@ -190,7 +119,6 @@ class NetworkToolsProvider with ChangeNotifier {
           notifyListeners();
         }
 
-        // Safety limit for log area
         messageCount++;
         if (messageCount > 100) {
           final lines = perfOutputController.text.split('\n');
@@ -248,8 +176,8 @@ class NetworkToolsProvider with ChangeNotifier {
   void _updateHistory() {
     socketSendHistory.add(socketSendPerSec);
     socketReceiveHistory.add(socketReceivePerSec);
-    sendBytesHistory.add(sendBytesPerSec / (1024 * 1024)); // MB/s
-    receiveBytesHistory.add(receiveBytesPerSec / (1024 * 1024)); // MB/s
+    sendBytesHistory.add(sendBytesPerSec / (1024 * 1024));
+    receiveBytesHistory.add(receiveBytesPerSec / (1024 * 1024));
 
     if (socketSendHistory.length > 30) {
       socketSendHistory.removeAt(0);
@@ -259,150 +187,9 @@ class NetworkToolsProvider with ChangeNotifier {
     }
   }
 
-  // --- Site Test ---
-  Future<void> runSiteTest() async {
-    if (isSiteTesting) return;
-    isSiteTesting = true;
-    siteOutputController.clear();
-    final urlStr = siteUrlController.text.trim();
-
-    _logTo(siteOutputController, 'Initializing security scan for: $urlStr');
-
-    final stopwatch = Stopwatch()..start();
-    try {
-      final uri = Uri.parse(urlStr);
-      final response = await http.get(uri).timeout(const Duration(seconds: 10));
-      stopwatch.stop();
-
-      final emoji = response.statusCode >= 200 && response.statusCode < 300
-          ? '✅'
-          : '⚠️';
-
-      var output = '\n--- Scan Results ---\n';
-      output += 'Status: $emoji ${response.statusCode}\n';
-      output += 'Response Time: ${stopwatch.elapsedMilliseconds}ms\n\n';
-
-      output += '--- HTTP Headers ---\n';
-      response.headers.forEach((key, value) {
-        output += '$key: $value\n';
-      });
-
-      _logTo(siteOutputController, output, addTimestamp: false);
-    } catch (e) {
-      _logTo(siteOutputController, '❌ Error: $e');
-    } finally {
-      isSiteTesting = false;
-      _logTo(siteOutputController, 'Scan completed.');
-      notifyListeners();
-    }
-  }
-
-  // --- Port Scan ---
-  Future<void> runPortScan() async {
-    if (isPortScanning) return;
-    isPortScanning = true;
-    portOutputController.clear();
-    final host = portHostController.text.trim();
-    final ports = portRangeController.text
-        .split(',')
-        .map((e) => int.tryParse(e.trim()))
-        .whereType<int>()
-        .toList();
-
-    _logTo(portOutputController, 'Starting port scan for host: $host');
-    _logTo(
-      portOutputController,
-      'Targeting ${ports.length} ports...\n',
-      addTimestamp: false,
-    );
-
-    int openCount = 0;
-    int closedCount = 0;
-
-    for (var port in ports) {
-      if (!isPortScanning) break;
-      try {
-        final socket = await Socket.connect(
-          host,
-          port,
-          timeout: const Duration(seconds: 1),
-        );
-        _logTo(
-          portOutputController,
-          '  [🟢 OPEN]    Port $port',
-          addTimestamp: false,
-        );
-        openCount++;
-        socket.destroy();
-      } catch (_) {
-        _logTo(
-          portOutputController,
-          '  [🔴 CLOSED] Port $port',
-          addTimestamp: false,
-        );
-        closedCount++;
-      }
-      notifyListeners();
-    }
-
-    isPortScanning = false;
-    _logTo(portOutputController, '\n--- Scan Summary ---', addTimestamp: false);
-    _logTo(
-      portOutputController,
-      'Total Ports: ${openCount + closedCount}',
-      addTimestamp: false,
-    );
-    _logTo(
-      portOutputController,
-      'Open: $openCount, Closed: $closedCount',
-      addTimestamp: false,
-    );
-    _logTo(portOutputController, 'Scan finished.');
-    notifyListeners();
-  }
-
-  void stopPortScan() {
-    if (isPortScanning) {
-      isPortScanning = false;
-      _logTo(portOutputController, 'Scan aborted by user.');
-    }
-  }
-
-  void _logTo(
-    TextEditingController controller,
-    String message, {
-    bool addTimestamp = true,
-  }) {
-    final timestamp = addTimestamp
-        ? "[${DateTime.now().toString().substring(11, 19)}] "
-        : "";
-    controller.text +=
-        "$timestamp$message${message.endsWith('\n') ? '' : '\n'}";
-    notifyListeners();
-  }
-
-  // --- Clear Methods ---
-  void clearPing() {
-    pingOutputController.clear();
-    stopPing();
-    notifyListeners();
-  }
-
   void clearPerf() {
     perfOutputController.clear();
     stopPerfTest();
-    notifyListeners();
-  }
-
-  void clearSite() {
-    siteOutputController.clear();
-    isSiteTesting = false;
-    notifyListeners();
-  }
-
-  void clearPort() {
-    portOutputController.clear();
-    stopPortScan();
     notifyListeners();
   }
 }
@@ -430,7 +217,6 @@ void _perfIsolateWorker(SendPort mainSendPort) async {
   final List<dynamic> activeSockets = [];
   ServerSocket? serverSocket;
 
-  // Periodic metrics report
   Timer.periodic(const Duration(seconds: 1), (t) {
     mainSendPort.send({
       'sendPkt': sendPkt,
@@ -438,7 +224,6 @@ void _perfIsolateWorker(SendPort mainSendPort) async {
       'sendBytes': sendBytes,
       'receiveBytes': receiveBytes,
     });
-    // Reset local counters for next second
     sendPkt = 0;
     receivePkt = 0;
     sendBytes = 0;
@@ -495,7 +280,6 @@ void _perfIsolateWorker(SendPort mainSendPort) async {
         });
       }
     } else {
-      // Client Mode
       mainSendPort.send('Resolving host $host...\n');
       final lookup = await InternetAddress.lookup(host);
       if (lookup.isEmpty) throw Exception('Host resolve failed');
@@ -540,7 +324,6 @@ void _perfIsolateWorker(SendPort mainSendPort) async {
 
       mainSendPort.send('Data transmission started ($interval ms interval).\n');
 
-      // Sending Timer
       Timer.periodic(Duration(milliseconds: interval), (t) {
         for (var s in activeSockets) {
           try {
