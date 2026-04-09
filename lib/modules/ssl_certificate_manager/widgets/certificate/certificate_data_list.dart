@@ -39,8 +39,7 @@ class CertificateDataList extends StatelessWidget {
             onTap: () => provider.selectCertificate(item.id),
             borderRadius: BorderRadius.circular(8),
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
                 color: isSelected
                     ? theme.colorScheme.primary.withValues(alpha: 0.06)
@@ -54,10 +53,8 @@ class CertificateDataList extends StatelessWidget {
                     children: [
                       if (provider.batchMode) ...[
                         Checkbox(
-                          value:
-                              provider.batchSelectedIds.contains(item.id),
-                          onChanged: (_) =>
-                              provider.toggleBatchSelect(item.id),
+                          value: provider.batchSelectedIds.contains(item.id),
+                          onChanged: (_) => provider.toggleBatchSelect(item.id),
                           visualDensity: VisualDensity.compact,
                           materialTapTargetSize:
                               MaterialTapTargetSize.shrinkWrap,
@@ -89,8 +86,9 @@ class CertificateDataList extends StatelessWidget {
                     child: Text(
                       'CN: ${item.commonName}  |  SN: ${item.serialNumber}  |  ${LocalizationKeys.expiresAt.tr(context)}: ${item.expiresAt.toLocal().toString().split(".").first}',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface
-                            .withValues(alpha: 0.55),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.55,
+                        ),
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),

@@ -31,10 +31,9 @@ class CertificateDetailPanel extends StatelessWidget {
           child: Text(
             LocalizationKeys.selectCertificate.tr(context),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.5),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.5),
             ),
           ),
         ),
@@ -108,7 +107,10 @@ class CertificateDetailPanel extends StatelessWidget {
                             .first,
                       ),
                       _buildDaysRemainingRow(
-                          context, cert.daysRemaining, daysColor),
+                        context,
+                        cert.daysRemaining,
+                        daysColor,
+                      ),
                     ],
                   ),
                 ),
@@ -117,8 +119,7 @@ class CertificateDetailPanel extends StatelessWidget {
                 SslSectionContainer(
                   title: LocalizationKeys.sectionExtensions.tr(context),
                   child: FutureBuilder<CertificateDetailInfo?>(
-                    future:
-                        provider.fetchCertificateDetails(cert.certFilePath),
+                    future: provider.fetchCertificateDetails(cert.certFilePath),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState != ConnectionState.done) {
                         return Padding(
@@ -137,34 +138,36 @@ class CertificateDetailPanel extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SslInfoRow(
-                            label: LocalizationKeys.certDetailPublicKey
-                                .tr(context),
+                            label: LocalizationKeys.certDetailPublicKey.tr(
+                              context,
+                            ),
                             value: detail.publicKeyAlgorithm,
                           ),
                           SslInfoRow(
-                            label: LocalizationKeys.certDetailSignatureAlgo
-                                .tr(context),
+                            label: LocalizationKeys.certDetailSignatureAlgo.tr(
+                              context,
+                            ),
                             value: detail.signatureAlgorithm,
                           ),
                           SslInfoRow(
-                            label: LocalizationKeys.certDetailKeyUsage
-                                .tr(context),
+                            label: LocalizationKeys.certDetailKeyUsage.tr(
+                              context,
+                            ),
                             value: detail.keyUsage.join(', '),
                           ),
                           SslInfoRow(
-                            label: LocalizationKeys.certDetailExtKeyUsage
-                                .tr(context),
+                            label: LocalizationKeys.certDetailExtKeyUsage.tr(
+                              context,
+                            ),
                             value: detail.extendedKeyUsage.join(', '),
                           ),
                           SslInfoRow(
-                            label: LocalizationKeys.certDetailSan
-                                .tr(context),
+                            label: LocalizationKeys.certDetailSan.tr(context),
                             value: detail.subjectAltNames.join(', '),
                           ),
                           if (detail.basicConstraints != null)
                             SslInfoRow(
-                              label: LocalizationKeys
-                                  .certDetailBasicConstraints
+                              label: LocalizationKeys.certDetailBasicConstraints
                                   .tr(context),
                               value: detail.basicConstraints!,
                             ),
@@ -176,16 +179,14 @@ class CertificateDetailPanel extends StatelessWidget {
 
                 // Fingerprint
                 FutureBuilder<CertificateDetailInfo?>(
-                  future:
-                      provider.fetchCertificateDetails(cert.certFilePath),
+                  future: provider.fetchCertificateDetails(cert.certFilePath),
                   builder: (context, snapshot) {
                     final detail = snapshot.data;
                     if (detail == null || detail.sha256Fingerprint.isEmpty) {
                       return const SizedBox.shrink();
                     }
                     return SslSectionContainer(
-                      title:
-                          LocalizationKeys.sectionFingerprints.tr(context),
+                      title: LocalizationKeys.sectionFingerprints.tr(context),
                       child: SslInfoRow(
                         label: 'SHA-256',
                         value: detail.sha256Fingerprint,
@@ -212,8 +213,7 @@ class CertificateDetailPanel extends StatelessWidget {
                         copyable: true,
                       ),
                       SslInfoRow(
-                        label:
-                            LocalizationKeys.summaryConfigPath.tr(context),
+                        label: LocalizationKeys.summaryConfigPath.tr(context),
                         value: cert.configFilePath,
                         copyable: true,
                       ),
@@ -234,8 +234,7 @@ class CertificateDetailPanel extends StatelessWidget {
                         obscureText: revokeConfig.obscureText,
                         textCapitalization: revokeConfig.textCapitalization,
                         decoration: InputDecoration(
-                          labelText:
-                              LocalizationKeys.revokeReason.tr(context),
+                          labelText: LocalizationKeys.revokeReason.tr(context),
                           suffixIcon: revokeConfig.suffix,
                           border: const OutlineInputBorder(),
                           isDense: true,
@@ -250,8 +249,7 @@ class CertificateDetailPanel extends StatelessWidget {
                             onPressed: onRenew,
                             icon: const Icon(Icons.autorenew),
                             label: Text(
-                              LocalizationKeys.renewCertificate
-                                  .tr(context),
+                              LocalizationKeys.renewCertificate.tr(context),
                             ),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.green,
@@ -268,15 +266,12 @@ class CertificateDetailPanel extends StatelessWidget {
                           ),
                           OutlinedButton.icon(
                             onPressed: () async {
-                              final result =
-                                  await provider.verifyCertificateChain(
-                                cert.id,
-                              );
+                              final result = await provider
+                                  .verifyCertificateChain(cert.id);
                               if (!context.mounted) return;
                               onShowInlineMessage(
                                 result.valid
-                                    ? LocalizationKeys.verifySuccess
-                                        .tr(context)
+                                    ? LocalizationKeys.verifySuccess.tr(context)
                                     : '${LocalizationKeys.verifyFailed.tr(context)}: ${result.message}',
                               );
                             },
@@ -288,12 +283,9 @@ class CertificateDetailPanel extends StatelessWidget {
                           FilledButton.icon(
                             onPressed: cert.status == SslCertStatus.revoked
                                 ? null
-                                : () =>
-                                    provider.revokeCertificate(cert.id),
+                                : () => provider.revokeCertificate(cert.id),
                             icon: const Icon(Icons.block),
-                            label: Text(
-                              LocalizationKeys.revoke.tr(context),
-                            ),
+                            label: Text(LocalizationKeys.revoke.tr(context)),
                             style: FilledButton.styleFrom(
                               backgroundColor: Colors.red,
                             ),
@@ -302,9 +294,7 @@ class CertificateDetailPanel extends StatelessWidget {
                             onPressed: () =>
                                 provider.deleteCertificate(cert.id),
                             icon: const Icon(Icons.delete_outline),
-                            label: Text(
-                              LocalizationKeys.delete.tr(context),
-                            ),
+                            label: Text(LocalizationKeys.delete.tr(context)),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.red,
                               side: const BorderSide(color: Colors.red),
@@ -331,8 +321,7 @@ class CertificateDetailPanel extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        borderRadius:
-            const BorderRadius.vertical(top: Radius.circular(12)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
         gradient: LinearGradient(
           colors: [
             theme.colorScheme.primary.withValues(alpha: 0.16),
@@ -365,8 +354,7 @@ class CertificateDetailPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildDaysRemainingRow(
-      BuildContext context, int days, Color color) {
+  Widget _buildDaysRemainingRow(BuildContext context, int days, Color color) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
@@ -378,8 +366,7 @@ class CertificateDetailPanel extends StatelessWidget {
             child: Text(
               LocalizationKeys.daysRemaining.tr(context),
               style: theme.textTheme.bodySmall?.copyWith(
-                color:
-                    theme.colorScheme.onSurface.withValues(alpha: 0.55),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -411,8 +398,7 @@ class CertificateDetailPanel extends StatelessWidget {
               controller: pfxPasswordController,
               obscureText: true,
               decoration: InputDecoration(
-                labelText:
-                    LocalizationKeys.exportPfxPassword.tr(context),
+                labelText: LocalizationKeys.exportPfxPassword.tr(context),
                 border: const OutlineInputBorder(),
               ),
             ),
@@ -437,8 +423,7 @@ class CertificateDetailPanel extends StatelessWidget {
                   );
                 }
               },
-              child:
-                  Text(LocalizationKeys.exportCertificate.tr(context)),
+              child: Text(LocalizationKeys.exportCertificate.tr(context)),
             ),
           ],
         );
