@@ -1,22 +1,39 @@
-part of '../ssl_certificate_manager_page.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-extension _SslPageAuditLogSection on _SslCertificateManagerPageState {
-  Widget _buildAuditLogTab(SslCertificateManagerProvider provider) {
+import '../../../../core/services/localization_service.dart';
+import '../../../../core/widgets/common/dialog.dart';
+import '../../localization/localization_keys.dart';
+import '../../models/ssl_models.dart';
+import '../../providers/ssl_certificate_manager_provider.dart';
+import '../../widgets/shared/premium_card.dart';
+
+/// Tab page that displays the audit log with clear functionality.
+class AuditLogTab extends StatelessWidget {
+  const AuditLogTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final provider = context.watch<SslCertificateManagerProvider>();
     final logs = provider.auditLog;
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          _buildGradientHeader(
+          SslGradientHeader(
             title: LocalizationKeys.auditLog.tr(context),
             icon: Icons.history_outlined,
             trailing: logs.isEmpty
                 ? null
                 : OutlinedButton.icon(
-                    onPressed: () => _handleClearAuditLog(provider),
-                    icon: const Icon(Icons.delete_sweep_outlined, size: 16),
-                    label: Text(LocalizationKeys.auditClearLog.tr(context)),
+                    onPressed: () =>
+                        _handleClearAuditLog(context, provider),
+                    icon: const Icon(Icons.delete_sweep_outlined,
+                        size: 16),
+                    label:
+                        Text(LocalizationKeys.auditClearLog.tr(context)),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.red,
                       side: const BorderSide(color: Colors.red),
@@ -51,10 +68,12 @@ extension _SslPageAuditLogSection on _SslCertificateManagerPageState {
                 : Card(
                     child: ListView.separated(
                       itemCount: logs.length,
-                      separatorBuilder: (_, __) => const Divider(height: 1),
+                      separatorBuilder: (_, __) =>
+                          const Divider(height: 1),
                       itemBuilder: (context, index) {
                         final entry = logs[index];
-                        return _buildAuditLogItem(entry, theme);
+                        return _buildAuditLogItem(
+                            context, entry, theme);
                       },
                     ),
                   ),
@@ -64,7 +83,11 @@ extension _SslPageAuditLogSection on _SslCertificateManagerPageState {
     );
   }
 
-  Widget _buildAuditLogItem(AuditLogEntry entry, ThemeData theme) {
+  Widget _buildAuditLogItem(
+    BuildContext context,
+    AuditLogEntry entry,
+    ThemeData theme,
+  ) {
     final IconData icon;
     final Color color;
     final String actionLabel;
@@ -92,7 +115,8 @@ extension _SslPageAuditLogSection on _SslCertificateManagerPageState {
       case AuditAction.importCsr:
         icon = Icons.upload_file;
         color = Colors.teal;
-        actionLabel = LocalizationKeys.auditActionImportCsr.tr(context);
+        actionLabel =
+            LocalizationKeys.auditActionImportCsr.tr(context);
     }
 
     return ListTile(
@@ -114,7 +138,8 @@ extension _SslPageAuditLogSection on _SslCertificateManagerPageState {
       subtitle: Text(
         entry.detail,
         style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+          color:
+              theme.colorScheme.onSurface.withValues(alpha: 0.6),
         ),
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
@@ -122,7 +147,8 @@ extension _SslPageAuditLogSection on _SslCertificateManagerPageState {
       trailing: Text(
         _formatAuditTimestamp(entry.timestamp),
         style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
+          color:
+              theme.colorScheme.onSurface.withValues(alpha: 0.45),
         ),
       ),
     );
@@ -135,6 +161,7 @@ extension _SslPageAuditLogSection on _SslCertificateManagerPageState {
   }
 
   Future<void> _handleClearAuditLog(
+    BuildContext context,
     SslCertificateManagerProvider provider,
   ) async {
     final confirmed = await showAdvancedConfirmDialog(
@@ -147,7 +174,7 @@ extension _SslPageAuditLogSection on _SslCertificateManagerPageState {
       cancelText: LocalizationKeys.cancel.tr(context),
       confirmColor: Colors.red,
     );
-    if (!mounted || confirmed != true) return;
+    if (!context.mounted || confirmed != true) return;
     provider.clearAuditLog();
   }
 }

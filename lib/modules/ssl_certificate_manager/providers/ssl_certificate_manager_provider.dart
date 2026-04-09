@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,6 +8,8 @@ import '../../../core/services/persistence_service.dart';
 import '../../../core/utils/logger.dart';
 import '../models/ssl_models.dart';
 import '../services/default_openssl_template.dart';
+import '../services/openssl_command_service.dart';
+export '../services/openssl_command_service.dart';
 
 class OpenSslCnfCodeController extends TextEditingController {
   @override
@@ -90,18 +91,6 @@ class OpenSslCnfCodeController extends TextEditingController {
     }
     return TextSpan(text: line, style: baseStyle);
   }
-}
-
-class SslIssueExecutionResult {
-  const SslIssueExecutionResult({
-    required this.success,
-    required this.message,
-    this.record,
-  });
-
-  final bool success;
-  final String message;
-  final SslCertificateRecord? record;
 }
 
 class SslCertificateManagerProvider with ChangeNotifier {
@@ -546,7 +535,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
       return RootCaValidationResult.invalid('无法识别根私钥内容，请确认是 PEM 格式私钥。');
     }
 
-    final keyCheck = await _verifyImportedPrivateKeyPassword(
+    final keyCheck = await OpenSslCommandService.verifyImportedPrivateKeyPassword(
       keySource,
       keyPassword,
     );
@@ -560,7 +549,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
       '[SSL] root key password verify passed, encrypted=${keyCheck.isEncrypted}',
     );
 
-    final opensslInfo = await _readCertificateMetaByOpenSsl(certSource);
+    final opensslInfo = await OpenSslCommandService.readCertificateMetaByOpenSsl(certSource);
     if (opensslInfo == null || opensslInfo.isEmpty) {
       AppLogger.warning('[SSL] root cert metadata parse failed');
       return RootCaValidationResult.invalid(
@@ -568,7 +557,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
       );
     }
 
-    final keyMatch = await _verifyCertificateKeyMatch(
+    final keyMatch = await OpenSslCommandService.verifyCertificateKeyMatch(
       certPath: certSource,
       keyPath: keySource,
       usePassword: keyCheck.isEncrypted,
@@ -627,7 +616,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
       if (requiredFieldsError != null) {
         throw Exception(requiredFieldsError);
       }
-      await _ensureOpenSslAvailable();
+      await OpenSslCommandService.ensureOpenSslAvailable();
       final domain = _template.domain.trim();
       if (domain.isEmpty) {
         throw Exception('域名不能为空');
@@ -655,7 +644,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
       final renderedCnf = _buildRenderedCnfContent();
       await File(configPath).writeAsString(renderedCnf);
 
-      await _runOpenSslOrThrow(
+      await OpenSslCommandService.runOpenSslOrThrow(
         [
           'genpkey',
           '-algorithm',
@@ -669,7 +658,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
         timeout: const Duration(seconds: 20),
       );
 
-      await _runOpenSslOrThrow(
+      await OpenSslCommandService.runOpenSslOrThrow(
         [
           'req',
           '-new',
@@ -729,14 +718,14 @@ class SslCertificateManagerProvider with ChangeNotifier {
         signArgs.addAll(['-passin', 'pass:${rootCAPasswordController.text}']);
       }
 
-      await _runOpenSslOrThrow(
+      await OpenSslCommandService.runOpenSslOrThrow(
         signArgs,
         action: '签发证书',
         workingDirectory: _config.storagePath,
         timeout: const Duration(seconds: 20),
       );
 
-      final certMeta = await _readIssuedCertificateMeta(certPath);
+      final certMeta = await OpenSslCommandService.readIssuedCertificateMeta(certPath);
       if (certMeta == null) {
         throw Exception('证书已生成，但无法读取签发结果，请检查 openssl 输出。');
       }
@@ -931,7 +920,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
     notifyListeners();
     AppLogger.info('[SSL] generateCrl start');
     try {
-      await _ensureOpenSslAvailable();
+      await OpenSslCommandService.ensureOpenSslAvailable();
       final days = crlDays ?? _crlState.crlDays;
       final crlOutputPath = p.join(_config.storagePath, '_files', 'crl.pem');
       final rootCertPath = rootCACertPathController.text.trim();
@@ -975,7 +964,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
         args.addAll(['-passin', 'pass:${rootCAPasswordController.text}']);
       }
 
-      await _runOpenSslOrThrow(
+      await OpenSslCommandService.runOpenSslOrThrow(
         args,
         action: '生成 CRL',
         workingDirectory: _config.storagePath,
@@ -1016,7 +1005,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
     String certFilePath,
   ) async {
     try {
-      final textResult = await _runOpenSsl([
+      final textResult = await OpenSslCommandService.runOpenSsl([
         'x509',
         '-text',
         '-noout',
@@ -1025,7 +1014,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
       ]);
       if (textResult == null || textResult.exitCode != 0) return null;
 
-      final fpResult = await _runOpenSsl([
+      final fpResult = await OpenSslCommandService.runOpenSsl([
         'x509',
         '-fingerprint',
         '-sha256',
@@ -1082,7 +1071,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
   ) async {
     if (!isInitialized) return null;
     try {
-      await _ensureOpenSslAvailable();
+      await OpenSslCommandService.ensureOpenSslAvailable();
       final record = _certificates.firstWhere(
         (c) => c.id == certificateId,
         orElse: () => throw Exception('Certificate not found'),
@@ -1110,7 +1099,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
         args.addAll(['-certfile', rootCertPath]);
       }
 
-      await _runOpenSslOrThrow(
+      await OpenSslCommandService.runOpenSslOrThrow(
         args,
         action: '导出 PKCS#12',
         timeout: const Duration(seconds: 15),
@@ -1147,7 +1136,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
         return (valid: false, message: '未找到根证书路径');
       }
 
-      final result = await _runOpenSsl([
+      final result = await OpenSslCommandService.runOpenSsl([
         'verify',
         '-CAfile',
         rootCertPath,
@@ -1291,7 +1280,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
     isLoading = true;
     notifyListeners();
     try {
-      await _ensureOpenSslAvailable();
+      await OpenSslCommandService.ensureOpenSslAvailable();
 
       final csrFile = File(csrFilePath);
       if (!await csrFile.exists()) {
@@ -1299,7 +1288,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
       }
 
       // Read CSR subject to extract domain/CN
-      final csrInfo = await _runOpenSsl([
+      final csrInfo = await OpenSslCommandService.runOpenSsl([
         'req',
         '-in',
         csrFilePath,
@@ -1310,7 +1299,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
         throw Exception('无法读取 CSR 信息，请检查文件格式。');
       }
       final subjectLine = csrInfo.stdout.toString().trim();
-      final cn = _extractCommonName(subjectLine) ?? 'external-csr';
+      final cn = OpenSslCommandService.extractCommonName(subjectLine) ?? 'external-csr';
 
       final now = DateTime.now();
       final safeName = _sanitizeFileStem(cn);
@@ -1355,13 +1344,13 @@ class SslCertificateManagerProvider with ChangeNotifier {
         signArgs.addAll(['-passin', 'pass:${rootCAPasswordController.text}']);
       }
 
-      await _runOpenSslOrThrow(
+      await OpenSslCommandService.runOpenSslOrThrow(
         signArgs,
         action: '签发外部 CSR',
         timeout: const Duration(seconds: 20),
       );
 
-      final certMeta = await _readIssuedCertificateMeta(certPath);
+      final certMeta = await OpenSslCommandService.readIssuedCertificateMeta(certPath);
       if (certMeta == null) {
         throw Exception('证书已生成，但无法读取签发结果。');
       }
@@ -2274,7 +2263,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
   }
 
   Future<void> _setupRootCaFiles(String storagePath) async {
-    await _ensureOpenSslAvailable();
+    await OpenSslCommandService.ensureOpenSslAvailable();
     final rootName = rootCANameController.text.trim();
     final certTarget = p.join(storagePath, 'CAcerts', '$rootName.crt');
     final keyTarget = p.join(storagePath, 'CAcerts', '$rootName.key');
@@ -2293,7 +2282,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
         'openssl_config',
         _defaultCnfFileName,
       );
-      await _runOpenSslOrThrow(
+      await OpenSslCommandService.runOpenSslOrThrow(
         [
           'genpkey',
           if (rootCAPasswordController.text.isNotEmpty) ...[
@@ -2338,7 +2327,7 @@ class SslCertificateManagerProvider with ChangeNotifier {
         ]);
       }
 
-      await _runOpenSslOrThrow(
+      await OpenSslCommandService.runOpenSslOrThrow(
         rootReqArgs,
         action: '生成根证书',
         workingDirectory: storagePath,
@@ -2412,133 +2401,6 @@ class SslCertificateManagerProvider with ChangeNotifier {
     return lower.endsWith('.key') || lower.endsWith('.pem');
   }
 
-  Future<Map<String, String>?> _readCertificateMetaByOpenSsl(
-    String certPath,
-  ) async {
-    try {
-      final result = await _runOpenSsl([
-        'x509',
-        '-in',
-        certPath,
-        '-noout',
-        '-subject',
-        '-issuer',
-        '-serial',
-        '-startdate',
-        '-enddate',
-        '-fingerprint',
-        '-sha256',
-      ]);
-      if (result == null || result.exitCode != 0) {
-        return null;
-      }
-
-      final details = <String, String>{};
-      final lines = result.stdout.toString().split('\n');
-      for (final raw in lines) {
-        final line = raw.trim();
-        if (line.isEmpty) continue;
-        if (line.startsWith('subject=')) {
-          details['Subject'] = line.substring('subject='.length).trim();
-        } else if (line.startsWith('issuer=')) {
-          details['Issuer'] = line.substring('issuer='.length).trim();
-        } else if (line.startsWith('serial=')) {
-          details['Serial'] = line.substring('serial='.length).trim();
-        } else if (line.startsWith('notBefore=')) {
-          details['Not Before'] = line.substring('notBefore='.length).trim();
-        } else if (line.startsWith('notAfter=')) {
-          details['Not After'] = line.substring('notAfter='.length).trim();
-        } else if (line.startsWith('sha256 Fingerprint=')) {
-          details['SHA256 Fingerprint'] = line
-              .substring('sha256 Fingerprint='.length)
-              .trim();
-        }
-      }
-
-      if (!details.containsKey('Subject') ||
-          !details.containsKey('Not After')) {
-        return null;
-      }
-      return details;
-    } catch (e, st) {
-      AppLogger.error('[SSL] read cert metadata failed', e, st);
-      return null;
-    }
-  }
-
-  Future<_IssuedCertificateMeta?> _readIssuedCertificateMeta(
-    String certPath,
-  ) async {
-    final details = await _readCertificateMetaByOpenSsl(certPath);
-    if (details == null || details.isEmpty) {
-      return null;
-    }
-
-    final issuedAt = _parseOpenSslDate(details['Not Before']);
-    final expiresAt = _parseOpenSslDate(details['Not After']);
-    final serialNumber = (details['Serial'] ?? '').trim();
-    if (issuedAt == null || expiresAt == null || serialNumber.isEmpty) {
-      return null;
-    }
-
-    final issuerLine = (details['Issuer'] ?? '').trim();
-    return _IssuedCertificateMeta(
-      issuedAt: issuedAt,
-      expiresAt: expiresAt,
-      serialNumber: serialNumber,
-      issuer: _extractCommonName(issuerLine) ?? issuerLine,
-    );
-  }
-
-  Future<PrivateKeyPasswordCheckResult> _verifyImportedPrivateKeyPassword(
-    String keyPath,
-    String password,
-  ) async {
-    try {
-      // 使用空密码参数避免 openssl 进入交互阻塞。
-      final plainRead = await _runOpenSsl([
-        'pkey',
-        '-in',
-        keyPath,
-        '-noout',
-        '-passin',
-        'pass:',
-      ]);
-      if (plainRead != null && plainRead.exitCode == 0) {
-        AppLogger.debug('[SSL] private key can be read without password');
-        return PrivateKeyPasswordCheckResult.valid(isEncrypted: false);
-      }
-
-      if (password.trim().isEmpty) {
-        return PrivateKeyPasswordCheckResult.invalid('私钥疑似已加密，请填写正确的私钥密码后再继续。');
-      }
-
-      final passRead = await _runOpenSsl([
-        'pkey',
-        '-in',
-        keyPath,
-        '-noout',
-        '-passin',
-        'pass:$password',
-      ]);
-      if (passRead == null || passRead.exitCode != 0) {
-        AppLogger.warning('[SSL] private key password incorrect');
-        return PrivateKeyPasswordCheckResult.invalid('私钥密码错误，无法解锁该私钥。');
-      }
-      AppLogger.debug('[SSL] private key unlocked by provided password');
-      return PrivateKeyPasswordCheckResult.valid(isEncrypted: true);
-    } catch (e, st) {
-      AppLogger.error(
-        '[SSL] openssl unavailable when verifying private key',
-        e,
-        st,
-      );
-      return PrivateKeyPasswordCheckResult.invalid(
-        '无法调用 openssl 校验私钥密码，请确认 openssl 已正确安装。',
-      );
-    }
-  }
-
   Future<bool> _ensureStorageAvailableOrRecover({
     bool allowAutoRecover = true,
   }) async {
@@ -2597,138 +2459,6 @@ class SslCertificateManagerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool?> _verifyCertificateKeyMatch({
-    required String certPath,
-    required String keyPath,
-    required bool usePassword,
-    required String password,
-  }) async {
-    try {
-      final certPub = await _runOpenSsl([
-        'x509',
-        '-in',
-        certPath,
-        '-pubkey',
-        '-noout',
-      ]);
-      if (certPub == null || certPub.exitCode != 0) {
-        return null;
-      }
-
-      final keyArgs = <String>['pkey', '-in', keyPath, '-pubout'];
-      if (usePassword) {
-        keyArgs.addAll(['-passin', 'pass:$password']);
-      } else {
-        // 非交互模式读取，防止 openssl 等待终端输入导致界面无响应。
-        keyArgs.addAll(['-passin', 'pass:']);
-      }
-      final keyPub = await _runOpenSsl(keyArgs);
-      if (keyPub == null || keyPub.exitCode != 0) {
-        return null;
-      }
-
-      final certNormalized = certPub.stdout.toString().replaceAll(
-        RegExp(r'\s+'),
-        '',
-      );
-      final keyNormalized = keyPub.stdout.toString().replaceAll(
-        RegExp(r'\s+'),
-        '',
-      );
-      if (certNormalized.isEmpty || keyNormalized.isEmpty) {
-        return null;
-      }
-      return certNormalized == keyNormalized;
-    } catch (e, st) {
-      AppLogger.error('[SSL] verify cert-key match failed', e, st);
-      return null;
-    }
-  }
-
-  Future<ProcessResult?> _runOpenSsl(
-    List<String> args, {
-    String? workingDirectory,
-    Duration timeout = const Duration(seconds: 8),
-  }) async {
-    try {
-      final result = await Process.run(
-        'openssl',
-        args,
-        workingDirectory: workingDirectory,
-      ).timeout(timeout);
-      return result;
-    } on TimeoutException {
-      AppLogger.error(
-        '[SSL] openssl command timeout: openssl ${_sanitizeOpenSslArgs(args)}',
-      );
-      return null;
-    } catch (e, st) {
-      AppLogger.error(
-        '[SSL] openssl command failed: openssl ${_sanitizeOpenSslArgs(args)}',
-        e,
-        st,
-      );
-      return null;
-    }
-  }
-
-  Future<void> _ensureOpenSslAvailable() async {
-    final result = await _runOpenSsl(['version']);
-    if (result == null || result.exitCode != 0) {
-      throw Exception('未检测到可用的 openssl，请先安装并确保命令行可直接执行 openssl。');
-    }
-  }
-
-  Future<ProcessResult> _runOpenSslOrThrow(
-    List<String> args, {
-    required String action,
-    String? workingDirectory,
-    Duration timeout = const Duration(seconds: 8),
-  }) async {
-    final result = await _runOpenSsl(
-      args,
-      workingDirectory: workingDirectory,
-      timeout: timeout,
-    );
-    if (result == null) {
-      throw Exception('$action失败：无法调用 openssl，请确认已安装且可在 PATH 中找到。');
-    }
-    if (result.exitCode != 0) {
-      throw Exception('$action失败：${_extractOpenSslFailure(result)}');
-    }
-    return result;
-  }
-
-  String _extractOpenSslFailure(ProcessResult result) {
-    final stderrText = result.stderr.toString().trim();
-    final stdoutText = result.stdout.toString().trim();
-    final message = stderrText.isNotEmpty ? stderrText : stdoutText;
-    if (message.isEmpty) {
-      return 'openssl 退出码 ${result.exitCode}';
-    }
-    return message
-        .split('\n')
-        .map((e) => e.trim())
-        .where((e) => e.isNotEmpty)
-        .join(' | ');
-  }
-
-  String _sanitizeOpenSslArgs(List<String> args) {
-    final sanitized = <String>[];
-    for (int i = 0; i < args.length; i++) {
-      final current = args[i];
-      sanitized.add(current);
-      if ((current == '-passin' ||
-              current == '-passout' ||
-              current == '-pass') &&
-          i + 1 < args.length) {
-        sanitized.add('***');
-        i++;
-      }
-    }
-    return sanitized.join(' ');
-  }
-
   String _sanitizeFileStem(String value) {
     final sanitized = value.replaceAll(RegExp(r'[^A-Za-z0-9._-]'), '_');
     return sanitized.isEmpty ? 'certificate' : sanitized;
@@ -2770,123 +2500,4 @@ class SslCertificateManagerProvider with ChangeNotifier {
         .replaceAll('=', r'\=');
   }
 
-  DateTime? _parseOpenSslDate(String? raw) {
-    if (raw == null || raw.trim().isEmpty) {
-      return null;
-    }
-    final normalized = raw.trim();
-    final match = RegExp(
-      r'^([A-Za-z]{3})\s+(\d{1,2})\s+(\d\d):(\d\d):(\d\d)\s+(\d{4})\s+GMT$',
-    ).firstMatch(normalized);
-    if (match == null) {
-      return DateTime.tryParse(normalized)?.toLocal();
-    }
-
-    const months = <String, int>{
-      'Jan': 1,
-      'Feb': 2,
-      'Mar': 3,
-      'Apr': 4,
-      'May': 5,
-      'Jun': 6,
-      'Jul': 7,
-      'Aug': 8,
-      'Sep': 9,
-      'Oct': 10,
-      'Nov': 11,
-      'Dec': 12,
-    };
-    final month = months[match.group(1)];
-    if (month == null) {
-      return null;
-    }
-    return DateTime.utc(
-      int.parse(match.group(6)!),
-      month,
-      int.parse(match.group(2)!),
-      int.parse(match.group(3)!),
-      int.parse(match.group(4)!),
-      int.parse(match.group(5)!),
-    ).toLocal();
-  }
-
-  String? _extractCommonName(String issuerText) {
-    final compact = issuerText.trim();
-    final slashMatch = RegExp(r'(?:^|/)CN\s*=\s*([^/]+)').firstMatch(compact);
-    if (slashMatch != null) {
-      return slashMatch.group(1)?.trim();
-    }
-    final commaMatch = RegExp(r'CN\s*=\s*([^,]+)').firstMatch(compact);
-    return commaMatch?.group(1)?.trim();
-  }
-}
-
-class _IssuedCertificateMeta {
-  const _IssuedCertificateMeta({
-    required this.issuedAt,
-    required this.expiresAt,
-    required this.serialNumber,
-    required this.issuer,
-  });
-
-  final DateTime issuedAt;
-  final DateTime expiresAt;
-  final String serialNumber;
-  final String issuer;
-}
-
-class RootCaValidationResult {
-  const RootCaValidationResult._({
-    required this.isValid,
-    required this.message,
-    required this.details,
-  });
-
-  final bool isValid;
-  final String message;
-  final Map<String, String> details;
-
-  factory RootCaValidationResult.valid(Map<String, String> details) {
-    return RootCaValidationResult._(
-      isValid: true,
-      message: '校验成功',
-      details: details,
-    );
-  }
-
-  factory RootCaValidationResult.invalid(String message) {
-    return RootCaValidationResult._(
-      isValid: false,
-      message: message,
-      details: const <String, String>{},
-    );
-  }
-}
-
-class PrivateKeyPasswordCheckResult {
-  const PrivateKeyPasswordCheckResult._({
-    required this.isValid,
-    required this.isEncrypted,
-    required this.message,
-  });
-
-  final bool isValid;
-  final bool isEncrypted;
-  final String message;
-
-  factory PrivateKeyPasswordCheckResult.valid({required bool isEncrypted}) {
-    return PrivateKeyPasswordCheckResult._(
-      isValid: true,
-      isEncrypted: isEncrypted,
-      message: '校验成功',
-    );
-  }
-
-  factory PrivateKeyPasswordCheckResult.invalid(String message) {
-    return PrivateKeyPasswordCheckResult._(
-      isValid: false,
-      isEncrypted: false,
-      message: message,
-    );
-  }
 }

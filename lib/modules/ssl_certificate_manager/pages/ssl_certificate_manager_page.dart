@@ -1,26 +1,18 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:path/path.dart' as p;
 
-import '../../../core/widgets/common/dialog.dart';
 import '../../../core/services/localization_service.dart';
 import '../../../core/widgets/navigation/module_side_nav.dart';
 import '../localization/localization_keys.dart';
-import '../models/ssl_models.dart';
 import '../providers/ssl_certificate_manager_provider.dart';
 
-part 'sections/ssl_page_init_section.dart';
-part 'sections/ssl_page_certificate_section.dart';
-part 'sections/ssl_page_openssl_template_section.dart';
-part 'sections/ssl_page_storage_section.dart';
-part 'sections/ssl_page_shared_widgets_section.dart';
-part 'sections/ssl_page_diff.dart';
-part 'sections/ssl_page_csr_import_section.dart';
-part 'sections/ssl_page_audit_log_section.dart';
+import 'tabs/audit_log_tab.dart';
+import 'tabs/certificate_issue_tab.dart';
+import 'tabs/certificate_list_tab.dart';
+import 'tabs/csr_import_tab.dart';
+import 'tabs/init_guide_tab.dart';
+import 'tabs/openssl_template_tab.dart';
+import 'tabs/storage_config_tab.dart';
 
 class SslCertificateManagerPage extends StatefulWidget {
   const SslCertificateManagerPage({super.key});
@@ -31,53 +23,10 @@ class SslCertificateManagerPage extends StatefulWidget {
 }
 
 class _SslCertificateManagerPageState extends State<SslCertificateManagerPage> {
-  final ScrollController _cnfEditorScrollController = ScrollController();
-  final TextEditingController _pfxPasswordController = TextEditingController();
   bool _isNavExpanded = false;
   static const double _compactNavWidth = 68;
   static const double _expandedNavWidth = 200;
   static const double _navHeaderHeight = 60;
-  int _issueStep = 0;
-  bool _showRootCaPassword = false;
-  bool _showChallengePassword = false;
-
-  void _refreshPage([VoidCallback? updater]) {
-    if (!mounted) return;
-    setState(() {
-      updater?.call();
-    });
-  }
-
-  void _changeIssueStep(int delta) {
-    _refreshPage(() {
-      _issueStep += delta;
-    });
-  }
-
-  void _resetIssueStep() {
-    _refreshPage(() {
-      _issueStep = 0;
-    });
-  }
-
-  void _toggleRootCaPasswordVisibility() {
-    _refreshPage(() {
-      _showRootCaPassword = !_showRootCaPassword;
-    });
-  }
-
-  void _toggleChallengePasswordVisibility() {
-    _refreshPage(() {
-      _showChallengePassword = !_showChallengePassword;
-    });
-  }
-
-  @override
-  void dispose() {
-    _cnfEditorScrollController.dispose();
-    _pfxPasswordController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +41,7 @@ class _SslCertificateManagerPageState extends State<SslCertificateManagerPage> {
     }
 
     if (!provider.isInitialized) {
-      return _buildInitGuide(provider);
+      return const InitGuideTab();
     }
 
     return Scaffold(
@@ -105,13 +54,13 @@ class _SslCertificateManagerPageState extends State<SslCertificateManagerPage> {
         onCollapse: () => setState(() => _isNavExpanded = false),
         content: IndexedStack(
           index: provider.selectedNavIndex,
-          children: [
-            _buildCertificateList(provider),
-            _buildIssueTab(provider),
-            _buildOpenSslTemplateTab(provider),
-            _buildStorageTab(provider),
-            _buildCsrImportTab(provider),
-            _buildAuditLogTab(provider),
+          children: const [
+            CertificateListTab(),
+            CertificateIssueTab(),
+            OpenSslTemplateTab(),
+            StorageConfigTab(),
+            CsrImportTab(),
+            AuditLogTab(),
           ],
         ),
         buildPanel:

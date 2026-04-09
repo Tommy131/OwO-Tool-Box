@@ -1,51 +1,58 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/services/localization_service.dart';
-import '../localization/localization_keys.dart';
-import '../providers/ssl_certificate_manager_provider.dart';
+import '../../../../core/services/localization_service.dart';
+import '../../localization/localization_keys.dart';
+import '../../providers/ssl_certificate_manager_provider.dart';
 
-/// 差异比较对话框中的行类型
-enum _DiffLineType { same, added, removed }
+/// Line type in the diff view.
+enum DiffLineType { same, added, removed }
 
-/// 差异比较对话框中的行模型
-class _DiffLine {
-  final int? oldLine;
-  final int? newLine;
-  final String text;
-  final _DiffLineType type;
-
-  _DiffLine({
-    this.oldLine,
-    this.newLine,
-    required this.text,
+/// A single line in the diff view.
+class DiffLine {
+  DiffLine({
     required this.type,
+    required this.text,
+    required this.oldLine,
+    required this.newLine,
   });
 
+  final DiffLineType type;
+  final String text;
+  final int? oldLine;
+  final int? newLine;
+
   String get marker {
-    switch (type) {
-      case _DiffLineType.added:
-        return '+';
-      case _DiffLineType.removed:
-        return '-';
-      case _DiffLineType.same:
-        return ' ';
-    }
+    if (type == DiffLineType.added) return '+';
+    if (type == DiffLineType.removed) return '-';
+    return ' ';
   }
 }
 
-/// 证书配置文件差异比较对话框
+/// Dialog that shows a side-by-side diff of CNF template changes.
 class CnfDiffDialog extends StatelessWidget {
-  final SslCertificateManagerProvider provider;
+  const CnfDiffDialog._({required this.before, required this.after});
 
-  const CnfDiffDialog({super.key, required this.provider});
+  final String before;
+  final String after;
+
+  /// Show the diff dialog for the given provider's saved vs. current content.
+  static Future<void> show(
+    BuildContext context,
+    SslCertificateManagerProvider provider,
+  ) {
+    return showDialog<void>(
+      context: context,
+      builder: (ctx) => CnfDiffDialog._(
+        before: provider.savedCnfContent,
+        after: provider.cnfEditorController.text,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final before = provider.savedCnfContent;
-    final after = provider.cnfEditorController.text;
     final lines = _buildDiffLines(before, after);
-    final hasChanges = lines.any((e) => e.type != _DiffLineType.same);
-
+    final hasChanges = lines.any((e) => e.type != DiffLineType.same);
     final theme = Theme.of(context);
 
     return AlertDialog(
@@ -72,9 +79,9 @@ class CnfDiffDialog extends StatelessWidget {
                               vertical: 1,
                             ),
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start,
                               children: [
-                                // 行号
                                 SizedBox(
                                   width: 54,
                                   child: Text(
@@ -84,20 +91,20 @@ class CnfDiffDialog extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                // 标记符 (+/-)
                                 SizedBox(
                                   width: 14,
                                   child: Text(
                                     line.marker,
-                                    style: theme.textTheme.bodySmall?.copyWith(
+                                    style: theme.textTheme.bodySmall
+                                        ?.copyWith(
                                       fontFamily: 'monospace',
-                                      color: _diffMarkerColor(line.type),
+                                      color:
+                                          _diffMarkerColor(line.type),
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                // 文本内容
                                 Expanded(
                                   child: SelectableText.rich(
                                     _highlightCnfLine(
@@ -128,46 +135,98 @@ class CnfDiffDialog extends StatelessWidget {
     );
   }
 
-  /// 构建差异比较行
-  List<_DiffLine> _buildDiffLines(String before, String after) {
-    final bLines = before.split('\n');
-    final aLines = after.split('\n');
-    final result = <_DiffLine>[];
+  // -- Diff computation (LCS-based) --
 
-    int i = 0, j = 0;
-    while (i < bLines.length || j < aLines.length) {
-      if (i < bLines.length && j < aLines.length && bLines[i] == aLines[j]) {
-        result.add(
-          _DiffLine(
-            oldLine: i + 1,
-            newLine: j + 1,
-            text: bLines[i],
-            type: _DiffLineType.same,
-          ),
-        );
-        i++;
-        j++;
-      } else if (i < bLines.length &&
-          (j >= aLines.length || !aLines.sublist(j).contains(bLines[i]))) {
-        result.add(
-          _DiffLine(
-            oldLine: i + 1,
-            text: bLines[i],
-            type: _DiffLineType.removed,
-          ),
-        );
-        i++;
-      } else {
-        result.add(
-          _DiffLine(newLine: j + 1, text: aLines[j], type: _DiffLineType.added),
-        );
-        j++;
+  static List<DiffLine> _buildDiffLines(String before, String after) {
+    final beforeLines = before.split('\n');
+    final afterLines = after.split('\n');
+    final m = beforeLines.length;
+    final n = afterLines.length;
+
+    final dp = List.generate(
+      m + 1,
+      (_) => List<int>.filled(n + 1, 0, growable: false),
+      growable: false,
+    );
+
+    for (int i = m - 1; i >= 0; i--) {
+      for (int j = n - 1; j >= 0; j--) {
+        if (beforeLines[i] == afterLines[j]) {
+          dp[i][j] = dp[i + 1][j + 1] + 1;
+        } else {
+          final down = dp[i + 1][j];
+          final right = dp[i][j + 1];
+          dp[i][j] = down > right ? down : right;
+        }
       }
     }
+
+    int i = 0;
+    int j = 0;
+    int oldLine = 1;
+    int newLine = 1;
+    final result = <DiffLine>[];
+
+    while (i < m && j < n) {
+      if (beforeLines[i] == afterLines[j]) {
+        result.add(DiffLine(
+          type: DiffLineType.same,
+          text: beforeLines[i],
+          oldLine: oldLine,
+          newLine: newLine,
+        ));
+        i++;
+        j++;
+        oldLine++;
+        newLine++;
+      } else if (dp[i + 1][j] >= dp[i][j + 1]) {
+        result.add(DiffLine(
+          type: DiffLineType.removed,
+          text: beforeLines[i],
+          oldLine: oldLine,
+          newLine: null,
+        ));
+        i++;
+        oldLine++;
+      } else {
+        result.add(DiffLine(
+          type: DiffLineType.added,
+          text: afterLines[j],
+          oldLine: null,
+          newLine: newLine,
+        ));
+        j++;
+        newLine++;
+      }
+    }
+
+    while (i < m) {
+      result.add(DiffLine(
+        type: DiffLineType.removed,
+        text: beforeLines[i],
+        oldLine: oldLine,
+        newLine: null,
+      ));
+      i++;
+      oldLine++;
+    }
+
+    while (j < n) {
+      result.add(DiffLine(
+        type: DiffLineType.added,
+        text: afterLines[j],
+        oldLine: null,
+        newLine: newLine,
+      ));
+      j++;
+      newLine++;
+    }
+
     return result;
   }
 
-  /// 差异比较行的高亮逻辑 (复用 cnf 编辑器的规则)
+  // -- Syntax highlighting for CNF lines --
+
   TextSpan _highlightCnfLine(
     String line,
     ThemeData theme, {
@@ -194,40 +253,32 @@ class CnfDiffDialog extends StatelessWidget {
     if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
       return TextSpan(
         text: line,
-        style: mono?.copyWith(color: sectionColor, fontWeight: FontWeight.w600),
+        style:
+            mono?.copyWith(color: sectionColor, fontWeight: FontWeight.w600),
       );
     }
     final eqIndex = line.indexOf('=');
     if (eqIndex > 0) {
       final keyArea = line.substring(0, eqIndex);
-      final keyTextEnd = keyArea.replaceFirst(RegExp(r'[\t ]+$'), '').length;
+      final keyTextEnd =
+          keyArea.replaceFirst(RegExp(r'[\t ]+$'), '').length;
       final key = keyArea.substring(0, keyTextEnd);
       final gap = keyArea.substring(keyTextEnd);
       final sep = line.substring(eqIndex, eqIndex + 1);
       final value = line.substring(eqIndex + 1);
       return TextSpan(
         children: [
-          TextSpan(
-            text: key,
-            style: mono?.copyWith(color: keyColor),
-          ),
-          TextSpan(
-            text: gap,
-            style: mono?.copyWith(color: baseColor),
-          ),
-          TextSpan(
-            text: sep,
-            style: mono?.copyWith(color: baseColor),
-          ),
-          TextSpan(
-            text: value,
-            style: mono?.copyWith(color: valueColor),
-          ),
+          TextSpan(text: key, style: mono?.copyWith(color: keyColor)),
+          TextSpan(text: gap, style: mono?.copyWith(color: baseColor)),
+          TextSpan(text: sep, style: mono?.copyWith(color: baseColor)),
+          TextSpan(text: value, style: mono?.copyWith(color: valueColor)),
         ],
       );
     }
     return TextSpan(text: line, style: mono);
   }
+
+  // -- Diff styling helpers --
 
   TextStyle? _diffNoStyle(ThemeData theme) {
     return theme.textTheme.bodySmall?.copyWith(
@@ -236,29 +287,29 @@ class CnfDiffDialog extends StatelessWidget {
     );
   }
 
-  String _diffDisplayLineNumber(_DiffLine line) {
+  String _diffDisplayLineNumber(DiffLine line) {
     return (line.newLine ?? line.oldLine)?.toString() ?? '';
   }
 
-  Color _diffBgColor(ThemeData theme, _DiffLineType type) {
-    if (type == _DiffLineType.added) {
+  Color _diffBgColor(ThemeData theme, DiffLineType type) {
+    if (type == DiffLineType.added) {
       return Colors.green.withValues(alpha: 0.10);
     }
-    if (type == _DiffLineType.removed) {
+    if (type == DiffLineType.removed) {
       return Colors.red.withValues(alpha: 0.10);
     }
     return Colors.transparent;
   }
 
-  Color _diffMarkerColor(_DiffLineType type) {
-    if (type == _DiffLineType.added) return Colors.green;
-    if (type == _DiffLineType.removed) return Colors.red;
-    return Colors.grey;
+  Color _diffMarkerColor(DiffLineType type) {
+    if (type == DiffLineType.added) return Colors.green.shade700;
+    if (type == DiffLineType.removed) return Colors.red.shade700;
+    return Colors.grey.shade600;
   }
 
-  Color _diffTextColor(ThemeData theme, _DiffLineType type) {
-    if (type == _DiffLineType.added) return Colors.green.shade900;
-    if (type == _DiffLineType.removed) return Colors.red.shade900;
+  Color _diffTextColor(ThemeData theme, DiffLineType type) {
+    if (type == DiffLineType.added) return Colors.green.shade900;
+    if (type == DiffLineType.removed) return Colors.red.shade900;
     return theme.colorScheme.onSurface;
   }
 }

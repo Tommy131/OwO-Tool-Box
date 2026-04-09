@@ -1,31 +1,47 @@
-part of '../ssl_certificate_manager_page.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
+import 'package:provider/provider.dart';
 
-extension _SslPageCsrImportSection on _SslCertificateManagerPageState {
-  Widget _buildCsrImportTab(SslCertificateManagerProvider provider) {
+import '../../../../core/services/localization_service.dart';
+import '../../../../core/widgets/common/dialog.dart';
+import '../../localization/localization_keys.dart';
+import '../../providers/ssl_certificate_manager_provider.dart';
+import '../../widgets/shared/premium_card.dart';
+import '../../widgets/form/ssl_text_field.dart';
+
+/// Tab page for importing and signing CSR files.
+class CsrImportTab extends StatelessWidget {
+  const CsrImportTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final provider = context.watch<SslCertificateManagerProvider>();
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: ListView(
         children: [
-          _buildGradientHeader(
+          SslGradientHeader(
             title: LocalizationKeys.importCsrTitle.tr(context),
             subtitle: LocalizationKeys.importCsrSubtitle.tr(context),
             icon: Icons.upload_file_outlined,
           ),
           const SizedBox(height: 16),
-          _buildPremiumCard(
+          SslPremiumCard(
             title: LocalizationKeys.importCsr.tr(context),
             icon: Icons.description_outlined,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildTextField(
+                SslTextField(
                   controller: provider.csrFilePathController,
                   label: LocalizationKeys.csrFilePath.tr(context),
                   suffix: IconButton(
                     icon: const Icon(Icons.upload_file),
                     onPressed: () async {
-                      final path = await _pickCsrFile();
+                      final path = await _pickCsrFile(context);
                       if (path != null) {
                         provider.csrFilePathController.text = path;
                       }
@@ -33,7 +49,7 @@ extension _SslPageCsrImportSection on _SslCertificateManagerPageState {
                   ),
                   requiredField: true,
                 ),
-                _buildTextField(
+                SslTextField(
                   controller: provider.csrValidDaysController,
                   label: LocalizationKeys.validDays.tr(context),
                   requiredField: true,
@@ -42,7 +58,7 @@ extension _SslPageCsrImportSection on _SslCertificateManagerPageState {
                 FilledButton.icon(
                   onPressed: provider.isLoading
                       ? null
-                      : () => _handleSignCsr(provider),
+                      : () => _handleSignCsr(context, provider),
                   icon: const Icon(Icons.verified_outlined),
                   label: Text(LocalizationKeys.signCsr.tr(context)),
                 ),
@@ -63,7 +79,7 @@ extension _SslPageCsrImportSection on _SslCertificateManagerPageState {
     );
   }
 
-  Future<String?> _pickCsrFile() async {
+  Future<String?> _pickCsrFile(BuildContext context) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: const ['csr', 'pem'],
@@ -76,23 +92,30 @@ extension _SslPageCsrImportSection on _SslCertificateManagerPageState {
     if (lower.endsWith('.csr') || lower.endsWith('.pem')) {
       return path;
     }
-    if (!mounted) return null;
+    if (!context.mounted) return null;
     await _showSimpleDialog(
+      context,
       LocalizationKeys.fileTypeNotAllowed.tr(context),
       LocalizationKeys.csrFileAllowedOnly.tr(context),
     );
     return null;
   }
 
-  Future<void> _handleSignCsr(SslCertificateManagerProvider provider) async {
+  Future<void> _handleSignCsr(
+    BuildContext context,
+    SslCertificateManagerProvider provider,
+  ) async {
     final csrPath = provider.csrFilePathController.text.trim();
     if (csrPath.isEmpty) {
-      _showInlineMessage(LocalizationKeys.csrFilePath.tr(context));
+      _showInlineMessage(
+          context, LocalizationKeys.csrFilePath.tr(context));
       return;
     }
-    final days = int.tryParse(provider.csrValidDaysController.text.trim());
+    final days =
+        int.tryParse(provider.csrValidDaysController.text.trim());
     if (days == null || days <= 0) {
-      _showInlineMessage(LocalizationKeys.validationValidDays.tr(context));
+      _showInlineMessage(
+          context, LocalizationKeys.validationValidDays.tr(context));
       return;
     }
 
@@ -100,12 +123,13 @@ extension _SslPageCsrImportSection on _SslCertificateManagerPageState {
       context: context,
       style: ConfirmDialogStyle.darkNeon,
       title: LocalizationKeys.importCsrTitle.tr(context),
-      content: '${LocalizationKeys.csrFilePath.tr(context)}: $csrPath\n${LocalizationKeys.validDays.tr(context)}: $days',
+      content:
+          '${LocalizationKeys.csrFilePath.tr(context)}: $csrPath\n${LocalizationKeys.validDays.tr(context)}: $days',
       icon: Icons.verified_outlined,
       confirmText: LocalizationKeys.signCsr.tr(context),
       cancelText: LocalizationKeys.cancel.tr(context),
     );
-    if (!mounted || confirmed != true) return;
+    if (!context.mounted || confirmed != true) return;
 
     showLoadingDialog(
       context: context,
@@ -118,7 +142,7 @@ extension _SslPageCsrImportSection on _SslCertificateManagerPageState {
       csrFilePath: csrPath,
       validDays: days,
     );
-    if (!mounted) return;
+    if (!context.mounted) return;
     Navigator.of(context, rootNavigator: true).pop();
 
     if (result.success) {
@@ -145,5 +169,33 @@ extension _SslPageCsrImportSection on _SslCertificateManagerPageState {
         cancelText: '',
       );
     }
+  }
+
+  Future<void> _showSimpleDialog(
+    BuildContext context,
+    String title,
+    String message,
+  ) async {
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(LocalizationKeys.confirm.tr(context)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showInlineMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 }
