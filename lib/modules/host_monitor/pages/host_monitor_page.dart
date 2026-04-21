@@ -239,7 +239,10 @@ class _HostMonitorPageState extends State<HostMonitorPage> {
   Future<void> _navigateAndRefresh(Widget screen) async {
     final result = await Navigator.push<bool>(
       context,
-      MaterialPageRoute(builder: (_) => screen),
+      MaterialPageRoute(
+        builder: (_) =>
+            ChangeNotifierProvider.value(value: _provider, child: screen),
+      ),
     );
     if (result == true) _loadHosts();
   }
@@ -702,11 +705,14 @@ class _HostMonitorPageState extends State<HostMonitorPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => HostEditPage(
-                  host: _hosts[index],
-                  callback: () async {
-                    await _loadHosts();
-                  },
+                builder: (context) => ChangeNotifierProvider.value(
+                  value: _provider,
+                  child: HostEditPage(
+                    host: _hosts[index],
+                    callback: () async {
+                      await _loadHosts();
+                    },
+                  ),
                 ),
               ),
             );
