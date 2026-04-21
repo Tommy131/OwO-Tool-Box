@@ -345,7 +345,12 @@ class _HostMonitorPageState extends State<HostMonitorPage> {
                 icon: const Icon(Icons.notifications_outlined),
                 onPressed: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const AlertHistoryPage()),
+                  MaterialPageRoute(
+                    builder: (_) => ChangeNotifierProvider.value(
+                      value: _provider,
+                      child: const AlertHistoryPage(),
+                    ),
+                  ),
                 ),
                 tooltip: _tr(host_l10n.LocalizationKeys.alertHistory),
               ),
