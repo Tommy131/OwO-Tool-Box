@@ -1,5 +1,7 @@
 # OwO Tool Box
 
+[New project moved to here](https://github.com/Tommy131/OwO-WinDeployer)
+
 [中文文档](README_ZH.md)
 
 **OwO Tool Box** is a multifunctional system tools application built with Flutter. It is designed to provide a suite of utilities for system administrators and developers, starting with a powerful **Host Monitor** module.
