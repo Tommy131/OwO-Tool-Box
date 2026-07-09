@@ -1,5 +1,7 @@
 # OwO Tool Box
 
+[新项目已迁移至这里](https://github.com/Tommy131/OwO-WinDeployer)
+
 [English Documentation](README.md)
 
 **OwO Tool Box** 是一个基于 Flutter 构建的多功能系统工具箱应用。它旨在为系统管理员和开发者提供一套实用的工具，目前核心功能为强大的 **主机监控 (Host Monitor)** 模块。
